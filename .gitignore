@@ -5,12 +5,13 @@ __pycache__
 db.sqlite3
 static/
 *.html
-migration/
+migrations/
 staticfile/
 mediafile/
 *.swp
 *.save
 local/
 *.sqlite3
+*.env
 celerybeat.pid
 celerybeat-schedule
