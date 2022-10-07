@@ -50,6 +50,9 @@ class Nation(APIView):
 
 
 class Registration(APIView):
+    def get(self,request):
+        serializers=ProfileSerializer(Person.objects.all(),many=True)
+        return Response(serializers.data)
     
     def post(self,request):
         if not request.POST._mutable:
@@ -64,9 +67,9 @@ class Registration(APIView):
         person_phone_number=Person.objects.filter(phone_number__iexact=data['phone_number'])
         if person_phone_number.exists():
             return Response({"message":os.environ.get("Phone_Number_Exists_Message"),
-                             "status":profile[0].status,
-                             "verify":prifle[0].verify,
-                             "block":profile[0].block
+                             "status":person_phone_number[0].status,
+                             "verify":person_phone_number[0].verify,
+                             "block":person_phone_number[0].block
                              })
         person_email=Person.objects.filter(email__iexact=data['email'])
         if person_email.exists():

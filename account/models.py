@@ -22,7 +22,7 @@ class Person(models.Model):
 #basic info
 	name = models.CharField(max_length=20,null=True)
 	email=models.EmailField(null=True)
-	matrimony_id = models.CharField(max_length=20,null=True)
+	matrimony_id = models.CharField(max_length=20,null=True,blank=True)
 	phone_number = models.CharField(max_length=13,null=True)
 	gender = models.CharField(max_length=20,null=True,choices=GENDER)
 	dateofbirth = models.CharField(max_length=20,null=True)
@@ -86,7 +86,7 @@ class Person(models.Model):
 	family_value = models.CharField(max_length=100,null=True)
 
 #about self	
-	about_myself =  models.TextField()
+	about_myself =  models.TextField(null=True,blank=True)
 	status=models.BooleanField(default=True)
 	block=models.BooleanField(default=False)
 	verify=models.BooleanField(default=False)
