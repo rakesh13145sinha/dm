@@ -11,7 +11,7 @@ load_dotenv('.env')
 #print(os.getenv("Phone_nuber_exists_message"))
 class Check_Email(APIView):
     def get(self,request):
-        person_phone_number=Person.objects.filter(phone_number__iexact=data['phone_number'])
+        person_phone_number=Person.objects.filter(phone_number__iexact=request.data['phone_number'])
         if person_phone_number.exists():
             return Response({"message":os.environ.get("Phone_Number_Exists_Message"),
                              "status":True                             
@@ -23,7 +23,7 @@ class Check_Email(APIView):
 
 class Check_Phone_Number(APIView):
     def get(self,request):
-        person_email=Person.objects.filter(email__iexact=data['email'])
+        person_email=Person.objects.filter(email__iexact=request.data['email'])
         if person_email.exists():
             return Response({"message":os.environ.get("Email_Exists"),
                              "status":True
