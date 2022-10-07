@@ -1,0 +1,26 @@
+
+
+from shadi.settings import *
+
+from django.core.management.utils import get_random_secret_key
+
+SECRET_KEY =SECRET_KEY = SECRET_KEY =get_random_secret_key() 
+
+DEBUG = False
+
+ALLOWED_HOSTS = ['localhost']
+
+
+WSGI_APPLICATION = 'shadi.production.wsgi.application'
+
+
+# Database
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+

@@ -1,0 +1,16 @@
+*/node_modules
+*.pyc
+*/*.pyc
+__pycache__
+db.sqlite3
+static/
+*.html
+migration/
+staticfile/
+mediafile/
+*.swp
+*.save
+local/
+*.sqlite3
+celerybeat.pid
+celerybeat-schedule
