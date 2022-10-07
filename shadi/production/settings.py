@@ -5,10 +5,10 @@ from shadi.settings import *
 from django.core.management.utils import get_random_secret_key
 
 SECRET_KEY =SECRET_KEY = SECRET_KEY =get_random_secret_key() 
-load_dotenv('.env')
+# load_dotenv('.env')
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['52.72.255.130']
 
 
 WSGI_APPLICATION = 'shadi.production.wsgi.application'
