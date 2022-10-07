@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from .models import * 
 from .serializers import *
+
 import os
 from dotenv import load_dotenv
 # Create your views here.
@@ -32,6 +33,22 @@ class Check_Email(APIView):
             return Response({"message":"Accepted",
                              "status":False                             
                              },status=200)
+ 
+
+          
+class Nation(APIView):
+    def get(self,request):
+        query=request.GET.get('q')
+        response={}
+        if query:
+            cities=City.objects.filter(state__name=query)
+            return Response([{"id":city.id,"name":city.name} for city in cities])    
+        else:
+            states=State.objects.all()
+            return Response([{"id":state.id,"name":state.name} for state in states]) 
+                
+
+
 class Registration(APIView):
     
     def post(self,request):

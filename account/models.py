@@ -178,34 +178,34 @@ class SaveOTP(models.Model):
 # 	def __str__(self):
 # 		return "%s" %(self.profile.user.id)
 
-# class Country(models.Model):
-# 	country= models.CharField(max_length=20)
+class Country(models.Model):
+	name= models.CharField(max_length=20)
 
-# 	class Meta:
-# 			unique_together = ("country",)
-# 	def __str__(self):
-# 		return self.country
+	class Meta:
+		unique_together = ("name",)
+	def __str__(self):
+		return self.country
 
-# class State(models.Model):
+class State(models.Model):
 
-# 	state=models.CharField(max_length=20)
-# 	country = models.ForeignKey(Country, on_delete=models.CASCADE)
+	name=models.CharField(max_length=20)
+	country = models.ForeignKey(Country, on_delete=models.CASCADE)
 
-# 	class Meta:
-# 			unique_together = ("state",)	
-# 	def __str__(self):
-# 		return self.state
+	class Meta:
+		unique_together = ("name",)	
+	def __str__(self):
+		return self.state
 		
-# class City(models.Model):
+class City(models.Model):
 
-# 	city=models.CharField(max_length=20)
-# 	state=models.ForeignKey(State, on_delete=models.CASCADE)
+	name=models.CharField(max_length=20)
+	state=models.ForeignKey(State, on_delete=models.CASCADE)
 
-# 	class Meta:
-# 			unique_together = ("city",)
+	class Meta:
+		unique_together = ("name",)
 
-# 	def __str__(self):
-# 		return self.city
+	def __str__(self):
+		return self.city
 
 # class Height(models.Model):
 
