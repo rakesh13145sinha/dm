@@ -104,6 +104,8 @@ class Person(models.Model):
 	def __str__(self):
 		return "%s" %(self.user)
 
+	
+
 class ProfileImage(models.Model):
 	profile=models.OneToOneField(Person,on_delete=models.CASCADE)
 	image=models.ImageField(upload_to="profile/image")

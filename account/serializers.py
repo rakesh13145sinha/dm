@@ -13,5 +13,5 @@ class PersonSerializers(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=Person 
-        fields="__all__"
+        exclude=('user',)
     
