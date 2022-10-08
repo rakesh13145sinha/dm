@@ -23,8 +23,8 @@ class Check_Phone_Number(APIView):
                              },status=200)
         else:
             return Response({"message":"Accepted",
-                            "status":person_phone_number[0].status,
-                            "matrimony_id":person_phone_number[0].matrimony_id                            
+                            "status":False,
+                            "matrimony_id":None                            
                              },status=200)
 
 class Check_Email(APIView):
@@ -146,6 +146,7 @@ class Validate_OTP(APIView):
                 contactnumber.save()
         
             response={
+                "message":"Login successfully",
                 "phone_number":contactnumber.phone_number,
                 "name":contactnumber.name,
                 "matrimony_id":contactnumber.matrimony_id,
@@ -155,4 +156,4 @@ class Validate_OTP(APIView):
             
         else:
             return Response({"message":"Enter wrong otp","status":False},status=status.HTTP_404_NOT_FOUND)
-        
+
