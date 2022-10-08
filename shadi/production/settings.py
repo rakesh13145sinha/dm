@@ -8,7 +8,7 @@ SECRET_KEY =SECRET_KEY = SECRET_KEY =get_random_secret_key()
 # load_dotenv('.env')
 DEBUG = False
 
-ALLOWED_HOSTS = ['52.72.255.130']
+ALLOWED_HOSTS = ['52.72.255.130','localhost']
 
 
 WSGI_APPLICATION = 'shadi.production.wsgi.application'
@@ -35,3 +35,6 @@ DATABASES = {
     }
 }
 
+
+MEDIA_URL='/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'mediafile/')
