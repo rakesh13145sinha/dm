@@ -122,7 +122,8 @@ class ProfileMultiImage(models.Model):
 
 class SaveOTP(models.Model):
 	
-	phone_number = models.ForeignKey(Person, on_delete=models.CASCADE)
+	#phone_number = models.ForeignKey(Person, on_delete=models.CASCADE)
+	phone_number = models.CharField(max_length=50,null=True)
 	otp = models.IntegerField(null=True) 
 	
 	

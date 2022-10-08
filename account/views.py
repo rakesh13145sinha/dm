@@ -86,15 +86,14 @@ class Registration(APIView):
         if person_phone_number.exists():
             return Response({"message":os.environ.get("Phone_Number_Exists_Message"),
                              "status":person_phone_number[0].status,
-                             "verify":person_phone_number[0].verify,
-                             "block":person_phone_number[0].block
+                             "matrimony_id":person_phone_number[0].matrimony_id,
                              })
         person_email=Person.objects.filter(email__iexact=email)
         if person_email.exists():
             return Response({"message":os.environ.get("Email_Exists"),
                              "status":person_email[0].status,
-                             "verify":person_email[0].verify,
-                             "block":person_email[0].block
+                            "matrimony_id":person_email[0].matrimony_id,
+                             
                              })
         serializers=PersonSerializers(data=data)
         if serializers.is_valid():
@@ -105,11 +104,55 @@ class Registration(APIView):
             return Response(serializers.errors,status=400)
         
     def delete(self,request):
-        person=Person.objects.filter(id=request.GET['id'])
+        #matrimonyid=request.GET['matrimony_id']
+        person=Person.objects.filter(matrimony_id=request.GET['matrimony_id'])
         if person.exists():
             person.delete()
             
-            return Response({"message":"Profile deleted sucessfully",'status':True})
+            return Response({"message":"Profile Deleted sucessfully",'status':True})
         else:
-            return Response({"message":"Profile Id Not Found",'status':False})
+            return Response({"message":"Profile Matrimony Id Not Found",'status':False})
+
+
+"""VALIDATE OTP AUTHENTICATION AND LOGIN WITH OTP""" 
+"""api/auth/otp"""
+class Validate_OTP(APIView):
+    def post(self,request) :
+        data=request.data
+
+        try:
+           
+            data['phone_number']
+            data['otp']
+            
+        except KeyError as msg:
+            return Response({"message":str(msg),"status":False,"required_field":True})
+        
+        
+        contactnumber= Person.objects.get(phone_number__iexact=data['phone_number'])    
+       
+        saved_otp=SaveOTP.objects.get(phone_number__iexact=data['phone_number'])
+        
+        
+        """OTP VARIFICATION """
+        if int(data['otp'])==saved_otp.otp:
+            
+            if data['phone_number'] != "8500001406":
+             
+                saved_otp.delete()
+
+                contactnumber.status=True
+
+                contactnumber.save()
+        
+            response={
+                "phone_number":contactnumber.phone_number,
+                "name":contactnumber.name,
+                "matrimony_id":contactnumber.matrimony_id,
+                "status":contactnumber.status,
+                }
+            return Response(response,status=status.HTTP_202_ACCEPTED)
+            
+        else:
+            return Response({"message":"Enter wrong otp","status":False},status=status.HTTP_404_NOT_FOUND)
         
