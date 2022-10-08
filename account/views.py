@@ -87,18 +87,21 @@ class Registration(APIView):
             return Response({"message":os.environ.get("Phone_Number_Exists_Message"),
                              "status":person_phone_number[0].status,
                              "matrimony_id":person_phone_number[0].matrimony_id,
+                             "phone_number":person_phone_number[0].phone_number
                              })
         person_email=Person.objects.filter(email__iexact=email)
         if person_email.exists():
             return Response({"message":os.environ.get("Email_Exists"),
                              "status":person_email[0].status,
                             "matrimony_id":person_email[0].matrimony_id,
-                             
+                             "email":person_email[0].email
                              })
         serializers=PersonSerializers(data=data)
         if serializers.is_valid():
             serializers.save()
-            return Response({"message":os.environ.get("Profile_Created")})
+            return Response({"message":os.environ.get("Profile_Created"),
+                             "phone_number":phone
+                             })
         else:
             print(serializers.errors)
             return Response(serializers.errors,status=400)
@@ -156,4 +159,85 @@ class Validate_OTP(APIView):
             
         else:
             return Response({"message":"Enter wrong otp","status":False},status=status.HTTP_404_NOT_FOUND)
+
+
+
+"""Single Image Post"""
+class UploadProfileImage(APIView):
+    def get(self,request):
+        matrimonyid=request.GET.get('matrimony_id')
+        imageid=request.GET.get('imageid')
+        response={}
+        if imageid is not None:
+           
+            image=ProfileMultiImage.objects.get(id=imageid)
+                
+            return Response({                             
+                             "image":image.files.url,
+                             "imageid":image.id}
+                                ,status=200)
+           
+       
+        elif matrimonyid is not None:
+            response={}
+            profile=Person.objects.get(matrimony_id=matrimonyid)
+            uploadedimage=ProfileMultiImage.objects.filter(profile=profile)
+            for i in range(6):
+                try:
+                    response[i+1]={
+                        "imageid":uploadedimage[i].id,
+                        "image": uploadedimage[i].files.url
+
+                    }
+                except Exception as e:
+                    response[i+1]={
+                        "imageid":None,
+                        "image": None,
+
+                    }
+                    
+                
+                
+            
+            return Response(response.values())
+        else:
+            return Response({"message":"somethig wrong check and try latter","status":False},status=200)
+
+        
+
+
+    def post(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
+       
+        matrimonyid=request.GET['matrimony_id']
+        profile=Person.objects.filter(matrimony_id=matrimonyid)
+        if profile.exists():
+           
+            image=ProfileMultiImage.objects.create(
+                profile=profile[0],\
+                files=request.FILES['image'])
+           
+            return Response({"message":"Profile Image Uploaded",
+                             "status":True,
+                             "image":image.files.url,
+                             "imageid":image.id},status=200)
+        else:
+            return Response({"message":"Matrimony Id Invalid",
+                             "status":False,
+                             "matrimony_id":None},status=400)
+       
+
+    def delete(self,request):
+        
+        imageid=request.GET.get('imageid')
+        
+        
+        image=ProfileMultiImage.objects.filter(id=imageid)
+        if image.exists():
+            image.delete()
+            return Response({"message":"Image successfully Deleted","satus":True},status=203)
+        else:
+            return Response({"message":"Image Id not Found","status":False},status=404)
+        
 
