@@ -58,6 +58,30 @@ class Nation(APIView):
             states=State.objects.all()
             return Response([{"id":state.id,"name":state.name} for state in states]) 
                 
+"""Single Profile get"""
+class SingleProfile(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        requestid=request.GET['requeted_matrimony_id']
+        
+        profile=Person.objects.filter(matrimony_id=requestid)
+        if profile.exists():
+            images=ProfileMultiImage.objects.filter(profile__id=profile[0].id)
+            #bookmark
+            bookmark=Bookmark.objects.filter(profile__matrimony_id=matrimonyid,album__matrimony_id=requestid)
+            serializers=ProfileSerializer(profile[0],many=False).data
+            serializers['profileimage']=[
+                {"id":image.id,"image":image.files.url if image.files else None}
+                for image in images ]
+            serializers['bookmark']= True if bookmark.exists() else False
+            serializers['age']=get_age(profile[0].dateofbirth) if profile[0].dateofbirth is not None else None
+            return Response(serializers)
+        else:
+            return Response({"message":"Invalid Matrimony Id","status":False},status=400)
+       
+
+
+
 
 
 class Registration(APIView):
@@ -66,8 +90,12 @@ class Registration(APIView):
         if matrimonyid is not None:
             profile=Person.objects.filter(matrimony_id=matrimonyid)
             if profile.exists():
-                serializers=ProfileSerializer(profile[0],many=False)
-                return Response(serializers.data)
+                images=ProfileMultiImage.objects.filter(profile__id=profile[0].id)
+                serializers=ProfileSerializer(profile[0],many=False).data
+                serializers['profileimage']=[
+                    {"id":image.id,"image":image.files.url if image.files else None}
+                    for image in images ]
+                return Response(serializers)
             else:
                 return Response({"message":"Invalid Matrimony Id","status":False},status=400)
         else:       
@@ -288,5 +316,31 @@ class NewMatchProfile(APIView):
             serializer['image']=images[0].files.url if images.exists() else None
             response[person.id]=serializer
         return Response(response.values())
-    
+
+"""BOOKMARK MATRIMONY ID"""
+
+class BookMarkProfile(APIView):
+    def get(self,request) :
+        matrimonyid=request.GET['matrimony_id']
+        requestid=request.GET['requeted_matrimony_id']
         
+        profile=Person.objects.filter(matrimony_id=requestid)
+        selfid=Person.objects.get(matrimony_id=matrimonyid)
+        
+        if profile.exists():
+            bookmark=Bookmark.objects.filter(profile=selfid)   
+            if bookmark.exists():
+                if bookmark[0].album.filter(matrimony_id=requestid).exists():
+                    bookmark[0].album.remove(profile[0])
+                
+                    return Response({"bookmark":False,"status":False})
+                else:
+                    bookmark[0].album.add(profile[0])
+                    return Response({"bookmark":True,"status":True})
+                    
+            else:
+                bookmark=Bookmark.objects.create(profile=selfid)
+                bookmark.album.add(profile[0])
+                return Response({"bookmark":True,"status":True})
+        else:
+            return Response({"message":"Requested Matrimony Id Invalid","status":False})

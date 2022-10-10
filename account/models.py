@@ -97,6 +97,7 @@ class Person(models.Model):
 	
 	reg_date=models.DateTimeField(auto_now=True,auto_now_add=False)
 	reg_update=models.DateTimeField(auto_now=False,auto_now_add=True)
+	
 
 	class Meta:
 		unique_together = ("phone_number","matrimony_id",'email')
@@ -106,14 +107,17 @@ class Person(models.Model):
 
 	
 
-class ProfileImage(models.Model):
-	profile=models.OneToOneField(Person,on_delete=models.CASCADE)
-	image=models.ImageField(upload_to="profile/image")
+# class ProfileImage(models.Model):
+# 	profile=models.OneToOneField(Person,on_delete=models.CASCADE)
+# 	image=models.ImageField(upload_to="profile/image")
+class Bookmark(models.Model):
+    profile=models.OneToOneField(Person,on_delete=models.CASCADE)
+    album=models.ManyToManyField(Person,related_name="album")
+    
 
 	
 
 class ProfileMultiImage(models.Model):
-	
 	profile = models.ForeignKey(Person, on_delete=models.CASCADE)
 	files = models.ImageField(upload_to = 'profile_pic/',null=True)
 	
@@ -121,8 +125,7 @@ class ProfileMultiImage(models.Model):
 		return "%s"%(self.id)
 
 class SaveOTP(models.Model):
-	
-	#phone_number = models.ForeignKey(Person, on_delete=models.CASCADE)
+
 	phone_number = models.CharField(max_length=50,null=True)
 	otp = models.IntegerField(null=True) 
 	
