@@ -290,7 +290,8 @@ class OppositeGenderProfile(APIView):
             images=ProfileMultiImage.objects.filter(profile__id=person.id)
             response[person.id]={
                 "image":images[0].files.url if images.exists() else None,
-                "matimony_id":person.matrimony_id
+                "matimony_id":person.matrimony_id,
+                "name":person.name
                 
                 }
         return Response(response.values())
@@ -344,3 +345,5 @@ class BookMarkProfile(APIView):
                 return Response({"bookmark":True,"status":True})
         else:
             return Response({"message":"Requested Matrimony Id Invalid","status":False})
+        
+        

@@ -151,38 +151,38 @@ class SaveOTP(models.Model):
 # 	def __str__(self):
 # 		return "%s" %(self.user.id)
 
-# class Partner_Preferences(models.Model):
-# 	profile = models.ForeignKey(Person, on_delete=models.CASCADE)
-# # basic details
-# 	min_age = models.CharField(max_length=100,null=True)
-# 	max_age = models.CharField(max_length=100,null=True)
-# 	min_height = models.CharField(max_length=100,null=True)
-# 	max_height = models.CharField(max_length=100,null=True)
-# 	physical_status = models.CharField(max_length=100,null=True)
-# 	mother_tongue = models.CharField(max_length=100,null=True)
-# 	marital_status = models.CharField(max_length=100,null=True)#multi
-# 	drinking_habbit = models.CharField(max_length=100,null=True)
-# 	smoking_habbit = models.CharField(max_length=100,null=True)
-# 	food=models.CharField(max_length=200,null=True)
-# # birth & religious	
-# 	caste = models.CharField(max_length=100,null=True)
-# 	religion = models.CharField(max_length=100,null=True)
-# 	star = models.CharField(max_length=100,null=True)
-# # education & profession
-# 	occupation = models.CharField(max_length=100,null=True)#profession
-# 	annual_income = models.CharField(max_length=100,null=True)
-# 	job_sector = models.CharField(max_length=100,null=True)
-# 	qualification	= models.CharField(max_length=100,null=True)
-# # residential 
-# 	city = models.CharField(max_length=100,null=True)
-# 	state = models.CharField(max_length=100,null=True)
-# 	country = models.CharField(max_length=100,null=True)
-# 	dosham= models.CharField(max_length=100,null=True)
-# 	profilecreate= models.CharField(max_length=100,null=True)
-# 	assets= models.CharField(max_length=100,null=True)
+class Partner_Preferences(models.Model):
+	profile = models.OneToOneField(Person, on_delete=models.CASCADE)
+# basic details
+	min_age = models.CharField(max_length=100,null=True)
+	max_age = models.CharField(max_length=100,null=True)
+	min_height = models.CharField(max_length=100,null=True)
+	max_height = models.CharField(max_length=100,null=True)
+	physical_status = models.CharField(max_length=100,null=True)
+	mother_tongue = models.CharField(max_length=100,null=True)
+	marital_status = models.CharField(max_length=100,null=True)#multi
+	drinking_habbit = models.CharField(max_length=100,null=True)
+	smoking_habbit = models.CharField(max_length=100,null=True)
+	food=models.CharField(max_length=200,null=True)
+# birth & religious	
+	caste = models.CharField(max_length=100,null=True)
+	religion = models.CharField(max_length=100,null=True)
+	star = models.CharField(max_length=100,null=True)
+# education & profession
+	occupation = models.CharField(max_length=100,null=True)#profession
+	annual_income = models.CharField(max_length=100,null=True)
+	job_sector = models.CharField(max_length=100,null=True)
+	qualification	= models.CharField(max_length=100,null=True)
+# residential 
+	city = models.CharField(max_length=100,null=True)
+	state = models.CharField(max_length=100,null=True)
+	country = models.CharField(max_length=100,null=True)
+	dosham= models.CharField(max_length=100,null=True)
+	profilecreate= models.CharField(max_length=100,null=True)
+	assets= models.CharField(max_length=100,null=True)
 	
-# 	def __str__(self):
-# 		return "%s" %(self.profile.user.id)
+	def __str__(self):
+		return "%s" %(self.profile.user.id)
 
 class Country(models.Model):
 	name= models.CharField(max_length=20)
