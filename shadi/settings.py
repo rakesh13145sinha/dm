@@ -28,8 +28,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     #third party application
     'rest_framework',
+    "corsheaders",
     #project base application
 
     'account.apps.AccountConfig',
@@ -103,7 +105,7 @@ TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 
 USE_TZ = True
-
+CORS_ALLOW_ALL_ORIGINS=True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
