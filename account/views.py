@@ -8,6 +8,7 @@ import random
 from .serializers import *
 from .send_otp import *
 import os
+from age import get_age
 from dotenv import load_dotenv
 # Create your views here.
 load_dotenv('.env')
@@ -255,8 +256,39 @@ class OppositeGenderProfile(APIView):
             # &
             # Q(reg_date)
             )
-        person=Person.objects.filter(query).order_by('-reg_date')
-        serializer=GenderSerializer(person,many=True).data 
-       
-        return Response(serializer)
+        response={}
+        persons=Person.objects.filter(query).order_by('-reg_date')[:12]
+        for person in persons:
+            # serializer=GenderSerializer(person,many=False).data
+            # serializer['age']=get_age(person.dateofbirth) 
+            images=ProfileMultiImage.objects.filter(profile__id=person.id)
+            response[person.id]={
+                "image":images[0].image.url if images.exists() else None,
+                "matimony_id":person.matrimony_id,
+                
+            }
+        return Response(response.values())
+    
+
+"""NEW MATCH JOIN"""
+class NewMatchProfile(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        person=Person.objects.get(matrimony_id__iexact=matrimonyid)
+        query=Q(
+            ~Q(gender=person.gender)
+            &
+            Q(block=False)
+            # &
+            # Q(reg_date)
+            )
+        response={}
+        persons=Person.objects.filter(query).order_by('-reg_date')[13:]
+        for person in persons:
+            images=ProfileMultiImage.objects.filter(profile__id=person.id)
+            serializer=GenderSerializer(person,many=False).data
+            serializer['image']=images[0].image.url if images.exists() else None
+            response[person.id]=serializer
+        return Response(response.values())
+    
         
