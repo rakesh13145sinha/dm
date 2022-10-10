@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from .models import *
+from django.db.models import Q
 import random 
 from .serializers import *
 from .send_otp import *
@@ -241,3 +242,21 @@ class UploadProfileImage(APIView):
             return Response({"message":"Image Id not Found","status":False},status=404)
         
 
+
+"""NEW MATCH PROFILE"""
+class OppositeGenderProfile(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        person=Person.objects.get(matrimony_id__iexact=matrimonyid)
+        query=Q(
+            ~Q(gender=person.gender)
+            &
+            Q(block=False)
+            # &
+            # Q(reg_date)
+            )
+        person=Person.objects.filter(query).order_by('-reg_date')
+        serializer=GenderSerializer(person,many=True).data 
+       
+        return Response(serializer)
+        

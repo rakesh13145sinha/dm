@@ -8,5 +8,6 @@ urlpatterns = [
     path('verify/otp/',Validate_OTP.as_view()),
     
     #image upload
-    path('image/upload/',UploadProfileImage.as_view())
+    path('image/upload/',UploadProfileImage.as_view()),
+    path('new/match',OppositeGenderProfile.as_view())
 ]
