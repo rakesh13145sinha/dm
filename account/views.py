@@ -165,7 +165,7 @@ class Validate_OTP(APIView):
         contactnumber= Person.objects.get(phone_number__iexact=data['phone_number'])    
        
         saved_otp=SaveOTP.objects.get(phone_number__iexact=data['phone_number'])
-        
+        images=ProfileMultiImage.objects.filter(profile=contactnumber)
         
         """OTP VARIFICATION """
         if int(data['otp'])==saved_otp.otp:
@@ -183,6 +183,7 @@ class Validate_OTP(APIView):
                 "phone_number":contactnumber.phone_number,
                 "name":contactnumber.name,
                 "matrimony_id":contactnumber.matrimony_id,
+                "image":images[0].files.url if images.exists() else None,
                 "status":contactnumber.status,
                 }
             return Response(response,status=status.HTTP_202_ACCEPTED)
@@ -422,3 +423,70 @@ class ProfileMatchPercentage(APIView):
     
         return Response(response,status=200)
           
+          
+          
+
+
+"""test"""
+class DailyRecomandation(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        profile=Person.objects.get(matrimony_id=matrimonyid)
+        query=Q(
+           Q(   ~Q(gender=profile.gender)
+                &
+                Q(status=True)
+            )
+           &
+           Q(
+               Q(physical_status=profile.physical_status)
+               |
+               Q(mother_tongue=profile.mother_tongue)
+               |
+               Q(marital_status=profile.marital_status)
+               |
+               Q(drinking_habbit=profile.drinking_habbit)
+               |
+               Q(smoking_habbit=profile.smoking_habbit)
+               |
+               Q(diet_preference=profile.diet_preference)
+               |
+               Q(caste=profile.caste)
+               |
+               Q(religion=profile.religion)
+               |
+               Q(occupation=profile.occupation)
+               |
+               Q(job_sector=profile.job_sector)
+               |
+               Q(smoking_habbit=profile.smoking_habbit)
+               |
+               Q(city=profile.city)
+               |
+               Q(state=profile.state)
+               |
+               Q(religion=profile.religion)
+               |
+               Q(occupation=profile.occupation)
+               |
+               Q(qualification=profile.qualification)
+
+           ) 
+           
+            
+        )
+        
+        response={}
+        r_profile=Person.objects.filter(query).order_by('-reg_date')
+        for r_pro in r_profile:
+            images=ProfileMultiImage.objects.filter(profile=r_pro)
+            response[r_pro.id]={
+                "matrimony_id":r_pro.matrimony_id,
+                "image":images[0].files.url if images.exists() else None,
+                "height":heigth(r_pro.height),
+                "age":get_age(r_pro.dateofbirth),
+                "gender":r_pro.gender
+                
+            }
+        
+        return Response(response.values(),status=200)
