@@ -12,5 +12,6 @@ urlpatterns = [
     path('new/match',OppositeGenderProfile.as_view()),
     path('new/join',NewMatchProfile.as_view()),
     path('bookmark/',BookMarkProfile.as_view()),
-    path('profile/',SingleProfile.as_view())
+    path('profile/',SingleProfile.as_view()),
+    path('match/percentage',ProfileMatchPercentage.as_view())
 ]

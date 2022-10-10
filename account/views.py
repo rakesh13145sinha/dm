@@ -8,7 +8,7 @@ import random
 from .serializers import *
 from .send_otp import *
 import os
-from age import get_age
+from age import get_age,heigth
 from dotenv import load_dotenv
 # Create your views here.
 load_dotenv('.env')
@@ -347,3 +347,61 @@ class BookMarkProfile(APIView):
             return Response({"message":"Requested Matrimony Id Invalid","status":False})
         
         
+        
+"""test"""
+class ProfileMatchPercentage(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        requestid=request.GET['requeted_matrimony_id']
+        
+        profile=Person.objects.get(matrimony_id=matrimonyid)
+        r_profile=Person.objects.get(matrimony_id=requestid)
+        
+        r_age=get_age(r_profile.dateofbirth)
+        d_age=[i for i in range(25,35)]
+        d_height=[
+        "4'1''","4'2''","4'3''","4'4''","4'5''","4'6''","4'7''","4'8''","4'9''","4'10''","4'11''","5'0''"  
+        "5'1''","5'2''","5'3''","5'4''","5'5''","5'6''","5'7''","5'8''","5'9''","5'10''","5'11''","6'0''"
+            
+            ]
+        response={
+            "age":True if int(r_age) in d_age else False, 
+            "height":True if r_profile.height in d_height else False,
+            'physical_status': True if profile.physical_status==r_profile.physical_status else False,
+            'mother_tongue': True if profile.mother_tongue==r_profile.mother_tongue else False,
+            "marital_status": True if profile.marital_status==r_profile.marital_status else False,
+            'drinking_habbit': True if profile.drinking_habbit==r_profile.drinking_habbit else False,
+            'smoking_habbit': True if profile.smoking_habbit==r_profile.smoking_habbit else False,
+            'diet_preference': True if profile.diet_preference==r_profile.diet_preference else False,
+            'caste': True if profile.caste==r_profile.caste else False,
+            'religion': True if profile.religion==r_profile.religion else False,
+            'star': True if profile.star==r_profile.star else False,
+            'occupation': True if profile.occupation==r_profile.occupation else False,
+            "annual_income": True if profile.physical_status==r_profile.physical_status else False,
+            'job_sector': True if profile.job_sector==r_profile.job_sector else False,
+            'city': True if profile.city==r_profile.city else False,
+            'state': True if profile.state==r_profile.state else False,
+            'dosham': False,
+            "qualification":True if profile.qualification==r_profile.qualification else False
+            
+         }  
+        
+        number_of_true=0
+        for key,value in response.items():
+            if value is True:
+                number_of_true+=1
+            else:
+                pass
+        multi=(number_of_true*100)//18
+        response.update({"percentage":multi})
+        # list_of_pp=['min_age','max_age','min_height','max_height','physical_status','mother_tongue'
+        #             "marital_status",'drinking_habbit',
+        #             'smoking_habbit','food','caste','religion','star','occupation'
+        #             "annual_income",'job_sector',
+        #             'city','state','dosham','religion','star','occupation'
+                    
+        #             ]
+           
+    
+        return Response(response,status=400)
+          
