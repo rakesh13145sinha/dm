@@ -365,25 +365,42 @@ class ProfileMatchPercentage(APIView):
             
             ]
         response={
-            "age":True if int(r_age) in d_age else False, 
+            "age":True if int(r_age) in d_age else False,
+            "age_range":"25-35" ,
             "height":True if r_profile.height in d_height else False,
+            "height_range":"4.5 -5.11",
             'physical_status': True if profile.physical_status==r_profile.physical_status else False,
+            "physical_range":"Normal",
             'mother_tongue': True if profile.mother_tongue==r_profile.mother_tongue else False,
+            "mother_tongue_range":"Any",
             "marital_status": True if profile.marital_status==r_profile.marital_status else False,
+            "marital_range":"Unmarried",
             'drinking_habbit': True if profile.drinking_habbit==r_profile.drinking_habbit else False,
+            "drinking_habbit_range":"Any",
             'smoking_habbit': True if profile.smoking_habbit==r_profile.smoking_habbit else False,
+            "smoking_habbit_range":"Any",
             'diet_preference': True if profile.diet_preference==r_profile.diet_preference else False,
+            "diet_preference_range":"Any",
             'caste': True if profile.caste==r_profile.caste else False,
+            "caste_range":"Any",
             'religion': True if profile.religion==r_profile.religion else False,
+            "religion_range":"Any",
             'star': True if profile.star==r_profile.star else False,
+            "star_range":"Any",
             'occupation': True if profile.occupation==r_profile.occupation else False,
+            "occupation_range":"Any",
             "annual_income": True if profile.physical_status==r_profile.physical_status else False,
+            "annual_income_range":"3-5",
             'job_sector': True if profile.job_sector==r_profile.job_sector else False,
+            "job_sector_range":"Any",
             'city': True if profile.city==r_profile.city else False,
+            "city_range":"Any",
             'state': True if profile.state==r_profile.state else False,
+            "state_range":"Any",
             'dosham': False,
-            "qualification":True if profile.qualification==r_profile.qualification else False
-            
+            "dosham_range":"Any",
+            "qualification":True if profile.qualification==r_profile.qualification else False,
+            "qualification_range":"Any"
          }  
         
         number_of_true=0
@@ -403,5 +420,5 @@ class ProfileMatchPercentage(APIView):
         #             ]
            
     
-        return Response(response,status=400)
+        return Response(response,status=200)
           
