@@ -250,23 +250,21 @@ class OppositeGenderProfile(APIView):
         matrimonyid=request.GET['matrimony_id']
         person=Person.objects.get(matrimony_id__iexact=matrimonyid)
         query=Q(
-            ~Q(gender=person.gender)
+           ~ Q(gender=person.gender)
             &
             Q(block=False)
             # &
             # Q(reg_date)
             )
         response={}
-        persons=Person.objects.filter(query).order_by('-reg_date')[:12]
+        persons=Person.objects.filter(query).order_by('-reg_date')[0:12]
         for person in persons:
-            # serializer=GenderSerializer(person,many=False).data
-            # serializer['age']=get_age(person.dateofbirth) 
             images=ProfileMultiImage.objects.filter(profile__id=person.id)
             response[person.id]={
-                "image":images[0].image.url if images.exists() else None,
-                "matimony_id":person.matrimony_id,
+                "image":images[0].files.url if images.exists() else None,
+                "matimony_id":person.matrimony_id
                 
-            }
+                }
         return Response(response.values())
     
 
@@ -287,7 +285,7 @@ class NewMatchProfile(APIView):
         for person in persons:
             images=ProfileMultiImage.objects.filter(profile__id=person.id)
             serializer=GenderSerializer(person,many=False).data
-            serializer['image']=images[0].image.url if images.exists() else None
+            serializer['image']=images[0].files.url if images.exists() else None
             response[person.id]=serializer
         return Response(response.values())
     
