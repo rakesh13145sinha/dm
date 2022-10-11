@@ -1,4 +1,5 @@
-from django.shortcuts import get_list_or_404
+from urllib import response
+from django.shortcuts import get_list_or_404, get_object_or_404
 from requests import delete
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -49,6 +50,33 @@ class Banner(APIView):
         except Exception as e:
             return Response({"message":"Banner deleted"}) 
 
+
+"""This function for  view profile check"""
+def ViewedProfiles(matrimonyid,requestid,status=None):
+    """self matrimony id"""
+    selfprofile=get_object_or_404(Person,matrimony_id=matrimonyid)
+    
+    """requested matrimony id"""
+    requested_profile=get_object_or_404(Person,matrimony_id=requestid)
+    
+    view_profile=ViewedProfile.objects.filter(profile__id=selfprofile.id)
+    if status is None:                  
+        if view_profile.exists():
+            if view_profile[0].view.filter(id=requested_profile.id).exists():
+                pass
+            else:
+                view_profile[0].view.add(requested_profile)
+        else:
+            
+            view_profile=ViewedProfile.objects.create(profile=selfprofile)
+            view_profile.view.add(requested_profile)
+        return True
+    elif status is not None:
+        if view_profile.exists():
+            return view_profile[0].view.filter(id=requested_profile.id).exists()
+        else:
+            return False
+        
 
 
 class Check_Phone_Number(APIView):
@@ -104,8 +132,11 @@ class SingleProfile(APIView):
         profile=Person.objects.filter(matrimony_id=requestid)
         if profile.exists():
             images=ProfileMultiImage.objects.filter(profile__id=profile[0].id)
+           
             #bookmark
             bookmark=Bookmark.objects.filter(profile__matrimony_id=matrimonyid,album__matrimony_id=requestid)
+            #view profile
+            ViewedProfiles(matrimonyid,requestid)
             serializers=ProfileSerializer(profile[0],many=False).data
             serializers['profileimage']=[
                 {"id":image.id,"image":image.files.url if image.files else None}
@@ -116,11 +147,7 @@ class SingleProfile(APIView):
         else:
             return Response({"message":"Invalid Matrimony Id","status":False},status=400)
        
-
-
-
-
-
+"""Registration for new user"""
 class Registration(APIView):
     def get(self,request):
         matrimonyid=request.GET.get('matrimony_id')
@@ -369,7 +396,7 @@ class AllProfiles(APIView):
         for person in persons:
             images=ProfileMultiImage.objects.filter(profile__id=person.id)
             serializer=GenderSerializer(person,many=False).data
-            serializer['image']=images[0].files.url if images.exists() else None
+            serializer['profileimage']=images[0].files.url if images.exists() else None
             response[person.id]=serializer
         return Response(response.values())
 
@@ -478,10 +505,7 @@ class ProfileMatchPercentage(APIView):
     
         return Response(response,status=200)
           
-          
-          
-
-
+ 
 
 class DailyRecomandation(APIView):
     def get(self,request):
@@ -633,7 +657,7 @@ class Explore(APIView):
             }            
         return Response(response.values())
     
-import sys
+
 """EXPLORE PART"""
 class ExploreProfile(APIView):
     def get(self,request):
@@ -682,3 +706,56 @@ class ExploreProfile(APIView):
         else:
             return Response([],status=400)
  
+ 
+ 
+"""GET VIEWED PROFILE"""
+
+"""PROFILE I SAW  PROFILE """
+class ISawProfile(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        query=request.GET['q']#saw,viewed
+        
+        if query != "saw":
+            return Response({"message":"Invalid query","status":False},status=200)
+        
+        profile=Person.objects.get(matrimony_id__iexact=matrimonyid)
+        
+        
+        
+        view_profile=ViewedProfile.objects.filter(profile=profile)
+        # if view_profile.exists()==False:
+        #     return Response([],status=200)
+        
+        response={}
+        for view in view_profile[0].view.all():
+            images=ProfileMultiImage.objects.filter(profile__id=view.id)
+            serializer=GenderSerializer(view,many=False).data
+            serializer['profileimage']=images[0].files.url if images.exists() else None
+            response[view.id]=serializer
+        return Response(response.values())
+    
+    
+"""PROFILE  WHO VIEWED MY PROFILE """
+class WhoSawMyProfile(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        query=request.GET['q']#saw,viewed
+        
+        if query!="viewed":
+            return Response({"message":"Invalid query","status":False},status=200)
+        
+        person=Person.objects.get(matrimony_id__iexact=matrimonyid)
+        
+        filter_query=Q(view__id=person.id)
+        view_profile=ViewedProfile.objects.filter(filter_query)
+        if view_profile.exists()==False:
+            return Response([],status=200)
+        
+        response={}
+        for view in view_profile:
+            images=ProfileMultiImage.objects.filter(profile__id=view.profile.id)
+            serializer=GenderSerializer(view.profile,many=False).data
+            serializer['profileimage']=images[0].files.url if images.exists() else None
+            response[view.id]=serializer
+        return Response(response.values())

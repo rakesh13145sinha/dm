@@ -20,6 +20,11 @@ urlpatterns = [
     path('match/daily',DailyRecomandation.as_view()),
     path('explor/',Explore.as_view()),
     path('explor/name',ExploreProfile.as_view()),
+    
+    #profile viewed and saw
+    path('profile/saw',ISawProfile.as_view()),
+    path('profile/viewed',WhoSawMyProfile.as_view()),
     #admin
-    path('banner',Banner.as_view())
+    path('banner',Banner.as_view()),
+    
 ]

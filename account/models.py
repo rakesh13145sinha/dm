@@ -107,10 +107,6 @@ class Person(models.Model):
 		return "%s" %(self.user)
 
 	
-
-# class ProfileImage(models.Model):
-# 	profile=models.OneToOneField(Person,on_delete=models.CASCADE)
-# 	image=models.ImageField(upload_to="profile/image")
 class Bookmark(models.Model):
     profile=models.OneToOneField(Person,on_delete=models.CASCADE)
     album=models.ManyToManyField(Person,related_name="album")
@@ -135,14 +131,14 @@ class SaveOTP(models.Model):
 	def __str__(self):
 		return "%s"%(self.phone_number)
 
-# class Viewed_matches(models.Model):
-# 	user = models.ForeignKey(User, on_delete=models.CASCADE)
-# 	viewed_user_id = models.CharField(max_length=100,null=True)
-# 	#viewed_user_id = models.IntegerField(null=True)
-# 	viewd_status = models.BooleanField(default=True)
+# class Viewed_Profile(models.Model):
+# 	profile=models.OneToOneField(Person,on_delete=models.CASCADE)
+# 	view=models.ManyToManyField(Person,related_name="view_profile")
+
+class ViewedProfile(models.Model):
+	profile=models.OneToOneField(Person,on_delete=models.CASCADE)
+	view=models.ManyToManyField(Person,related_name="viewprofile")
 	
-# 	def __str__(self):
-# 		return "%s"%(self.user.id)
 
 # class LikedStatus(models.Model):
 # 	user = models.ForeignKey(User, on_delete=models.CASCADE)
