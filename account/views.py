@@ -36,13 +36,12 @@ class Check_Email(APIView):
             return Response({"message":os.environ.get("Email_Exists"),
                             "status":person_email[0].status,
                             "matrimony_id":person_email[0].matrimony_id ,
-                             "status":True
+                             
                              },status=200)
         else:
             return Response({"message":"Accepted",
                              "status":False ,
-                             "status":person_email[0].status,
-                            "matrimony_id":person_email[0].matrimony_id                             
+                            "matrimony_id":None                            
                              },status=200)
  
 
@@ -99,7 +98,7 @@ class Registration(APIView):
             else:
                 return Response({"message":"Invalid Matrimony Id","status":False},status=400)
         else:       
-            serializers=ProfileSerializer(Person.objects.all(),many=True)
+            serializers=ProfileSerializer(Person.objects.all().order_by("-id"),many=True)
             return Response(serializers.data)
     
     def post(self,request):
@@ -485,8 +484,42 @@ class DailyRecomandation(APIView):
                 "image":images[0].files.url if images.exists() else None,
                 "height":heigth(r_pro.height),
                 "age":get_age(r_pro.dateofbirth),
-                "gender":r_pro.gender
+                "gender":r_pro.gender,
+                "name":r_pro.name
                 
             }
         
         return Response(response.values(),status=200)
+    
+    
+
+
+"""SHFFLEING PROFILE SHOWING OPPISITE GENDER PROFILE"""
+class NeedToUpdateFields(APIView):
+    def get(self,request):
+        response={}
+        matrimonyid=request.GET['matrimony_id']
+        
+        profile=Person.objects.get(matrimony_id=matrimonyid)
+        
+        _list=['horoscope',"habbits",'workplace','star',
+               "total_family_members",'college','unmarried_brother',
+               'married_brother','unmarried_sister','married_sister',"annual_income"]
+        
+        
+        for info in _list:
+            if getattr(profile,info)=="" or getattr(profile,info) is None :
+                
+                response[info]={ 
+                                info:False,
+                                "about":"Get 90 imes more boostup your profile"
+                                }                             
+            else:
+                pass                   
+            images=ProfileMultiImage.objects.filter(profile__matrimony_id=matrimonyid)
+            if images.exists()==False:
+                response['image']={
+                "image":False,
+                "about":"Get 90 imes more boostup your profile"
+                }                     
+        return Response(response.values())
