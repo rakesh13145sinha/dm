@@ -344,7 +344,7 @@ class NewMatchProfile(APIView):
             ~Q(gender=person.gender)
             &
             Q(block=False)
-            # &
+            #&
             # Q(reg_date)
             )
         response={}
@@ -355,6 +355,25 @@ class NewMatchProfile(APIView):
             serializer['image']=images[0].files.url if images.exists() else None
             response[person.id]=serializer
         return Response(response.values())
+
+"""ALL PROFILE """
+class AllProfiles(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        person=Person.objects.get(matrimony_id__iexact=matrimonyid)
+        query=Q(
+            ~Q(gender=person.gender)
+            )
+        response={}
+        persons=Person.objects.filter(query).order_by('-id')
+        for person in persons:
+            images=ProfileMultiImage.objects.filter(profile__id=person.id)
+            serializer=GenderSerializer(person,many=False).data
+            serializer['image']=images[0].files.url if images.exists() else None
+            response[person.id]=serializer
+        return Response(response.values())
+
+
 
 """BOOKMARK MATRIMONY ID"""
 
@@ -653,9 +672,7 @@ class ExploreProfile(APIView):
                 #bookmark
                 bookmark=Bookmark.objects.filter(profile=profile,album__matrimony_id=match.matrimony_id)
                 serializers=GenderSerializer(match,many=False).data
-                serializers['profileimage']=[
-                    {"id":image.id,"image":image.files.url if image.files else None}
-                    for image in images ]
+                serializers['profileimage']=images[0].files.url if images.exists() else None
                 serializers['bookmark']= True if bookmark.exists() else False
                 print(match.height)
                 serializers['age']=get_age(match.dateofbirth) if match.dateofbirth is not None else None

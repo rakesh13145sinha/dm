@@ -11,9 +11,11 @@ urlpatterns = [
     #image upload
     path('image/upload/',UploadProfileImage.as_view()),
     path('new/match',OppositeGenderProfile.as_view()),
+    path('profile/all',AllProfiles.as_view()),
+    path('profile/',SingleProfile.as_view()),
     path('new/join',NewMatchProfile.as_view()),
     path('bookmark/',BookMarkProfile.as_view()),
-    path('profile/',SingleProfile.as_view()),
+   
     path('match/percentage',ProfileMatchPercentage.as_view()),
     path('match/daily',DailyRecomandation.as_view()),
     path('explor/',Explore.as_view()),
