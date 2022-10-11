@@ -16,5 +16,7 @@ urlpatterns = [
     path('profile/',SingleProfile.as_view()),
     path('match/percentage',ProfileMatchPercentage.as_view()),
     path('match/daily',DailyRecomandation.as_view()),
-    path('explor/',Explore.as_view())
+    path('explor/',Explore.as_view()),
+    #admin
+    path('banner',Banner.as_view())
 ]

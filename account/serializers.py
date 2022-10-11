@@ -19,4 +19,8 @@ class GenderSerializer(serializers.ModelSerializer):
     class Meta:
         model=Person 
         fields=['matrimony_id','name','city','state','about_myself','occupation','qualification']
-    
+
+class BannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=BannerImage
+        fields='__all__'

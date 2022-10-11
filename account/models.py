@@ -2,6 +2,7 @@ from django.db import models
 
 from django.contrib.auth.models import User
 
+
 class Person(models.Model):
 	GENDER=[('Male','Male'),('Female','Female')]
 	MATRIMONY=[
@@ -18,7 +19,7 @@ class Person(models.Model):
 				('Waiting','Waiting')
 				]
 	user = models.OneToOneField(User,on_delete=models.CASCADE)
-
+#66014444
 #basic info
 	name = models.CharField(max_length=20,null=True)
 	email=models.EmailField(null=True)
@@ -212,6 +213,14 @@ class City(models.Model):
 
 	def __str__(self):
 		return self.city
+
+class BannerImage(models.Model):
+    name=models.CharField(max_length=20)
+    image=models.ImageField(upload_to='banner')
+    background=models.CharField(max_length=20,null=True)
+    status=models.BooleanField(default=False)
+    def __str__(self):
+        return self.name
 
 # class Height(models.Model):
 

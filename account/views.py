@@ -1,4 +1,5 @@
 from django.shortcuts import get_list_or_404
+from requests import delete
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -14,6 +15,42 @@ from dotenv import load_dotenv
 # Create your views here.
 load_dotenv('.env')
 #print(os.getenv("Phone_nuber_exists_message"))
+"""UPLOAD BANNER IMAGE"""
+class Banner(APIView):
+    def get(self,request):
+        serializers=BannerSerializer(BannerImage.objects.all())
+        return Response(serializers.data)
+    def post(self,request):
+        data=request.data 
+        serializers=BannerSerializer(data=data)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data,status=200)
+        else:
+            print(serializers.errors)
+            return Response(serializers.errors)
+    
+    def put(self,request):
+        data=request.data 
+        bannerid=request.GET['id']
+        banner=BannerImage.objects.get(id=bannerid)
+        serializers=BannerSerializer(banner,data=data,partial=True)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data,status=200)
+        else:
+            print(serializers.errors)
+            return Response(serializers.errors)
+        
+    def delete(self,request):
+        bannerid=request.GET['id']
+        try:
+            BannerImage.objects.get(id=bannerid).delete() 
+        except Exception as e:
+            return Response({"message":"Banner deleted"}) 
+
+
+
 class Check_Phone_Number(APIView):
     def get(self,request):
         person_phone_number=Person.objects.filter(phone_number__iexact=request.GET['phone_number'])
@@ -349,7 +386,6 @@ class BookMarkProfile(APIView):
         
         
         
-"""test"""
 class ProfileMatchPercentage(APIView):
     def get(self,request):
         matrimonyid=request.GET['matrimony_id']
@@ -427,7 +463,7 @@ class ProfileMatchPercentage(APIView):
           
 
 
-"""test"""
+
 class DailyRecomandation(APIView):
     def get(self,request):
         matrimonyid=request.GET['matrimony_id']
@@ -504,8 +540,7 @@ class NeedToUpdateFields(APIView):
         profile=Person.objects.get(matrimony_id=matrimonyid)
         
         _list=['horoscope',"habbits",'workplace','star',
-               "total_family_members",'college','unmarried_brother',
-               'married_brother','unmarried_sister','married_sister',"annual_income"]
+               "total_family_members",'college' ,"annual_income"]
         
         
         for info in _list:
@@ -547,6 +582,35 @@ class Explore(APIView):
                 
                 Q(qualification=profile.qualification)& ~Q(gender=profile.gender)
                 )),
+            
+            horoscope=Count('pk', filter=Q(
+                
+                Q(horoscope=profile.horoscope)& ~Q(gender=profile.gender)
+                )),
+           
+            city=Count('pk', filter=Q(
+                
+                Q(city=profile.city)& ~Q(gender=profile.gender)
+                )),
+            state=Count('pk', filter=Q(
+                
+                Q(state=profile.state)& ~Q(gender=profile.gender)
+                )),
+            
+            workplace=Count('pk', filter=Q(
+                
+                Q(workplace=profile.workplace)& ~Q(gender=profile.gender)
+                )),
         
-        )               
-        return Response(profile)
+        )   
+        response={}
+        for key,value in profile.items():
+            banner=BannerImage.objects.filter(name=key,status=True)
+            response[key]={
+                "name":key,
+                "image":banner[0].image.url if banner.exists() else None,
+                "color":banner[0].background if banner.exists() else None,
+                "count":value
+            }            
+        return Response(response.values())
+    
