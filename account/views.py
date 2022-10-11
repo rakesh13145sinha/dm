@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import *
 from django.db.models import Q
 import random 
+from django.db.models import Count
 from .serializers import *
 from .send_otp import *
 import os
@@ -511,7 +512,7 @@ class NeedToUpdateFields(APIView):
             if getattr(profile,info)=="" or getattr(profile,info) is None :
                 
                 response[info]={ 
-                                info:False,
+                                "name":info,
                                 "about":"Get 90 imes more boostup your profile"
                                 }                             
             else:
@@ -519,7 +520,33 @@ class NeedToUpdateFields(APIView):
             images=ProfileMultiImage.objects.filter(profile__matrimony_id=matrimonyid)
             if images.exists()==False:
                 response['image']={
-                "image":False,
+                "name":"image",
                 "about":"Get 90 imes more boostup your profile"
                 }                     
         return Response(response.values())
+    
+
+
+"""Explore"""
+class Explore(APIView):
+    def get(self,request):
+        
+        matrimonyid=request.GET['matrimony_id']
+        
+        profile=Person.objects.get(matrimony_id=matrimonyid)
+        
+        profile=Person.objects.aggregate(
+            star=Count('pk', filter=Q(
+                Q(star=profile.star)& ~Q(gender=profile.gender)
+                )),
+            occupation=Count('pk', filter=Q(
+                
+                Q(occupation=profile.occupation)& ~Q(gender=profile.gender)
+                )),
+            qualification=Count('pk', filter=Q(
+                
+                Q(qualification=profile.qualification)& ~Q(gender=profile.gender)
+                )),
+        
+        )               
+        return Response(profile)

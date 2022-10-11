@@ -15,5 +15,6 @@ urlpatterns = [
     path('bookmark/',BookMarkProfile.as_view()),
     path('profile/',SingleProfile.as_view()),
     path('match/percentage',ProfileMatchPercentage.as_view()),
-    path('match/daily',DailyRecomandation.as_view())
+    path('match/daily',DailyRecomandation.as_view()),
+    path('explor/',Explore.as_view())
 ]
