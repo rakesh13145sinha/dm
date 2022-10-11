@@ -614,3 +614,54 @@ class Explore(APIView):
             }            
         return Response(response.values())
     
+import sys
+"""EXPLORE PART"""
+class ExploreProfile(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        _q=request.GET['q']
+        
+        profile=Person.objects.get(matrimony_id=matrimonyid) 
+        _list=['star','occupation','workplace','state','city','horoscope','qualification']
+        if _q not in _list:
+        
+            return Response({"message":"Invalid query",'status':False},status=400)
+        elif _q=="state":
+        
+            query=Q(~Q(gender=profile.gender)& Q(state=getattr(profile,_q)) )
+        elif _q=="star":     
+            query=Q(~Q(gender=profile.gender)& Q(star=getattr(profile,_q)) )
+        elif _q=="occupation":
+            query=Q(~Q(gender=profile.gender)& Q(occupation=getattr(profile,_q)) )     
+        elif _q=="workplace":
+            query=Q(~Q(gender=profile.gender)& Q(workplace=getattr(profile,_q)) )
+        elif _q=="city":
+            query=Q(~Q(gender=profile.gender)& Q(city=getattr(profile,_q)) )
+        elif _q=="horoscope":
+            query=Q(~Q(gender=profile.gender)& Q(horoscope=getattr(profile,_q)) )
+        elif _q=="qualification":
+            query=Q(~Q(gender=profile.gender)& Q(qualification=getattr(profile,_q)) )
+    
+           
+            
+       
+        matches=Person.objects.filter(query).order_by('-id')  
+        if matches.exists():
+            response={}
+            for match in matches:
+                images=ProfileMultiImage.objects.filter(profile__id=match.id)
+                #bookmark
+                bookmark=Bookmark.objects.filter(profile=profile,album__matrimony_id=match.matrimony_id)
+                serializers=GenderSerializer(match,many=False).data
+                serializers['profileimage']=[
+                    {"id":image.id,"image":image.files.url if image.files else None}
+                    for image in images ]
+                serializers['bookmark']= True if bookmark.exists() else False
+                print(match.height)
+                serializers['age']=get_age(match.dateofbirth) if match.dateofbirth is not None else None
+                serializers['height']=heigth(match.height) if match.height is not None else None
+                response[match.id]=serializers
+            return Response(response.values())
+        else:
+            return Response([],status=400)
+ 
