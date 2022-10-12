@@ -1,6 +1,5 @@
 from urllib import response
-from django.shortcuts import get_list_or_404, get_object_or_404
-from requests import delete
+from django.shortcuts import  get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -11,7 +10,7 @@ from django.db.models import Count
 from .serializers import *
 from .send_otp import *
 import os
-from age import get_age,heigth
+from age import *
 from dotenv import load_dotenv
 # Create your views here.
 load_dotenv('.env')
@@ -82,20 +81,29 @@ def ViewedProfiles(matrimonyid,requestid,status=None):
 
 """check request status"""       
 def connect_status(matrimonyid,requestid):
-    assert matrimonyid is None ,"matrimony id can't be None"
-    assert requestid is None ," requested matrimony id can't be None"
+    # assert matrimonyid is None ,"matrimony id can't be None"
+    # assert requestid is None ," requested matrimony id can't be None"
     query=Q(
-        profile__matrimony_id=matrimonyid,
-        requested_matrimony_id=requestid
+        Q(profile__matrimony_id=matrimonyid,requested_matrimony_id=requestid)
+        |
+        Q(profile__matrimony_id=requestid,requested_matrimony_id=matrimonyid)
     )
     send_friend_request=FriendRequests.objects.filter(query)
     if send_friend_request.exists():
-        return {"id":send_friend_request[0].id,"connect_status":send_friend_request[0].request_status} 
+        return {"connect_status":send_friend_request[0].request_status} 
     else:
-        return { "id":None,"connect_status":"connect"}   
+        return {"connect_status":"connect"}   
         
+def height_and_age(h,age):
    
-    
+    if h is not None and age is not None:
+        return {"age":get_age(age),'height':height(h)}   
+    elif h is None and age is None:
+        return {"age":None,'height':None}    
+    elif age is None:
+        return {"age":None,'height':height(h)}
+    elif h is None:
+        return {"age":get_age(age),'height':None}
 
 class Check_Phone_Number(APIView):
     def get(self,request):
@@ -159,8 +167,12 @@ class SingleProfile(APIView):
             serializers['profileimage']=[
                 {"id":image.id,"image":image.files.url if image.files else None}
                 for image in images ]
+            
             serializers['bookmark']= True if bookmark.exists() else False
-            serializers['age']=get_age(profile[0].dateofbirth) if profile[0].dateofbirth is not None else None
+            # serializers['age']=get_age(profile[0].dateofbirth) if profile[0].dateofbirth is not None else None
+            # serializers['height']= height(profile[0].height) if profile[0].height is not None else None
+            serializers.update(connect_status(matrimonyid,requestid))
+            serializers.update(height_and_age( profile[0].height,profile[0].dateofbirth ))
             return Response(serializers)
         else:
             return Response({"message":"Invalid Matrimony Id","status":False},status=400)
@@ -180,9 +192,18 @@ class Registration(APIView):
                 return Response(serializers)
             else:
                 return Response({"message":"Invalid Matrimony Id","status":False},status=400)
-        else:       
-            serializers=ProfileSerializer(Person.objects.all().order_by("-id"),many=True)
-            return Response(serializers.data)
+        else: 
+            profiles=Person.objects.all().order_by("-id")
+            response={}
+            for profile in profiles:
+                images=ProfileMultiImage.objects.filter(profile__id=profile.id)
+                serializers=ProfileSerializer(profile,many=False).data
+                serializers['profileimage']=[
+                    {"id":image.id,"image":image.files.url if image.files else None}
+                    for image in images ]
+                serializers.update(height_and_age( profile.height,profile.dateofbirth ))
+                response[profile.id]=serializers
+            return Response(response.values())
     
     def post(self,request):
         if not request.POST._mutable:
@@ -415,6 +436,7 @@ class AllProfiles(APIView):
             images=ProfileMultiImage.objects.filter(profile__id=person.id)
             serializer=GenderSerializer(person,many=False).data
             serializer['profileimage']=images[0].files.url if images.exists() else None
+            serializer.update(height_and_age( person.height,person.dateofbirth ))
             response[person.id]=serializer
         return Response(response.values())
 
@@ -580,7 +602,7 @@ class DailyRecomandation(APIView):
             response[r_pro.id]={
                 "matrimony_id":r_pro.matrimony_id,
                 "image":images[0].files.url if images.exists() else None,
-                "height":heigth(r_pro.height),
+                "height":height(r_pro.height),
                 "age":get_age(r_pro.dateofbirth),
                 "gender":r_pro.gender,
                 "name":r_pro.name,
@@ -719,7 +741,7 @@ class ExploreProfile(APIView):
                 serializers['bookmark']= True if bookmark.exists() else False
                 print(match.height)
                 serializers['age']=get_age(match.dateofbirth) if match.dateofbirth is not None else None
-                serializers['height']=heigth(match.height) if match.height is not None else None
+                serializers['height']=height(match.height) if match.height is not None else None
                 response[match.id]=serializers
             return Response(response.values())
         else:
@@ -786,7 +808,8 @@ class SendFriendRequest(APIView):
         requestid=request.GET['requeted_matrimony_id']
         query=Q(
             profile__matrimony_id=matrimonyid,
-            requested_matrimony_id=requestid
+            requested_matrimony_id=requestid,
+            
         )
         send_friend_request=FriendRequests.objects.filter(query)
         if send_friend_request.exists():
@@ -797,6 +820,18 @@ class SendFriendRequest(APIView):
             FriendRequests.objects.create(profile=profile,requested_matrimony_id=requestid)
             return Response({"message":"Request Send Successfully","connect_status":"Waiting"},status=200)
     
+    def post(self,request):
+        records=FriendRequests.objects.all().order_by('-created_date')
+        response={}
+        for re in records:
+            response[re.id]={
+                "profile":re.profile.matrimony_id,
+                "requested_matrimony_id":re.requested_matrimony_id,
+                "request_status":re.request_status,
+                "status":re.status,
+                "create":re.created_date
+            }
+        return Response(response.values())    
     def put(self,request):
         if not request.POST._mutable:
             request.POST._mutable=True
@@ -822,54 +857,65 @@ class SendFriendRequest(APIView):
             return Response({"message":"no found"})
            
     
-"""WAITING,RECEIVED FRIEND REQUEST DATA"""  
-class ReceivedFriendRequest(APIView):
+"""WAITING,RECEIVED,REJECTED FRIEND REQUEST DATA"""  
+class StautsOfSendRequest(APIView):
     def get(self,request):
         matrimonyid=request.GET['matrimony_id']
-    
+        request_query=request.GET['q']
+        _list=("Connected","Rejected",'Waiting')
+        
+        if request_query not in _list:
+            return Response({"message":"Invalid query","status":False},status=400)
+        
         query=Q(
-            request_status="Waiting",
-            requested_matrimony_id=matrimonyid
+            Q(request_status=request_query,requested_matrimony_id=matrimonyid)
+            |
+            Q(request_status=request_query,profile__matrimony_id=matrimonyid)
         )
         send_friend_request=FriendRequests.objects.filter(query).order_by("-created_date")
+        
         if send_friend_request.exists()==False:
             return Response([],status=200)
         response={}
         for view in send_friend_request:
-            images=ProfileMultiImage.objects.filter(profile__id=view.profile.id)
-            serializer=GenderSerializer(view.profile,many=False).data
+            # print("+++++++++++++++++++")
+            # print(matrimonyid,view.profile.matrimony_id,view.requested_matrimony_id)
+            #print("xxxxxxxxxxxxxxxxxxxxxxxxx")
+            if matrimonyid==view.profile.matrimony_id:
+                # print("xxxxxxxxxxxif ")
+                image_query=Q(profile__matrimony_id=view.requested_matrimony_id)
+                instance=get_object_or_404(Person,matrimony_id=view.requested_matrimony_id)
+            else:
+                # print("xxxxxxxxxxxelsse ")
+                image_query=Q(profile__matrimony_id=view.profile.matrimony_id) 
+                instance=get_object_or_404(Person,matrimony_id=view.profile.matrimony_id) 
+            images=ProfileMultiImage.objects.filter(image_query)
+                        
+            serializer=GenderSerializer(instance,many=False).data
             serializer['profileimage']=images[0].files.url if images.exists() else None
             serializer['connect_status']=view.request_status
             serializer['connectid']=view.id
-            
+            serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
+            serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
             response[view.id]=serializer
         return Response(response.values())
 
 
 
 """CHECK FRIEND REQUEST STATUS CONNECTED,REJECTED,WAITING"""  
-class StautsOfSendRequest(APIView):
+class GETSendedFriendRequest(APIView):
     def get(self,request):
         matrimonyid=request.GET['matrimony_id']
         request_query=request.GET['q']
-        _list=("Connected","Rejected",'send_request')
+        _list=('send_request',)
         if request_query not in _list:
             return Response({"message":"Invalid query","status":False},status=400)
         
-        
-        elif request_query=="send_request":
-            query=Q(
-                profile__matrimony_id=matrimonyid,
-                
-                )
-        elif request_query !="send_request":
-            query=Q(
-                profile__matrimony_id=matrimonyid,
-                request_status=request_query
+        query=Q(
+            profile__matrimony_id=matrimonyid,
+            
             )
         
-        else:
-            return Response({"message":"connect with developer","status":False},status=400)
         send_friend_request=FriendRequests.objects.filter(query)
         if send_friend_request.exists()==False:
             return Response([],status=200)
@@ -881,7 +927,9 @@ class StautsOfSendRequest(APIView):
             serializer=GenderSerializer(profileid,many=False).data
             serializer['profileimage']=images[0].files.url if images.exists() else None
             serializer['connect_status']=view.request_status
-            serializer['connectid']=view.id
+            # serializer['connectid']=view.id
+            serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
+            serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
            
             response[view.id]=serializer
         return Response(response.values())

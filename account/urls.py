@@ -14,8 +14,8 @@ urlpatterns = [
     path('profile/all',AllProfiles.as_view()),
     path('profile/',SingleProfile.as_view()),
     path('profile/connect/',SendFriendRequest.as_view()),
-    path('profile/connect/send',SendFriendRequest.as_view()),
-    path('profile/connect/received',ReceivedFriendRequest.as_view()),
+   
+    path('profile/connect/send',GETSendedFriendRequest.as_view()),
     path('profile/connect/status',StautsOfSendRequest.as_view()),
     path('new/join',NewMatchProfile.as_view()),
     path('bookmark/',BookMarkProfile.as_view()),

@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+
 class Person(models.Model):
 	GENDER=[('Male','Male'),('Female','Female')]
 	MATRIMONY=[
@@ -232,8 +233,10 @@ class FriendRequests(models.Model):
 	profile = models.ForeignKey(Person, on_delete=models.CASCADE)
 	requested_matrimony_id = models.CharField(max_length=100,null=True)
 	request_status = models.CharField(choices = request_status_types, default="Waiting", max_length = 25)
+
 	created_date=models.DateTimeField(auto_now=True,auto_now_add=False)
 	updated_date=models.DateTimeField(auto_now=False,auto_now_add=True)
+	status=models.BooleanField(default=False)
 	
 
 # class MatchOfTheDay(models.Model):

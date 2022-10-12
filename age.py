@@ -8,7 +8,7 @@ def get_age(string):
     age= str((year//365))[:3]
     return age
 
-def heigth(string):
+def height(string):
     c=string.split("'")[:2]
     
     c_s=c[0]+"."+c[1]
