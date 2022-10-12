@@ -169,8 +169,6 @@ class SingleProfile(APIView):
                 for image in images ]
             
             serializers['bookmark']= True if bookmark.exists() else False
-            # serializers['age']=get_age(profile[0].dateofbirth) if profile[0].dateofbirth is not None else None
-            # serializers['height']= height(profile[0].height) if profile[0].height is not None else None
             serializers.update(connect_status(matrimonyid,requestid))
             serializers.update(height_and_age( profile[0].height,profile[0].dateofbirth ))
             return Response(serializers)
@@ -419,6 +417,8 @@ class NewMatchProfile(APIView):
             images=ProfileMultiImage.objects.filter(profile__id=person.id)
             serializer=GenderSerializer(person,many=False).data
             serializer['image']=images[0].files.url if images.exists() else None
+            serializers.update(connect_status(matrimonyid,person.matrimony_id))
+            serializers.update(height_and_age(person.height,person.dateofbirth))
             response[person.id]=serializer
         return Response(response.values())
 
@@ -437,6 +437,7 @@ class AllProfiles(APIView):
             serializer=GenderSerializer(person,many=False).data
             serializer['profileimage']=images[0].files.url if images.exists() else None
             serializer.update(height_and_age( person.height,person.dateofbirth ))
+            serializer.update(connect_status(matrimonyid,person.matrimony_id ))
             response[person.id]=serializer
         return Response(response.values())
 
@@ -609,6 +610,7 @@ class DailyRecomandation(APIView):
                 "phone_number":r_pro.phone_number
                 
             }
+            response[r_pro.id].update(connect_status(matrimonyid,r_pro.matrimony_id))
         
         return Response(response.values(),status=200)
     
@@ -739,9 +741,8 @@ class ExploreProfile(APIView):
                 serializers=GenderSerializer(match,many=False).data
                 serializers['profileimage']=images[0].files.url if images.exists() else None
                 serializers['bookmark']= True if bookmark.exists() else False
-                print(match.height)
-                serializers['age']=get_age(match.dateofbirth) if match.dateofbirth is not None else None
-                serializers['height']=height(match.height) if match.height is not None else None
+                serializers.update(height_and_age(match.height,match.dateofbirth))
+                serializers.update(connect_status(matrimonyid,match.matrimony_id))
                 response[match.id]=serializers
             return Response(response.values())
         else:
@@ -773,6 +774,8 @@ class ISawProfile(APIView):
             images=ProfileMultiImage.objects.filter(profile__id=view.id)
             serializer=GenderSerializer(view,many=False).data
             serializer['profileimage']=images[0].files.url if images.exists() else None
+            serializer.update(height_and_age(view.height,view.dateofbirth))
+            serializer.update(connect_status(matrimonyid,view.matrimony_id))
             response[view.id]=serializer
         return Response(response.values())
     
@@ -798,6 +801,8 @@ class WhoSawMyProfile(APIView):
             images=ProfileMultiImage.objects.filter(profile__id=view.profile.id)
             serializer=GenderSerializer(view.profile,many=False).data
             serializer['profileimage']=images[0].files.url if images.exists() else None
+            serializer.update(height_and_age(view.height,view.dateofbirth))
+            serializer.update(connect_status(matrimonyid,view.matrimony_id))
             response[view.id]=serializer
         return Response(response.values())
 

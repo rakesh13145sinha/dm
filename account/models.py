@@ -132,22 +132,13 @@ class SaveOTP(models.Model):
 	def __str__(self):
 		return "%s"%(self.phone_number)
 
-# class Viewed_Profile(models.Model):
-# 	profile=models.OneToOneField(Person,on_delete=models.CASCADE)
-# 	view=models.ManyToManyField(Person,related_name="view_profile")
 
 class ViewedProfile(models.Model):
 	profile=models.OneToOneField(Person,on_delete=models.CASCADE)
 	view=models.ManyToManyField(Person,related_name="viewprofile")
 	
 
-# class LikedStatus(models.Model):
-# 	user = models.ForeignKey(User, on_delete=models.CASCADE)
-# 	user_liked = models.CharField(max_length=100,null=True)
-# 	LikedStatus = models.BooleanField(default=True)
-	
-# 	def __str__(self):
-# 		return "%s" %(self.user.id)
+
 
 class Partner_Preferences(models.Model):
 	profile = models.OneToOneField(Person, on_delete=models.CASCADE)
