@@ -16,6 +16,9 @@ from dotenv import load_dotenv
 # Create your views here.
 load_dotenv('.env')
 #print(os.getenv("Phone_nuber_exists_message"))
+
+def connection(**kwargs):
+    return kwargs
 """UPLOAD BANNER IMAGE"""
 class Banner(APIView):
     def get(self,request):
@@ -76,8 +79,23 @@ def ViewedProfiles(matrimonyid,requestid,status=None):
             return view_profile[0].view.filter(id=requested_profile.id).exists()
         else:
             return False
-        
 
+"""check request status"""       
+def connect_status(matrimonyid,requestid):
+    assert matrimonyid is None ,"matrimony id can't be None"
+    assert requestid is None ," requested matrimony id can't be None"
+    query=Q(
+        profile__matrimony_id=matrimonyid,
+        requested_matrimony_id=requestid
+    )
+    send_friend_request=FriendRequests.objects.filter(query)
+    if send_friend_request.exists():
+        return {"id":send_friend_request[0].id,"connect_status":send_friend_request[0].request_status} 
+    else:
+        return { "id":None,"connect_status":"connect"}   
+        
+   
+    
 
 class Check_Phone_Number(APIView):
     def get(self,request):
@@ -565,7 +583,8 @@ class DailyRecomandation(APIView):
                 "height":heigth(r_pro.height),
                 "age":get_age(r_pro.dateofbirth),
                 "gender":r_pro.gender,
-                "name":r_pro.name
+                "name":r_pro.name,
+                "phone_number":r_pro.phone_number
                 
             }
         
@@ -757,5 +776,112 @@ class WhoSawMyProfile(APIView):
             images=ProfileMultiImage.objects.filter(profile__id=view.profile.id)
             serializer=GenderSerializer(view.profile,many=False).data
             serializer['profileimage']=images[0].files.url if images.exists() else None
+            response[view.id]=serializer
+        return Response(response.values())
+    
+"""SEND FRIEND REQUEST"""   
+class SendFriendRequest(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        requestid=request.GET['requeted_matrimony_id']
+        query=Q(
+            profile__matrimony_id=matrimonyid,
+            requested_matrimony_id=requestid
+        )
+        send_friend_request=FriendRequests.objects.filter(query)
+        if send_friend_request.exists():
+            return Response({"message":"Request Exsits","connect_status":send_friend_request[0].request_status})  
+        else:
+            profile=get_object_or_404(Person,matrimony_id=matrimonyid)
+            get_object_or_404(Person,matrimony_id=requestid)
+            FriendRequests.objects.create(profile=profile,requested_matrimony_id=requestid)
+            return Response({"message":"Request Send Successfully","connect_status":"Waiting"},status=200)
+    
+    def put(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
+        data=request.data
+        connectid=request.GET['connectid']
+        _list=("Connected","Rejected")
+        if data['request_status'] not in _list:
+            return Response({"message":"Invalid Choice","status":False},status=400)
+        
+        
+        get_request=FriendRequests.objects.get(id=connectid)
+        get_request.request_status=data['request_status']
+        get_request.save()
+        return Response({"connect_staus":get_request.request_status})
+    
+    def delete(self,request):
+        connectid=request.GET['connectid']
+        fr=FriendRequests.objects.filter(id=connectid)
+        if fr.exists():
+            fr.delete()
+            return Response({"message":"deleted"})
+        else:
+            return Response({"message":"no found"})
+           
+    
+"""WAITING,RECEIVED FRIEND REQUEST DATA"""  
+class ReceivedFriendRequest(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+    
+        query=Q(
+            request_status="Waiting",
+            requested_matrimony_id=matrimonyid
+        )
+        send_friend_request=FriendRequests.objects.filter(query).order_by("-created_date")
+        if send_friend_request.exists()==False:
+            return Response([],status=200)
+        response={}
+        for view in send_friend_request:
+            images=ProfileMultiImage.objects.filter(profile__id=view.profile.id)
+            serializer=GenderSerializer(view.profile,many=False).data
+            serializer['profileimage']=images[0].files.url if images.exists() else None
+            serializer['connect_status']=view.request_status
+            serializer['connectid']=view.id
+            
+            response[view.id]=serializer
+        return Response(response.values())
+
+
+
+"""CHECK FRIEND REQUEST STATUS CONNECTED,REJECTED,WAITING"""  
+class StautsOfSendRequest(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        request_query=request.GET['q']
+        _list=("Connected","Rejected",'send_request')
+        if request_query not in _list:
+            return Response({"message":"Invalid query","status":False},status=400)
+        
+        
+        elif request_query=="send_request":
+            query=Q(
+                profile__matrimony_id=matrimonyid,
+                
+                )
+        elif request_query !="send_request":
+            query=Q(
+                profile__matrimony_id=matrimonyid,
+                request_status=request_query
+            )
+        
+        else:
+            return Response({"message":"connect with developer","status":False},status=400)
+        send_friend_request=FriendRequests.objects.filter(query)
+        if send_friend_request.exists()==False:
+            return Response([],status=200)
+        
+        response={}
+        for view in send_friend_request:
+            images=ProfileMultiImage.objects.filter(profile__matrimony_id=view.requested_matrimony_id)
+            profileid=get_object_or_404(Person,matrimony_id=view.requested_matrimony_id)
+            serializer=GenderSerializer(profileid,many=False).data
+            serializer['profileimage']=images[0].files.url if images.exists() else None
+            serializer['connect_status']=view.request_status
+            serializer['connectid']=view.id
+           
             response[view.id]=serializer
         return Response(response.values())

@@ -18,7 +18,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class GenderSerializer(serializers.ModelSerializer):
     class Meta:
         model=Person 
-        fields=['matrimony_id','name','city','state','about_myself','occupation','qualification']
+        fields=['matrimony_id','name','city','state','about_myself','phone_number','occupation','qualification']
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:

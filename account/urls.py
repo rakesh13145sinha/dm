@@ -13,6 +13,10 @@ urlpatterns = [
     path('new/match',OppositeGenderProfile.as_view()),
     path('profile/all',AllProfiles.as_view()),
     path('profile/',SingleProfile.as_view()),
+    path('profile/connect/',SendFriendRequest.as_view()),
+    path('profile/connect/send',SendFriendRequest.as_view()),
+    path('profile/connect/received',ReceivedFriendRequest.as_view()),
+    path('profile/connect/status',StautsOfSendRequest.as_view()),
     path('new/join',NewMatchProfile.as_view()),
     path('bookmark/',BookMarkProfile.as_view()),
    
@@ -26,5 +30,6 @@ urlpatterns = [
     path('profile/viewed',WhoSawMyProfile.as_view()),
     #admin
     path('banner',Banner.as_view()),
+   
     
 ]

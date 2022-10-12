@@ -34,7 +34,11 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
-
-MEDIA_URL='/media/'
-MEDIA_ROOT=os.path.join(BASE_DIR,'mediafile/')
+if DEBUG:
+    STATIC_URL = '/static/'
+    STATIC_ROOT=os.path.join(BASE_DIR,'staticfile/')
+    MEDIA_URL='/media/'
+    MEDIA_ROOT=os.path.join(BASE_DIR,'mediafile/')
+else:
+    MEDIA_URL='/media/'
+    MEDIA_ROOT=os.path.join(BASE_DIR,'mediafile/')
