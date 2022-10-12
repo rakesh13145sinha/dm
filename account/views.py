@@ -417,9 +417,9 @@ class NewMatchProfile(APIView):
             images=ProfileMultiImage.objects.filter(profile__id=person.id)
             serializer=GenderSerializer(person,many=False).data
             serializer['image']=images[0].files.url if images.exists() else None
-            serializers.update(connect_status(matrimonyid,person.matrimony_id))
-            serializers.update(height_and_age(person.height,person.dateofbirth))
             response[person.id]=serializer
+            response[person.id].update(height_and_age(person.height,person.dateofbirth))
+            response[person.id].update(connect_status(matrimonyid,person.matrimony_id) )
         return Response(response.values())
 
 """ALL PROFILE """
@@ -436,9 +436,9 @@ class AllProfiles(APIView):
             images=ProfileMultiImage.objects.filter(profile__id=person.id)
             serializer=GenderSerializer(person,many=False).data
             serializer['profileimage']=images[0].files.url if images.exists() else None
-            serializer.update(height_and_age( person.height,person.dateofbirth ))
-            serializer.update(connect_status(matrimonyid,person.matrimony_id ))
             response[person.id]=serializer
+            response[person.id].update(height_and_age(person.height,person.dateofbirth))
+            response[person.id].update(connect_status(matrimonyid,person.matrimony_id ) )                          
         return Response(response.values())
 
 
