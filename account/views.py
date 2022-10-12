@@ -414,7 +414,7 @@ class NewMatchProfile(APIView):
             # Q(reg_date)
             )
         response={}
-        persons=Person.objects.filter(query).order_by('-reg_date')[13:]
+        persons=Person.objects.filter(query).order_by('-reg_date')#[13:]
         for person in persons:
             images=ProfileMultiImage.objects.filter(profile__id=person.id)
             serializer=GenderSerializer(person,many=False).data
@@ -800,7 +800,11 @@ class WhoSawMyProfile(APIView):
             serializer['profileimage']=images[0].files.url if images.exists() else None
             response[view.id]=serializer
         return Response(response.values())
-    
+
+
+
+
+#######################FRIEND REQUEST SEND#########################    
 """SEND FRIEND REQUEST"""   
 class SendFriendRequest(APIView):
     def get(self,request):
@@ -897,6 +901,7 @@ class StautsOfSendRequest(APIView):
             serializer['connectid']=view.id
             serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
             serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
+            serializer.update(height_and_age(instance.height,instance.dateofbirth))
             response[view.id]=serializer
         return Response(response.values())
 
@@ -927,9 +932,12 @@ class GETSendedFriendRequest(APIView):
             serializer=GenderSerializer(profileid,many=False).data
             serializer['profileimage']=images[0].files.url if images.exists() else None
             serializer['connect_status']=view.request_status
-            # serializer['connectid']=view.id
+            serializer.update(height_and_age(profileid.height,profileid.dateofbirth))
             serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
             serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
            
             response[view.id]=serializer
         return Response(response.values())
+
+
+######################FINISH####################################
