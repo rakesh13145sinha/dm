@@ -470,7 +470,29 @@ class BookMarkProfile(APIView):
                 return Response({"bookmark":True,"status":True})
         else:
             return Response({"message":"Requested Matrimony Id Invalid","status":False})
-        
+
+class Album(APIView):
+    def get(self,request) :
+        matrimonyid=request.GET['matrimony_id']
+        bookmark=Bookmark.objects.select_related("profile")\
+        .filter(profile__matrimony_id=matrimonyid)   
+        if bookmark.exists():
+            response={}
+            bookmarks=bookmark[0].album.all()
+            for person in bookmarks:
+                images=ProfileMultiImage.objects.filter(profile__id=person.id)
+                response[person.id]={
+                    "profileimage":images[0].files.url if images.exists() else None,
+                    "matrimony_id":person.matrimony_id
+                    }
+                                        
+            return Response(response.values())
+           
+                
+        else:
+            return Response([],status=200)
+       
+            
         
         
 class ProfileMatchPercentage(APIView):

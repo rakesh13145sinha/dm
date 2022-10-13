@@ -20,7 +20,7 @@ from django.core.wsgi import get_wsgi_application
 # print(model_list)   
 # for model in models_list:
     
-#     if model.__name__=="User":
+#     if model.__name__=="Bookmark":
 #         all_field=model._meta.get_fields()
 #         for field in all_field:
 #             print(field.name)

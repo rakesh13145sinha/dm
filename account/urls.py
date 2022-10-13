@@ -19,7 +19,7 @@ urlpatterns = [
     path('profile/connect/status',StautsOfSendRequest.as_view()),
     path('new/join',NewMatchProfile.as_view()),
     path('bookmark/',BookMarkProfile.as_view()),
-   
+    path('bookmark/show',Album.as_view()),
     path('match/percentage',ProfileMatchPercentage.as_view()),
     path('match/daily',DailyRecomandation.as_view()),
     path('explor/',Explore.as_view()),
