@@ -1,4 +1,5 @@
 
+from enum import unique
 from django.db import models
 
 
@@ -22,5 +23,18 @@ class MemberShip(models.Model):
     message5=models.CharField(max_length=100,null=True,blank=True)
     status=models.BooleanField(default=True)
     created=models.DateTimeField(auto_now_add=False,auto_now=True)
+    planid=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):
         return self.subscription
+    
+
+
+class Payment(models.Model):
+    profile=models.CharField(max_length=50)
+    membership=models.CharField(max_length=50)
+    status=models.BooleanField(default=False)
+    razorpay_order_id=models.CharField(max_length=200)
+    razorpay_payment_id=models.CharField(max_length=200)
+    razorpay_orderid_signature=models.CharField(max_length=200)
+    created_date=models.DateTimeField(auto_now=False,auto_now_add=True)
+    updated_date=models.DateTimeField(auto_now=True,auto_now_add=False)

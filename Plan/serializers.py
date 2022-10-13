@@ -10,3 +10,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model=MemberShip
         exclude=('created','month','status')
+        
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Payment
+        fields='__all__'
+        
