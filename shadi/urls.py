@@ -27,7 +27,8 @@ if settings.DEBUG:
         # reurl(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
         path('api/v1/',
                 include([
-                    path('account/',include('account.urls'))
+                    path('account/',include('account.urls')),
+                    path('plan/',include('Plan.urls'))
                 ])
             )
     ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
@@ -38,7 +39,8 @@ else:
         re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
         path('api/v1/',
                 include([
-                    path('account/',include('account.urls'))
+                    path('account/',include('account.urls')),
+                    path('plan/',include('Plan.urls'))
                 ])
             )
     ]

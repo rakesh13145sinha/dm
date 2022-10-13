@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     #project base application
 
     'account.apps.AccountConfig',
+    'Plan.apps.PlanConfig'
 ]
 
 MIDDLEWARE = [

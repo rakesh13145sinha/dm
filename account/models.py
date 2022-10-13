@@ -230,78 +230,13 @@ class FriendRequests(models.Model):
 	status=models.BooleanField(default=False)
 	
 
-# class MatchOfTheDay(models.Model):
-
-# 	user_id = models.CharField(max_length=100,null=True)
-# 	created_at = models.DateField()
-# 	Ative_status = models.BooleanField(default=True)
-
-# 	def __str__(self):
-# 		return "%s"%(self.user_id)
-
-# class VisibleDataRequest(models.Model):
-# 	visible_status_types = (
-# 		("Pending","Pending"),
-# 		("Visible","Visible"),
-# 		("Unvisible","Unvisible"),
-# 		)
-# 	main_user_id = models.CharField(max_length=100,null=True)
-# 	visible_user_id = models.CharField(max_length=100,null=True)
-# 	key_name = models.CharField(max_length=100,null=True)
-# 	visible_status = models.CharField(choices = visible_status_types, default="Pending", max_length = 25)
-
-# 	def __str__(self):
-# 		return "%s"%(self.main_user_id)
 
 
 
 
 
-# class SenderRequests(models.Model):
-# 	request_status_types = (
-# 		("Send","Send"),
-# 		("Approved","Approved"),
-# 		("Rejected","Rejected"),
-# 		)
-	
-# 	sender = models.ForeignKey(User, on_delete=models.CASCADE,null=True)#logged in userid
-# 	request_for_user_id = models.CharField(max_length=100,null=True)#which profile you want to connect with pass the  user id here
-# 	request_status = models.CharField(choices = request_status_types, default="Send", max_length = 25)
-# 	created_at = models.DateField(auto_now=True,auto_now_add=False)
-# 	created_time = models.TimeField(auto_now=True,auto_now_add=False)
-# 	updated_at = models.DateField(auto_now=False,auto_now_add=True)
-# 	updated_time = models.TimeField(auto_now=False,auto_now_add=True)
-# 	status = models.BooleanField(default=False)
 
-# 	def __str__(self):
-# 		return "%s"%(self.sender)
 
-# class ReceiveRequests(models.Model):
-# 	received_status = (
-# 		("Received","Received"),
-# 		("Approved","Approved"),
-# 		("Rejected","Rejected"),
-# 		)
-# 	profile = models.ForeignKey(User, on_delete=models.CASCADE,null=True)#logged in userid
-# 	received_request = models.CharField(max_length=100,null=True)
-# 	received_status = models.CharField(choices = received_status, default="Received", max_length = 25)
-# 	created_at = models.DateField(auto_now=True,auto_now_add=False)
-# 	created_time = models.TimeField(auto_now=True,auto_now_add=False)
-# 	updated_at = models.DateField(auto_now=False,auto_now_add=True)
-# 	updated_time = models.TimeField(auto_now=False,auto_now_add=True)
-# 	status = models.BooleanField(default=False)
-	
-# 	def __str__(self):
-# 		return "%s"%(self.profile)
 
-# class MatchCountImage(models.Model):
-# 	name= models.CharField(max_length=100)
-# 	image=models.ImageField(upload_to='match_count/')
-# 	def __str__(self):
-# 		return (self.name)
 
-# class Branch(models.Model):#mbbs,
-# 	degree= models.CharField(max_length=100)
-# 	image=models.ImageField(upload_to='match_count/')
-# 	def __str__(self):
-# 		return (self.degree)
+
