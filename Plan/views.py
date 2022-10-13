@@ -2,7 +2,7 @@ import razorpay
 from dotenv import load_dotenv
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from account.models import Person
 from .models import *
 from .serializers import *
 
@@ -13,20 +13,22 @@ import os
 # Create your views here.
 class SubscriptionPla(APIView):
     def get(self,request):
-        month=request.GET['month']
+        month=request.GET.get('month')
         plan=request.GET.get('membership')
         if plan is None:
-            members=MemberShip.objects.filter(month=month,status=True).order_by('-id')
+            members=MemberShip.objects.filter(month=month).order_by('-id')
             serializers=SubscriptionSerializer(members,many=True)
             return Response(serializers.data) 
         elif plan is not None and month is not None: 
-            members=MemberShip.objects.filter(month=month,subscription=plan,status=True).order_by('-id')
+            members=MemberShip.objects.filter(month=month,subscription=plan).order_by('-id')
             serializers=SubscriptionSerializer(members,many=True)
             return Response(serializers.data)
         else:
             return Response({"message":"somthing wrong","status":False})
+    
     def post(self,request):
         data=request.data 
+        data['status']=True
         serializers=PlanSerializer(data=data)
         if serializers.is_valid():
             serializers.save()
@@ -63,6 +65,7 @@ class PaymentCapture(APIView):
     
     def get(self,request):
         planid=request.GET['planid']
+        matrimonyid=request.GET['matrimony_id']
         KEY=os.environ.get("KEY")
         SECRET =os.environ.get("SECRET")
         try:
@@ -70,12 +73,21 @@ class PaymentCapture(APIView):
         except Exception as msg:
             print(msg)
             return Response({"message":"Plan Id Not Valid","status":False},status=400)
+        
+        try:
+            profile=Person.objects.get(matrimony_id=matrimonyid)
+        except Exception as msg:
+            print(msg)
+            return Response({"message":"Invalid Matrimony Id","status":False},status=400)
         client = razorpay.Client(auth=(KEY,SECRET))
 
         payment=client.order.create({"amount": int(plan.price)*100,"currency": "INR","payment_capture":1})
         
         data={"message":"oderid generated successfully",
-              "status":True,"orderid":payment['id']
+              "status":True,"orderid":payment['id'],
+              "email":profile.email,
+              "name":profile.name,
+              "phone_number":profile.phone_number
               
               }
         
