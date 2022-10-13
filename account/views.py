@@ -568,7 +568,48 @@ class ProfileMatchPercentage(APIView):
     
         return Response(response,status=200)
           
- 
+
+#TESING PHASE ####################
+class MatchInPercentage(APIView):
+    def get(self,request):
+        
+        matrimonyid=request.GET['matrimony_id']
+        response = {}
+        main_user = Person.objects.filter(matrimony_id=matrimonyid).values()
+        
+        partner_user = Person.objects.filter(~Q(gender=main_user[0]["gender"])).values()
+
+        for index , keys in enumerate(partner_user):
+            response[index]={"id":keys['id']}
+            # _list=[
+            #    'user_id' ,'id','reg_date','reg_update' ,'id','total_access' ,'active_plan','verify' ,'block','gender' ,'phone_number','name' ,'about_myself','matrimony_id','email']
+            
+            del keys['user_id'], keys['id'],keys['reg_date'],keys['reg_update'],keys['total_access'],keys['active_plan'],keys['verify'],keys['block'],keys['status'],keys['about_myself'],keys['matrimony_id'],keys['email'],keys['gender'],keys['phone_number'] ,keys['name'],keys['image']
+            user_full_details= dict(ChainMap(*[{k : True} if partner_user[0][k] == main_user[0][k] else {k:False} for k,v in keys.items()]))
+            
+            response[index].update(user_full_details)
+        matrimonyid=[{"id":value['id'],"count":len([j for i, j in value.items() if j == True])} for key,value in response.items()]
+        print(matrimonyid)
+        sorted_list=sorted(matrimonyid,key=lambda x:x['count'],reverse=True)
+        print(sorted_list)
+        list_of_id=[ i['id'] for i in sorted_list]
+        
+        match_response={}
+        persons=Person.objects.filter(id__in=list_of_id)
+        
+        for person in persons:
+            
+            images=ProfileMultiImage.objects.filter(profile__id=person.id)
+            serializer=GenderSerializer(person,many=False).data
+            serializer['profileimage']=images[0].files.url if images.exists() else None
+            match_response[person.id]=serializer
+            match_response[person.id].update(height_and_age(person.height,person.dateofbirth))
+            match_response[person.id].update(connect_status(matrimonyid,person.matrimony_id ) )                          
+        return Response(match_response.values())
+        
+
+      
+
 
 class DailyRecomandation(APIView):
     def get(self,request):
@@ -968,3 +1009,5 @@ class GETSendedFriendRequest(APIView):
 
 
 ######################FINISH####################################
+
+
