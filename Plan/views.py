@@ -8,10 +8,17 @@ from .serializers import *
 class SubscriptionPla(APIView):
     def get(self,request):
         month=request.GET['month']
-        plan=request.GET['membership']
-        members=MemberShip.objects.filter(month=month,subscription=plan).order_by('-id')
-        serializers=SubscriptionSerializer(members,many=True)
-        return Response(serializers.data) 
+        plan=request.GET.get('membership')
+        if plan is None:
+            members=MemberShip.objects.filter(month=month).order_by('-id')
+            serializers=SubscriptionSerializer(members,many=True)
+            return Response(serializers.data) 
+        elif plan is not None and month is not None: 
+            members=MemberShip.objects.filter(month=month,subscription=plan).order_by('-id')
+            serializers=SubscriptionSerializer(members,many=True)
+            return Response(serializers.data)
+        else:
+            return Response({"message":"somthing wrong","status":False})
     def post(self,request):
         data=request.data 
         serializers=PlanSerializer(data=data)
