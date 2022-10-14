@@ -975,7 +975,7 @@ class SendFriendRequest(APIView):
             r=get_object_or_404(Person,matrimony_id=re.requested_matrimony_id)
             response[re.id]={
                 "id":re.id,
-                "profile":(re.profile.matrimony_id,re.profile.gender,re.name),
+                "profile":(re.profile.matrimony_id,re.profile.gender,re.profile.name),
                 "requested_matrimony_id":(re.requested_matrimony_id,r.gender,r.name),
                 "request_status":re.request_status,
                 "create":re.created_date.strftime("%Y-%b-%d")
