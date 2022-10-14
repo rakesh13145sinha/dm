@@ -957,7 +957,7 @@ class SendFriendRequest(APIView):
         query=Q(
             profile__matrimony_id=matrimonyid,
             requested_matrimony_id=requestid,
-            
+            status=True
         )
         send_friend_request=FriendRequests.objects.filter(query)
         if send_friend_request.exists():
@@ -965,7 +965,7 @@ class SendFriendRequest(APIView):
         else:
             profile=get_object_or_404(Person,matrimony_id=matrimonyid)
             get_object_or_404(Person,matrimony_id=requestid)
-            FriendRequests.objects.create(profile=profile,requested_matrimony_id=requestid)
+            FriendRequests.objects.create(profile=profile,requested_matrimony_id=requestid,status=True)
             return Response({"message":"Request Send Successfully","connect_status":"Waiting"},status=200)
     
     def post(self,request):
@@ -993,7 +993,11 @@ class SendFriendRequest(APIView):
         
         get_request=FriendRequests.objects.get(id=connectid)
         get_request.request_status=data['request_status']
-        get_request.save()
+        if data['request_status'].strip()=="Rejected":
+            get_request.status=False
+            get_request.save()
+        else:
+            get_request.save()
         return Response({"connect_staus":get_request.request_status})
     
     def delete(self,request):
@@ -1080,7 +1084,7 @@ class RejectedFriendRequest(APIView):
         matrimonyid=request.GET['matrimony_id']
                
         query=Q(
-            Q(request_status="Rejected",profile__matrimony_id=matrimonyid)
+            Q(request_status="Rejected",profile__matrimony_id=matrimonyid,status=False)
         )
         send_friend_request=FriendRequests.objects.select_related('profile').filter(query).order_by("-created_date")
         
