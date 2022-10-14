@@ -969,15 +969,17 @@ class SendFriendRequest(APIView):
             return Response({"message":"Request Send Successfully","connect_status":"Waiting"},status=200)
     
     def post(self,request):
-        records=FriendRequests.objects.all().order_by('-created_date')
+        records=FriendRequests.objects.select_related('profile').all().order_by('-created_date')
         response={}
         for re in records:
+            r=get_object_or_404(Person,matrimony_id=re.requested_matrimony_id)
             response[re.id]={
-                "profile":re.profile.matrimony_id,
-                "requested_matrimony_id":re.requested_matrimony_id,
+                "id":re.id,
+                "profile":(re.profile.matrimony_id,re.profile.gender),
+                "requested_matrimony_id":(re.requested_matrimony_id,r.gender,r.matrimony_id),
                 "request_status":re.request_status,
                 "status":re.status,
-                "create":re.created_date
+                "create":re.created_date.strftime("%Y-%b-%d")
             }
         return Response(response.values())    
     def put(self,request):
@@ -1005,38 +1007,91 @@ class SendFriendRequest(APIView):
             return Response({"message":"no found"})
            
     
-"""WAITING,RECEIVED,REJECTED FRIEND REQUEST DATA"""  
-class StautsOfSendRequest(APIView):
+"""Connected Profiles"""  
+class ConnectedProfiles(APIView):
     def get(self,request):
         matrimonyid=request.GET['matrimony_id']
-        request_query=request.GET['q']
-        _list=("Connected","Rejected",'Waiting')
-        
-        if request_query not in _list:
-            return Response({"message":"Invalid query","status":False},status=400)
         
         query=Q(
-            Q(request_status=request_query,requested_matrimony_id=matrimonyid)
+            Q(request_status="Connected",requested_matrimony_id=matrimonyid)
             |
-            Q(request_status=request_query,profile__matrimony_id=matrimonyid)
+            Q(request_status="Connected",profile__matrimony_id=matrimonyid)
         )
-        send_friend_request=FriendRequests.objects.filter(query).order_by("-created_date")
+        send_friend_request=FriendRequests.objects.select_related('profile').filter(query).order_by("-created_date")
         
         if send_friend_request.exists()==False:
             return Response([],status=200)
         response={}
         for view in send_friend_request:
-            # print("+++++++++++++++++++")
-            # print(matrimonyid,view.profile.matrimony_id,view.requested_matrimony_id)
-            #print("xxxxxxxxxxxxxxxxxxxxxxxxx")
+            
             if matrimonyid==view.profile.matrimony_id:
-                # print("xxxxxxxxxxxif ")
+                print("xxxxxxxxxxxif ")
                 image_query=Q(profile__matrimony_id=view.requested_matrimony_id)
                 instance=get_object_or_404(Person,matrimony_id=view.requested_matrimony_id)
             else:
-                # print("xxxxxxxxxxxelsse ")
-                image_query=Q(profile__matrimony_id=view.profile.matrimony_id) 
-                instance=get_object_or_404(Person,matrimony_id=view.profile.matrimony_id) 
+                print("xxxxxxxxxxxelsse ")
+                image_query=Q(profile=view.profile) 
+                instance=get_object_or_404(Person,id=view.profile.id)
+             
+            images=ProfileMultiImage.objects.filter(image_query)
+                        
+            serializer=GenderSerializer(instance,many=False).data
+            serializer['profileimage']=images[0].files.url if images.exists() else None
+            serializer['connect_status']=view.request_status
+            serializer['connectid']=view.id
+            serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
+            serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
+            serializer.update(height_and_age(instance.height,instance.dateofbirth))
+            response[view.id]=serializer
+        return Response(response.values())
+
+
+"""RECEIVED(someone send me friend request) FRIEND REQUEST DATA"""  
+class ReceivedFriendRequest(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+               
+        query=Q(
+            Q(request_status="Waiting",requested_matrimony_id=matrimonyid)
+        )
+        send_friend_request=FriendRequests.objects.select_related('profile').filter(query).order_by("-created_date")
+        
+        if send_friend_request.exists()==False:
+            return Response([],status=200)
+        response={}
+        for view in send_friend_request: 
+            image_query=Q(profile__matrimony_id=view.profile.matrimony_id) 
+            instance=get_object_or_404(Person,matrimony_id=view.profile.matrimony_id)
+             
+            images=ProfileMultiImage.objects.filter(image_query)
+                        
+            serializer=GenderSerializer(instance,many=False).data
+            serializer['profileimage']=images[0].files.url if images.exists() else None
+            serializer['connect_status']=view.request_status
+            serializer['connectid']=view.id
+            serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
+            serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
+            serializer.update(height_and_age(instance.height,instance.dateofbirth))
+            response[view.id]=serializer
+        return Response(response.values())
+
+"""REJECTED FRIEND REQUEST"""
+class RejectedFriendRequest(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+               
+        query=Q(
+            Q(request_status="Rejected",profile__matrimony_id=matrimonyid)
+        )
+        send_friend_request=FriendRequests.objects.select_related('profile').filter(query).order_by("-created_date")
+        
+        if send_friend_request.exists()==False:
+            return Response([],status=200)
+        response={}
+        for view in send_friend_request: 
+            image_query=Q(profile__matrimony_id=view.requested_matrimony_id) 
+            instance=get_object_or_404(Person,matrimony_id=view.requested_matrimony_id)
+             
             images=ProfileMultiImage.objects.filter(image_query)
                         
             serializer=GenderSerializer(instance,many=False).data
@@ -1051,15 +1106,11 @@ class StautsOfSendRequest(APIView):
 
 
 
-"""CHECK FRIEND REQUEST STATUS CONNECTED,REJECTED,WAITING"""  
+"""How many friend requested sended """  
 class GETSendedFriendRequest(APIView):
     def get(self,request):
         matrimonyid=request.GET['matrimony_id']
-        request_query=request.GET['q']
-        _list=('send_request',)
-        if request_query not in _list:
-            return Response({"message":"Invalid query","status":False},status=400)
-        
+    
         query=Q(
             profile__matrimony_id=matrimonyid,
             
