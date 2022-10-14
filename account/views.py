@@ -975,10 +975,9 @@ class SendFriendRequest(APIView):
             r=get_object_or_404(Person,matrimony_id=re.requested_matrimony_id)
             response[re.id]={
                 "id":re.id,
-                "profile":(re.profile.matrimony_id,re.profile.gender),
-                "requested_matrimony_id":(re.requested_matrimony_id,r.gender,r.matrimony_id),
+                "profile":(re.profile.matrimony_id,re.profile.gender,re.name),
+                "requested_matrimony_id":(re.requested_matrimony_id,r.gender,r.name),
                 "request_status":re.request_status,
-                "status":re.status,
                 "create":re.created_date.strftime("%Y-%b-%d")
             }
         return Response(response.values())    
@@ -1127,6 +1126,7 @@ class GETSendedFriendRequest(APIView):
             serializer=GenderSerializer(profileid,many=False).data
             serializer['profileimage']=images[0].files.url if images.exists() else None
             serializer['connect_status']=view.request_status
+            serializer['connectid']=view.id
             serializer.update(height_and_age(profileid.height,profileid.dateofbirth))
             serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
             serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
