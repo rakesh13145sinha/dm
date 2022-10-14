@@ -13,6 +13,7 @@ urlpatterns = [
     path('new/match',OppositeGenderProfile.as_view()),
     path('profile/all',AllProfiles.as_view()),
     path('profile/',SingleProfile.as_view()),
+    path('profile/complited',ProfileUpdatePercentage.as_view()),
     path('profile/connect/',SendFriendRequest.as_view()),
    
     path('profile/connect/send',GETSendedFriendRequest.as_view()),
