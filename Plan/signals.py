@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save,post_delete
 from django.dispatch import receiver
 from .models import MemberShip,Payment
 from account.models import Person
@@ -28,3 +28,10 @@ def update_profile(sender, instance, created, **kwargs):
         person.active_plan=getmembership(instance.membership)
         person.save()
         instance.save()
+        
+@receiver(post_delete, sender=Payment)
+def update_profile(sender, instance, created, **kwargs):
+    person=Person.objects.get(matirmony_id=instance.profile)
+    person.active_plan="Waiting"
+    person.save()
+    #instance.save()
