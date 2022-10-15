@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from account.models import Person
 from .models import *
 from .serializers import *
-
+from account.models import Person
 load_dotenv('.env')
 import os
 
@@ -15,18 +15,28 @@ class SubscriptionPla(APIView):
     def get(self,request):
         month=request.GET.get('month')
         plan=request.GET.get('membership')
-        if plan is None:
+        planid=request.GET.get('planid')
+       
+        if plan is not  None:
             members=MemberShip.objects.filter(month=month).order_by('-id')
             serializers=SubscriptionSerializer(members,many=True)
             return Response(serializers.data) 
-        elif plan is not None and month is not None: 
+        elif plan is not None and month is not None:
+            print("============xxxxxxxxxxxxxxx===============") 
             members=MemberShip.objects.filter(month=month,subscription=plan).order_by('-id')
             serializers=SubscriptionSerializer(members,many=True)
+            return Response(serializers.data)
+        elif planid is not None:
+            print("============yyyyyyyyyyyyyyyyyyyyy===============")
+            members=MemberShip.objects.get(id=planid)
+            serializers=SubscriptionSerializer(members,many=False)
             return Response(serializers.data)
         else:
             return Response({"message":"somthing wrong","status":False})
     
     def post(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
         data=request.data 
         data['status']=True
         serializers=PlanSerializer(data=data)
@@ -109,5 +119,46 @@ class PaymentCapture(APIView):
         else:
             print(serializers.errors)
             return Response(serializers.errors,status=200)
-       
         
+        
+    def delete(self,request):
+        paymenetid=request.GET['paymentid']
+        payment=Payment.objects.filter(id=paymenetid)
+        if payment.exists():
+            payment.delete()
+            return Response({"message":"Payment Id deleted",'status':True})
+        else:
+            return Response({"message":"Invalid Payment Id","status":False})
+
+"""Payment record"""       
+class GetAllPayment(APIView):
+    def get(self,request):
+        matrimonyid=request.GET.get('   ')
+        response={}
+        if matrimonyid is not None:
+            profile=Person.objects.get(matrimony_id=matrimonyid)
+            subscriptions=Payment.objects.filter(profile=matrimonyid).order_by('-id')
+            for pay in subscriptions:
+                
+                response[pay.id]={
+                    "name":profile.name,
+                    "matrimony_id":profile.matrimony_id,
+                    "planid":pay.membership,
+                    "matrimonyid":pay.profile,
+                    "taken data":pay.created_date
+                }
+            return  Response(response.values())
+        else:
+            subscriptions=Payment.objects.all().order_by('-id')
+            
+            for pay in subscriptions:
+                person=Person.objects.get(matrimony_id=pay.profile)
+                response[pay.id]={
+                    "name":person.name,
+                    "matrimony_id":person.matrimony_id,
+                    "planid":pay.membership,
+                    "matrimonyid":pay.profile,
+                    "taken data":pay.created_date
+                }
+            return  Response(response.values())
+                    
