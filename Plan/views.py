@@ -32,7 +32,10 @@ class SubscriptionPla(APIView):
             serializers=SubscriptionSerializer(members,many=False)
             return Response(serializers.data)
         else:
-            return Response({"message":"somthing wrong","status":False})
+            members=MemberShip.objects.all().order_by('-id')
+            serializers=SubscriptionSerializer(members,many=True)
+            return Response(serializers.data)
+        return Response({"message":"somthing wrong","status":False})
     
     def post(self,request):
         if not request.POST._mutable:
