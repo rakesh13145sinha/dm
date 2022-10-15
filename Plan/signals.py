@@ -31,7 +31,7 @@ def update_profile(sender, instance, created, **kwargs):
         
 @receiver(post_delete, sender=Payment)
 def delete_payment(sender, instance, **kwargs):
-    person=Person.objects.get(matirmony_id=instance.profile)
+    person=Person.objects.get(matrimony_id=instance.profile)
     person.active_plan="Waiting"
     person.save()
     #instance.save()
