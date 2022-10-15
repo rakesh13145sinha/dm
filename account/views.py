@@ -286,6 +286,8 @@ class Validate_OTP(APIView):
                 "matrimony_id":contactnumber.matrimony_id,
                 "image":images[0].files.url if images.exists() else None,
                 "status":contactnumber.status,
+                "active_plan":contactnumber.contactnumber,
+                "total_access":contactnumber.total_access
                 }
             return Response(response,status=status.HTTP_202_ACCEPTED)
             

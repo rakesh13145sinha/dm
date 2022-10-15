@@ -9,7 +9,7 @@ class PlanSerializer(serializers.ModelSerializer):
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model=MemberShip
-        exclude=('created','month','status')
+        exclude=('created','status')
         
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
