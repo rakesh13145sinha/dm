@@ -22,6 +22,7 @@ class MemberShip(models.Model):
     message4=models.CharField(max_length=100)
     message5=models.CharField(max_length=100,null=True,blank=True)
     status=models.BooleanField(default=True)
+    total_access=models.CharField(max_length=10,null=True,blank=True)
     created=models.DateTimeField(auto_now_add=False,auto_now=True)
     planid=models.CharField(max_length=100,null=True,blank=True)
     def __str__(self):

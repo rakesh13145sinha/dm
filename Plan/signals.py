@@ -12,7 +12,7 @@ def generateplanid():
 
 def getmembership(planid):
     client=MemberShip.objects.get(id=planid)
-    return client.subscription
+    return [client.subscription,client.total_access]
 
 @receiver(post_save, sender=MemberShip)
 def create_planid(sender, instance, created, **kwargs):
@@ -24,8 +24,10 @@ def create_planid(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Payment)
 def update_profile(sender, instance, created, **kwargs):
     if created:
-        person=Person.objects.get(matirmony_id=instance.profile)
-        person.active_plan=getmembership(instance.membership)
+        person=Person.objects.get(matrimony_id=instance.profile)
+        plan=getmembership(instance.membership)
+        person.active_plan=plan[0]
+        person.total_access=plan[1]
         person.save()
         instance.save()
         
@@ -33,5 +35,6 @@ def update_profile(sender, instance, created, **kwargs):
 def delete_payment(sender, instance, **kwargs):
     person=Person.objects.get(matrimony_id=instance.profile)
     person.active_plan="Waiting"
+    person.total_access=None
     person.save()
-    #instance.save()
+    

@@ -96,7 +96,6 @@ class Person(models.Model):
 #only admin perpose
 	active_plan=models.CharField(max_length=100,null=True,choices=USER_PLAN,blank=True,default="Waiting")
 	total_access=models.IntegerField(null=True,blank=True,default=0)
-	
 	reg_date=models.DateTimeField(auto_now=True,auto_now_add=False)
 	reg_update=models.DateTimeField(auto_now=False,auto_now_add=True)
 	
