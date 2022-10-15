@@ -141,6 +141,7 @@ class GetAllPayment(APIView):
             for pay in subscriptions:
                 
                 response[pay.id]={
+                    "id":pay.id,
                     "name":profile.name,
                     "matrimony_id":profile.matrimony_id,
                     "planid":pay.membership,
@@ -154,6 +155,7 @@ class GetAllPayment(APIView):
             for pay in subscriptions:
                 person=Person.objects.get(matrimony_id=pay.profile)
                 response[pay.id]={
+                    "id":pay.id,
                     "name":person.name,
                     "matrimony_id":person.matrimony_id,
                     "planid":pay.membership,
