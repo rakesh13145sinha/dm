@@ -33,7 +33,7 @@ class SubscriptionPla(APIView):
             return Response(serializers.data)
         else:
             
-            MemberShip.objects.update(total_access=40)
+            #MemberShip.objects.update(total_access=40)
             members=MemberShip.objects.all().order_by('-id')
             serializers=SubscriptionSerializer(members,many=True)
             return Response(serializers.data)
