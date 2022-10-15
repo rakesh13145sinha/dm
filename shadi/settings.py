@@ -116,10 +116,15 @@ USE_TZ = True
 
 CORS_ALLOW_ALL_ORIGINS=True
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True 
+CORS_ALLOWED_ORIGINS=True
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
+    'http://localhost:4200',
 )
+# CORS_ALLOWED_ORIGINS
+# CORS_ALLOWED_ORIGIN_REGEXES
+# CORS_ALLOW_ALL_ORIGINS
 #ACCESS_CONTROL_ALLOW_ORIGIN=
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
