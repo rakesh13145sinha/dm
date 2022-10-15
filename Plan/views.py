@@ -138,34 +138,26 @@ class PaymentCapture(APIView):
 """Payment record"""       
 class GetAllPayment(APIView):
     def get(self,request):
-        matrimonyid=request.GET.get('   ')
+        matrimonyid=request.GET.get('matrimony_id')
         response={}
         if matrimonyid is not None:
             profile=Person.objects.get(matrimony_id=matrimonyid)
             subscriptions=Payment.objects.filter(profile=matrimonyid).order_by('-id')
             for pay in subscriptions:
-                
-                response[pay.id]={
-                    "id":pay.id,
-                    "name":profile.name,
-                    "matrimony_id":profile.matrimony_id,
-                    "planid":pay.membership,
-                    "matrimonyid":pay.profile,
-                    "taken data":pay.created_date
-                }
+                serializer=PaymentSerializer(pay,many=False).data 
+                serializer['name']=profile.name
+                serializer['matrimony_id']=profile.matrimony_id
+                response[pay.id]=serializer
             return  Response(response.values())
         else:
             subscriptions=Payment.objects.all().order_by('-id')
             
             for pay in subscriptions:
                 person=Person.objects.get(matrimony_id=pay.profile)
-                response[pay.id]={
-                    "id":pay.id,
-                    "name":person.name,
-                    "matrimony_id":person.matrimony_id,
-                    "planid":pay.membership,
-                    "matrimonyid":pay.profile,
-                    "taken data":pay.created_date
-                }
+                serializer=PaymentSerializer(pay,many=False).data 
+                serializer['name']=person.name
+                serializer['matrimony_id']=person.matrimony_id
+                response[pay.id]=serializer
+                
             return  Response(response.values())
                   
