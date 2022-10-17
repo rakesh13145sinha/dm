@@ -137,6 +137,9 @@ class ViewedProfile(models.Model):
 	view=models.ManyToManyField(Person,related_name="viewprofile")
 	
 
+class ViewedPhonNumber(models.Model):
+	profile=models.OneToOneField(Person,on_delete=models.CASCADE)
+	view=models.ManyToManyField(Person,related_name="viewphonenumber")
 
 
 class Partner_Preferences(models.Model):

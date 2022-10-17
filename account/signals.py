@@ -14,4 +14,4 @@ def create_profile(sender, instance, created, **kwargs):
     if created:
         instance.matrimony_id=generate_matrimonyid()
         instance.save()
-        #sending_otp(random.randint(1000,9999), instance.phone_number)
+        sending_otp(random.randint(1000,9999), instance.phone_number)

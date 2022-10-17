@@ -79,6 +79,39 @@ def ViewedProfiles(matrimonyid,requestid,status=None):
         else:
             return False
 
+
+
+
+
+
+
+"""VIEW PHONE NUMBERS"""
+"""This function for  view profile check"""
+def ViewedPhoneNumber(matrimonyid,requestid,status=None):
+    """self matrimony id"""
+    selfprofile=get_object_or_404(Person,matrimony_id=matrimonyid)
+    
+    """requested matrimony id"""
+    requested_profile=get_object_or_404(Person,matrimony_id=requestid)
+    
+    view_profile=ViewedPhonNumber.objects.filter(profile__id=selfprofile.id)
+    if status is None:                  
+        if view_profile.exists():
+            if view_profile[0].view.filter(id=requested_profile.id).exists():
+                pass
+            else:
+                view_profile[0].view.add(requested_profile)
+        else:
+            
+            view_profile=ViewedPhonNumber.objects.create(profile=selfprofile)
+            view_profile.view.add(requested_profile)
+        return True
+    elif status is not None:
+        if view_profile.exists():
+            return view_profile[0].view.filter(id=requested_profile.id).exists()
+        else:
+            return False
+
 """check request status"""       
 def connect_status(matrimonyid,requestid):
     # assert matrimonyid is None ,"matrimony id can't be None"
@@ -270,9 +303,7 @@ class Validate_OTP(APIView):
         
         """OTP VARIFICATION """
         if int(data['otp'])==saved_otp.otp:
-            
-            
-             
+
             saved_otp.delete()
 
             contactnumber.status=True
@@ -286,7 +317,7 @@ class Validate_OTP(APIView):
                 "matrimony_id":contactnumber.matrimony_id,
                 "image":images[0].files.url if images.exists() else None,
                 "status":contactnumber.status,
-                "active_plan":contactnumber.contactnumber,
+                "active_plan":contactnumber.active_plan,
                 "total_access":contactnumber.total_access
                 }
             return Response(response,status=status.HTTP_202_ACCEPTED)
@@ -1144,6 +1175,25 @@ class GETSendedFriendRequest(APIView):
 ######################FINISH####################################
 
 
+class ViewPhoneNunmber(APIView):
+    def post(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
+        person=Person.objects.get(request.GET['matrimony_id'])
+        phone_status=ViewedPhoneNumber(request.GET['matrimony_id'],request.GET['request_matrimony_id'],status=True)
+        if phone_status:
+            ViewedPhoneNumber(request.GET['matrimony_id'],request.GET['request_matrimony_id'])
+            person.total_access=str(int(person.total_access)-1)
+            person.save()
+        else:
+            ViewedPhoneNumber(request.GET['matrimony_id'],request.GET['request_matrimony_id'])
+            person.total_access=str(int(person.total_access)-1)
+            person.save()
+                
+        else:
+            return Response({"message":"Invalid Matrimony id",
+                            "status":False},status=400)
+        
 
 
 
