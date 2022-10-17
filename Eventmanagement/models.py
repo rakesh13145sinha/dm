@@ -1,9 +1,10 @@
+from enum import unique
 from django.db import models
 from account.models import Person
 
 # Create your models here.
 class Vendor(models.Model):
-    vendor_name=models.CharField(max_length=100)
+    vendor_name=models.CharField(max_length=100,unique=True)
     image=models.ImageField(upload_to='event/')
     about_vendor=models.TextField()
     status=models.BooleanField(default=True)

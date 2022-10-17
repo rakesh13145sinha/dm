@@ -25,7 +25,7 @@ class VenderoView(APIView):
         serializers=VendorSerializer(vendor,data=data,partial=True)
         if serializers.is_valid():
             serializers.save()
-            return Response({"message":"Vendor Create Successfully","status":True},status=200)
+            return Response({"message":"Vendor Updated Successfully","status":True},status=200)
         else:
             print(serializers.errors)
             return Response(serializers.errors)
@@ -54,7 +54,7 @@ class PlannerCategory(APIView):
 class VendorEventView(APIView):
     def get(self,request):
         eventid=request.GET.get('eventid')
-        vendorid=request.GET.get('vendorid')
+        vendorname=request.GET.get('vendor_name')
         category=request.GET.get('category_name')
         if eventid is not None:
             event=VentorEvent.objects.filter(id=eventid,status=True)
@@ -64,8 +64,8 @@ class VendorEventView(APIView):
             else:
                 return Response({"message":"Event Id Not Found",'status':False},status=400)
         
-        elif vendorid is not None :
-            vendor=Vendor.objects.get(id=vendorid)
+        elif vendorname is not None :
+            vendor=Vendor.objects.get(vendor_name=vendorname)
             serializers=EventSerializer(vendor.ventorevent_set.filter(status=True),many=True)
             return Response(serializers.data)
         elif category is None:
@@ -82,12 +82,12 @@ class VendorEventView(APIView):
     def post(self,request):
         data=request.data 
         
-        vendor=Vendor.objects.get(id=request.GET['vendorid'])
+        vendor=Vendor.objects.get(vendor_name=request.GET['name'])
         data["vendor"]=vendor.id
         serializers=EventSerializer(data=data)
         if serializers.is_valid():
             serializers.save()
-            return Response({"message":"Vendor Create Successfully","status":True},status=200)
+            return Response({"message":"Vendor Event Created Successfully","status":True},status=200)
         else:
             print(serializers.errors)
             return Response(serializers.errors)
