@@ -7,5 +7,6 @@ urlpatterns = [
     path('like/',LikesView.as_view()),
     path('review/',LeaveReview.as_view()),
     path('project/',Menu.as_view()),
-    path('album/',Album.as_view())
+    path('album/',Album.as_view()),
+    path('catalog/',Catalog.as_view())
 ]

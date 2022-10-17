@@ -28,6 +28,12 @@ class VentorEvent(models.Model):
     def __str__(self):
         return self.envent_name
 
+class CatalogImage(models.Model):
+    event_planner=models.ForeignKey(VentorEvent,on_delete=models.CASCADE)
+    image=models.ImageField(upload_to="event/planner")
+
+
+
 class EventMultiImage(models.Model):
     event_planner=models.ForeignKey(VentorEvent,on_delete=models.CASCADE)
     image=models.ImageField(upload_to="event/planner")

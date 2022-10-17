@@ -63,6 +63,7 @@ class VendorEventView(APIView):
                 serializers=EventSerializer(event[0],many=False).data
                 
                 serializers['album']=[{"id":i.id,"image":i.image.url}  for i in event[0].eventmultiimage_set.all() ]
+                serializers['catalog']=[{"id":i.id,"image":i.image.url}  for i in event[0].catalogimage_set.all() ]
                 serializers['project']=[{"id":i.id,"name_of_project":i.name_of_project, "image":i.image.url}  for i in event[0].project_set.all() ]
                 serializers['review']=[{"id":i.id,"review":i.review }  for i in event[0].review_set.all() ]
                 return Response(serializers)
@@ -153,7 +154,20 @@ class Album(APIView):
         for img in files:
             EventMultiImage.objects.create(event_planner=event,image=img)
         return Response({"message":"Image Uploaded successfully","status":True},status=200)
-    
+
+
+"""CATALOG Image upload"""
+class Catalog(APIView):
+    def post(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
+        
+        event=VentorEvent.objects.get(id=request.GET['eventid'])
+        files=request.FILES.getlist('image')
+        for img in files:
+            CatalogImage.objects.create(event_planner=event,image=img)
+        return Response({"message":"Image Uploaded successfully","status":True},status=200)
+   
     
 """Multiple Project Upload"""
 class Menu(APIView):
