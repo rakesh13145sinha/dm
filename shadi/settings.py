@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     #project base application
 
     'account.apps.AccountConfig',
-    'Plan.apps.PlanConfig'
+    'Plan.apps.PlanConfig',
+    'Eventmanagement.apps.EventmanagementConfig'
 ]
 
 MIDDLEWARE = [

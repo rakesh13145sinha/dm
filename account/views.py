@@ -318,7 +318,7 @@ class Validate_OTP(APIView):
                 "image":images[0].files.url if images.exists() else None,
                 "status":contactnumber.status,
                 "active_plan":contactnumber.active_plan,
-                "total_access":contactnumber.total_access
+                #"total_access":contactnumber.total_access
                 }
             return Response(response,status=status.HTTP_202_ACCEPTED)
             
