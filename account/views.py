@@ -1189,10 +1189,10 @@ class ViewPhoneNunmber(APIView):
             ViewedPhoneNumber(request.GET['matrimony_id'],request.GET['request_matrimony_id'])
             person.total_access=str(int(person.total_access)-1)
             person.save()
+            return Response({"message":"Invalid Matrimony id","status":False},status=400)
                 
-        else:
-            return Response({"message":"Invalid Matrimony id",
-                            "status":False},status=400)
+        
+            
         
 
 
