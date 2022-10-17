@@ -24,3 +24,8 @@ class BannerSerializer(serializers.ModelSerializer):
     class Meta:
         model=BannerImage
         fields='__all__'
+        
+class PPSerializers(serializers.ModelSerializer):
+    class Meta:
+        model=Partner_Preferences
+        fields='__all__'

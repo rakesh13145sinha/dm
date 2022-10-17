@@ -95,22 +95,19 @@ def ViewedPhoneNumber(matrimonyid,requestid,status=None):
     requested_profile=get_object_or_404(Person,matrimony_id=requestid)
     
     view_profile=ViewedPhonNumber.objects.filter(profile__id=selfprofile.id)
-    if status is None:                  
-        if view_profile.exists():
-            if view_profile[0].view.filter(id=requested_profile.id).exists():
-                pass
-            else:
-                view_profile[0].view.add(requested_profile)
+                 
+    if view_profile.exists():
+        if view_profile[0].view.filter(id=requested_profile.id).exists():
+            return True
         else:
-            
-            view_profile=ViewedPhonNumber.objects.create(profile=selfprofile)
-            view_profile.view.add(requested_profile)
-        return True
-    elif status is not None:
-        if view_profile.exists():
-            return view_profile[0].view.filter(id=requested_profile.id).exists()
-        else:
+            view_profile[0].view.add(requested_profile)
             return False
+    else:
+        
+        view_profile=ViewedPhonNumber.objects.create(profile=selfprofile)
+        view_profile.view.add(requested_profile)
+        return False
+   
 
 """check request status"""       
 def connect_status(matrimonyid,requestid):
@@ -196,6 +193,9 @@ class SingleProfile(APIView):
             bookmark=Bookmark.objects.filter(profile__matrimony_id=matrimonyid,album__matrimony_id=requestid)
             #view profile
             ViewedProfiles(matrimonyid,requestid)
+            #check phone number views statas
+            phone_status=ViewedPhoneNumber(matrimonyid,requestid)
+        
             serializers=ProfileSerializer(profile[0],many=False).data
             serializers['profileimage']=[
                 {"id":image.id,"image":image.files.url if image.files else None}
@@ -269,7 +269,40 @@ class Registration(APIView):
         else:
             print(serializers.errors)
             return Response(serializers.errors,status=400)
-        
+    
+    def put(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
+           
+        data=request.data 
+        person=Person.objects.get(matrimony_id=request.GET['matrimony_id'])
+        person_phone_number=Person.objects.filter(phone_number__iexact=data.get('phone_number'))
+        if person_phone_number.exists():
+            return Response({"message":os.environ.get("Phone_Number_Exists_Message"),
+                             "status":person_phone_number[0].status,
+                             "matrimony_id":person_phone_number[0].matrimony_id,
+                             "phone_number":person_phone_number[0].phone_number
+                             })
+        person_email=Person.objects.filter(email__iexact=data.get('email'))
+        if person_email.exists():
+            return Response({"message":os.environ.get("Email_Exists"),
+                             "status":person_email[0].status,
+                            "matrimony_id":person_email[0].matrimony_id,
+                             "email":person_email[0].email
+                             })
+        serializers=PersonSerializers(person,data=data,partial=True)
+        if serializers.is_valid():
+            serializers.save()
+            return Response({"message":"Profile Updated successfully",
+                             
+                             })
+        else:
+            print(serializers.errors)
+            return Response(serializers.errors,status=400)
+    
+    
+    
+       
     def delete(self,request):
         #matrimonyid=request.GET['matrimony_id']
         person=Person.objects.filter(matrimony_id=request.GET['matrimony_id'])
@@ -318,7 +351,7 @@ class Validate_OTP(APIView):
                 "image":images[0].files.url if images.exists() else None,
                 "status":contactnumber.status,
                 "active_plan":contactnumber.active_plan,
-                #"total_access":contactnumber.total_access
+               
                 }
             return Response(response,status=status.HTTP_202_ACCEPTED)
             
@@ -435,7 +468,21 @@ class UploadProfileImage(APIView):
             return Response({"message":"Matrimony Id Invalid",
                              "status":False,
                              "matrimony_id":None},status=400)
+    
+    
+    def put(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
        
+        image=ProfileMultiImage.objects.get(id=request.GET['imageid'])
+        
+        image.files=request.FILES['image']
+        image.save()  
+        return Response({"message":"Profile Image Updated Successfully",
+                            "status":True,
+                            "image":image.files.url,
+                            "imageid":image.id},status=200)
+        
 
     def delete(self,request):
         
@@ -635,13 +682,8 @@ class ProfileMatchPercentage(APIView):
                 pass
         multi=(number_of_true*100)//18
         response.update({"percentage":multi})
-        # list_of_pp=['min_age','max_age','min_height','max_height','physical_status','mother_tongue'
-        #             "marital_status",'drinking_habbit',
-        #             'smoking_habbit','food','caste','religion','star','occupation'
-        #             "annual_income",'job_sector',
-        #             'city','state','dosham','religion','star','occupation'
-                    
-        #             ]
+        n=len(list(filter(lambda x:x==False,response.values())))
+       
            
     
         return Response(response,status=200)
@@ -1180,21 +1222,76 @@ class ViewPhoneNunmber(APIView):
         if not request.POST._mutable:
             request.POST._mutable=True
         person=Person.objects.get(request.GET['matrimony_id'])
-        phone_status=ViewedPhoneNumber(request.GET['matrimony_id'],request.GET['request_matrimony_id'],status=True)
+        phone_status=ViewedPhoneNumber(request.GET['matrimony_id'],request.GET['request_matrimony_id'])
         if phone_status:
-            ViewedPhoneNumber(request.GET['matrimony_id'],request.GET['request_matrimony_id'])
-            person.total_access=str(int(person.total_access)-1)
-            person.save()
+            return Response({"message":"Allready add this profile in your Id",
+                             "total_access":person.total_access,
+                             "status":False},status=200)
         else:
-            ViewedPhoneNumber(request.GET['matrimony_id'],request.GET['request_matrimony_id'])
             person.total_access=str(int(person.total_access)-1)
             person.save()
-            return Response({"message":"Invalid Matrimony id","status":False},status=400)
+            return Response({"message":"total access updated",
+                             "total_access":person.total_access,
+                             "status":False},status=200)
                 
-        
-            
-        
 
+
+
+"""Partner Preference"""
+class PartnerPreference(APIView):
+    def get(self,request):
+        pp=Partner_Preferences.objects.select_related('profile').filter(profile__matrimony_id=request.GET['matrimony_id'])
+        if pp.exists():
+            serializers=PPSerializers(pp[0],many=False)
+            return Response(serializers.data)       
+        else:
+            return Response({"message":"No any Preferace Yet!"})    
+    
+    def post(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
+        data=request.data
+        profile=Person.object.get(matrimonyid=request.GET['matrimony_id'])
+        pp=Partner_Preferences.objects.select_related('profile').filter(profile__matrimony_id=request.GET['matrimony_id'])
+        if pp.exists():
+            serializers=PPSerializers(pp[0],many=False)
+            return Response({"message":"Preferace already created","status":True})       
+        else:
+            data['profile']=profile.id
+            serializers=PPSerializers(data=data)
+            if serializers.is_valid():
+                serializers.save()
+                return Response({"message":"Partner Preferance Created successfully","status":True},status=200)
+            else:
+                print(serializers.errors)
+                return Response(serializers.errors)  
+            
+    def put(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
+        data=request.data
+        profile=Person.object.get(matrimonyid=request.GET['matrimony_id'])
+        pp=Partner_Preferences.objects.get(id=request.GET['preferanceid'])
+        if pp.exists():
+            serializers=PPSerializers(pp[0],many=False)
+            return Response({"message":"Preferace already created","status":True})       
+        else:
+            data['profile']=profile.id
+            serializers=PPSerializers(pp[0],data=data,partial=True)
+            if serializers.is_valid():
+                serializers.save()
+                return Response({"message":"Partner Preferance Created successfully","status":True},status=200)
+            else:
+                print(serializers.errors)
+                return Response(serializers.errors) 
+            
+    def delete(self,request):
+        pp=Partner_Preferences.objects.select_related('profile').filter(profile__matrimony_id=request.GET['matrimony_id'])
+        if pp.exists():
+            pp.delete()
+            return Response({"message":"Partner Preferance deleted successfully"})
+        else:
+            return Response({"message":"No record Yet"})
 
 
     

@@ -2,6 +2,7 @@ from django.urls import path,include
 from .views import *
 urlpatterns = [
     path('signup',Registration.as_view(),name="registration"),
+    path('preferance/',PartnerPreference.as_view()),
     path('signup/field/update',NeedToUpdateFields.as_view()),
     path('email/',Check_Email.as_view()),
     path('phone/',Check_Phone_Number.as_view()),
