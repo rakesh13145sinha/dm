@@ -79,9 +79,10 @@ class VendorEventView(APIView):
         
         elif category is not None:
             event=VentorEvent.objects.filter(category=category,status=True)
+            
             if event.exists():
-                serializers=EventSerializer(event[0],many=True).data
-                return Response(serializers)
+                serializers=EventSerializer(event,many=True)
+                return Response(serializers.data )
             else:
                 return Response([],status=200)
             
