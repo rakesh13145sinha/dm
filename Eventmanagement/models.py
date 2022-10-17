@@ -19,7 +19,7 @@ class VentorEvent(models.Model):
     rating=models.CharField(max_length=10,null=True,blank=True)
     price=models.FloatField()
     phone_number=models.CharField(max_length=15)
-    description=models.TextField()
+    description=models.TextField(null=True,blank=True)
     status=models.BooleanField(default=True)
     likes=models.ManyToManyField(Person,related_name="likes_by_person")
     category=models.CharField(max_length=100,null=True)
