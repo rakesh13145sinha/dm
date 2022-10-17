@@ -60,8 +60,12 @@ class VendorEventView(APIView):
         if eventid is not None:
             event=VentorEvent.objects.filter(id=eventid,status=True)
             if event.exists():
-                serializers=EventSerializer(event[0],many=False)
-                return Response(serializers.data)
+                serializers=EventSerializer(event[0],many=False).data
+                
+                serializers['album']=[{"id":i.id,"image":i.image.url}  for i in event[0].eventmultiimage_set.all() ]
+                serializers['project']=[{"id":i.id,"name_of_project":i.name_of_project, "image":i.image.url}  for i in event[0].project_set.all() ]
+                serializers['review']=[{"id":i.id,"review":i.review }  for i in event[0].review_set.all() ]
+                return Response(serializers)
             else:
                 return Response({"message":"Event Id Not Found",'status':False},status=400)
         
@@ -72,10 +76,12 @@ class VendorEventView(APIView):
                 return Response({"message":"Vendor May be Incorrect","status":False},status=200)
             serializers=EventSerializer(vendor.ventorevent_set.filter(status=True),many=True)
             return Response(serializers.data)
-        elif category is None:
+        
+        elif category is not None:
             event=VentorEvent.objects.filter(category=category,status=True)
             if event.exists():
-                return EventSerializer(event[0],many=False).data
+                serializers=EventSerializer(event[0],many=True).data
+                return Response(serializers)
             else:
                 return Response([],status=200)
             
@@ -95,6 +101,7 @@ class VendorEventView(APIView):
         else:
             print(serializers.errors)
             return Response(serializers.errors)
+    
     def put(self,request):
         data=request.data 
         event=VentorEvent.objects.get(id=request.GET['eventid'])
@@ -105,6 +112,7 @@ class VendorEventView(APIView):
         else:
             print(serializers.errors)
             return Response(serializers.errors)
+    
     def delete(self,request):
         message=request.GET.get('delete all')
         event=VentorEvent.objects.filter(id=request.GET['eventid'])
@@ -133,8 +141,39 @@ class LikesView(APIView):
             return Response({"likes":True,"status":True},status=200)
         
         
-# """Multiple Image upload"""
-# class Album(APIView):
-#     def post(self,request):
-#         if request
-#         event=VentorEvent.objects.get(id=request.GET['eventid']) 
+"""Multiple Image upload"""
+class Album(APIView):
+    def post(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
+        
+        event=VentorEvent.objects.get(id=request.GET['eventid'])
+        files=request.FILES.getlist('image')
+        for img in files:
+            EventMultiImage.objects.create(event_planner=event,image=img)
+        return Response({"message":"Image Uploaded successfully","status":True},status=200)
+    
+    
+"""Multiple Project Upload"""
+class Menu(APIView):
+    def post(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
+        data=request.data
+        event=VentorEvent.objects.get(id=request.GET['eventid'])
+        Project.objects.create(event_planner=event,image=data['image'],name_of_project=data['name_of_project'])
+        return Response({"message":"Project successfully","status":True},status=200)
+    
+
+
+"""REVIEW """
+class LeaveReview(APIView):
+    def post(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
+        data=request.data
+        matrimonyid=request.GET['matrimony_id']
+        profile=Person.objects.get(matrimony_id=matrimonyid)
+        event=VentorEvent.objects.get(id=request.GET['eventid'])
+        Review.objects.create(event_planner=event,profile=profile,review=data['review'])
+        return Response({"message":"Thanks for review","status":True},status=200)
