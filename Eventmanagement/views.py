@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from .models import * 
 from .serializers import *
 from .category import *
+from account.models import Person
 
 class VenderoView(APIView):
     def get(self,request):
@@ -47,7 +48,7 @@ class PlannerCategory(APIView):
     def get(self,request):
         planner=request.GET['planner']
         if Plannerdata.get(planner):
-            return Response(Plannerdata[planner],status=200) 
+            return Response([{"name":i}  for i in Plannerdata[planner]],status=200) 
         else:
             return Response({"message":"May Incorrect Planner Name"})      
 
@@ -65,7 +66,10 @@ class VendorEventView(APIView):
                 return Response({"message":"Event Id Not Found",'status':False},status=400)
         
         elif vendorname is not None :
-            vendor=Vendor.objects.get(vendor_name=vendorname)
+            try:
+                vendor=Vendor.objects.get(vendor_name=vendorname,status=True)
+            except Exception as msg:
+                return Response({"message":"Vendor May be Incorrect","status":False},status=200)
             serializers=EventSerializer(vendor.ventorevent_set.filter(status=True),many=True)
             return Response(serializers.data)
         elif category is None:
@@ -113,3 +117,24 @@ class VendorEventView(APIView):
         else:
            
             return Response({"message":"Vendor Event Id Not Found","status":False},status=400)
+
+
+"""EVENT LIKES"""
+class LikesView(APIView):
+    def post(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        profile=Person.objects.get(matrimony_id=matrimonyid)
+        event=VentorEvent.objects.get(id=request.GET['eventid']) 
+        if event.likes.filter(matrimony_id=matrimonyid).exist():
+            event.likes.remove(profile)
+            return Response({"likes":False,"status":False},status=200)
+        else:
+            event.likes.add(profile)
+            return Response({"likes":True,"status":True},status=200)
+        
+        
+# """Multiple Image upload"""
+# class Album(APIView):
+#     def post(self,request):
+#         if request
+#         event=VentorEvent.objects.get(id=request.GET['eventid']) 

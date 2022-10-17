@@ -19,6 +19,7 @@ class VentorEvent(models.Model):
     rating=models.CharField(max_length=10,null=True,blank=True)
     price=models.FloatField()
     phone_number=models.CharField(max_length=15)
+    description=models.TextField()
     status=models.BooleanField(default=True)
     likes=models.ManyToManyField(Person,related_name="likes_by_person")
     category=models.CharField(max_length=100,null=True)
@@ -26,3 +27,19 @@ class VentorEvent(models.Model):
 
     def __str__(self):
         return self.envent_name
+
+class EventMultiImage(models.Model):
+    event_planner=models.ForeignKey(VentorEvent,on_delete=models.CASCADE)
+    image=models.ImageField(upload_to="event/planner")
+    
+
+class Project(models.Model):
+    event_planner=models.ForeignKey(VentorEvent,on_delete=models.CASCADE)
+    name_of_project=models.CharField(max_length=50)
+    image=models.ImageField(upload_to="event/planner")
+    
+class Review(models.Model):
+    profile=models.ForeignKey(Person,on_delete=models.CASCADE)
+    event_planner=models.ForeignKey(VentorEvent,on_delete=models.CASCADE)
+    review=models.TextField()
+    
