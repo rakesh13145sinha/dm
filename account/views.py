@@ -1339,7 +1339,7 @@ class PremiumUser(APIView):
                 "image":images[0].files.url if images.exists() else None,
                 "matimony_id":person.matrimony_id,
                 "name":person.name,
-                "active_plan":person.active_plan__in
+                "active_plan":person.active_plan
                 }
             response[person.id].update(height_and_age(person.height,person.dateofbirth))
         return Response(response.values())
