@@ -210,6 +210,19 @@ class SingleProfile(APIView):
        
 """Registration for new user"""
 class Registration(APIView):
+    
+    def unique_phone_number(self,variable):
+        query=Q(
+            Q(phone_number__iexact=variable)
+            | 
+            Q(email__iexact=variable)
+            )
+        person_phone_number=Person.objects.filter(query)
+        return person_phone_number.exists() 
+        
+    
+    
+    
     def get(self,request):
         matrimonyid=request.GET.get('matrimony_id')
         if matrimonyid is not None:
@@ -242,24 +255,20 @@ class Registration(APIView):
            
         data=request.data 
         try:
-            phone=data['phone_number']
-            email=data['email']
+            phone=data['phone_number'].strip()
+            email=data['email'].strip()
         except KeyError as msg:
             return Response({"message":os.environ.get("Key_Not_Found"),"KeyError":str(msg),"status":False})
-        person_phone_number=Person.objects.filter(phone_number__iexact=phone)
-        if person_phone_number.exists():
+
+        if self.unique_phone_number(phone):
             return Response({"message":os.environ.get("Phone_Number_Exists_Message"),
-                             "status":person_phone_number[0].status,
-                             "matrimony_id":person_phone_number[0].matrimony_id,
-                             "phone_number":person_phone_number[0].phone_number
+                             "status":True
                              })
-        person_email=Person.objects.filter(email__iexact=email)
-        if person_email.exists():
+        if self.unique_phone_number(email):
             return Response({"message":os.environ.get("Email_Exists"),
-                             "status":person_email[0].status,
-                            "matrimony_id":person_email[0].matrimony_id,
-                             "email":person_email[0].email
+                             "status":True
                              })
+    
         serializers=PersonSerializers(data=data)
         if serializers.is_valid():
             serializers.save()
@@ -276,19 +285,15 @@ class Registration(APIView):
            
         data=request.data 
         person=Person.objects.get(matrimony_id=request.GET['matrimony_id'])
-        person_phone_number=Person.objects.filter(phone_number__iexact=data.get('phone_number'))
-        if person_phone_number.exists():
-            return Response({"message":os.environ.get("Phone_Number_Exists_Message"),
-                             "status":person_phone_number[0].status,
-                             "matrimony_id":person_phone_number[0].matrimony_id,
-                             "phone_number":person_phone_number[0].phone_number
+        if data.get('phone_number'):
+            if self.unique_phone_number(data['phone_number']):
+                return Response({"message":os.environ.get("Phone_Number_Exists_Message"),
+                             "status":True
                              })
-        person_email=Person.objects.filter(email__iexact=data.get('email'))
-        if person_email.exists():
-            return Response({"message":os.environ.get("Email_Exists"),
-                             "status":person_email[0].status,
-                            "matrimony_id":person_email[0].matrimony_id,
-                             "email":person_email[0].email
+        if data.get('email'):
+            if self.unique_phone_number(data['email']):
+                return Response({"message":os.environ.get("Email_Exists"),
+                             "status":True
                              })
         serializers=PersonSerializers(person,data=data,partial=True)
         if serializers.is_valid():
@@ -1294,6 +1299,31 @@ class PartnerPreference(APIView):
             return Response({"message":"No record Yet"})
 
 
-    
+"""LIST OF PREMIUM USER"""
+class PremiumUser(APIView):
+   def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        person=Person.objects.get(matrimony_id__iexact=matrimonyid)
+        USER_PLAN=["Silver","Gold",'Diamond',"Platinum"]
+        query=Q(
+           ~ Q(gender=person.gender)
+            &
+            Q(block=False)
+             &
+            Q(active_plan__in=USER_PLAN)
+            )
+        response={}
+        persons=Person.objects.filter(query).order_by('-reg_date')[0:12]
+        for person in persons:
+            images=ProfileMultiImage.objects.filter(profile__id=person.id)
+            response[person.id]={
+                "image":images[0].files.url if images.exists() else None,
+                "matimony_id":person.matrimony_id,
+                "name":person.name,
+                "active_plan":person.active_plan__in
+                }
+            response[person.id].update(height_and_age(person.height,person.dateofbirth))
+        return Response(response.values())
+            
 
 

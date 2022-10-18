@@ -14,13 +14,22 @@ import os
 class SubscriptionPla(APIView):
     def get(self,request):
         month=request.GET.get('month')
+        months=request.GET.get('months')#for web appication
         plan=request.GET.get('membership')
         planid=request.GET.get('planid')
        
         if plan is not  None:
             members=MemberShip.objects.filter(month=month).order_by('-id')
             serializers=SubscriptionSerializer(members,many=True)
-            return Response(serializers.data) 
+            return Response(serializers.data)
+        elif months:
+            response={}
+            members=MemberShip.objects.filter(month=months)
+            for i in members:
+                serializers=SubscriptionSerializer(i,many=False).data
+                response[i.subscription]=serializers
+            return Response(response)
+            
         elif plan is not None and month is not None:
             print("============xxxxxxxxxxxxxxx===============") 
             members=MemberShip.objects.filter(month=month,subscription=plan).order_by('-id')
@@ -32,13 +41,11 @@ class SubscriptionPla(APIView):
             serializers=SubscriptionSerializer(members,many=False)
             return Response(serializers.data)
         else:
-            
-            #MemberShip.objects.update(total_access=40)
+            print("================")
             members=MemberShip.objects.all().order_by('-id')
             serializers=SubscriptionSerializer(members,many=True)
             return Response(serializers.data)
-        return Response({"message":"somthing wrong","status":False})
-    
+        
     def post(self,request):
         if not request.POST._mutable:
             request.POST._mutable=True
@@ -160,4 +167,6 @@ class GetAllPayment(APIView):
                 response[pay.id]=serializer
                 
             return  Response(response.values())
-                  
+    
+    
+    

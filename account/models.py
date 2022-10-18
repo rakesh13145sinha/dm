@@ -54,7 +54,8 @@ class Person(models.Model):
 	horoscope=models.CharField(max_length=200,null=True)
 	habbits=models.CharField(max_length=200,null=True)
 	workplace=models.CharField(max_length=20,null=True)
-	
+	dosham=models.CharField(max_length=20,null=True)
+	birth_place=models.CharField(max_length=20,null=True)
 #location & contact
 	city = models.CharField(max_length=100,null=True)
 	state = models.CharField(max_length=100,null=True)
