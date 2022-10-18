@@ -174,7 +174,7 @@ class Partner_Preferences(models.Model):
 	dosham= models.CharField(max_length=100,null=True)
 	profilecreate= models.CharField(max_length=100,null=True)
 	assets= models.CharField(max_length=100,null=True)
-	
+	description=models.CharField(max_length=100,null=True)
 	def __str__(self):
 		return "%s" %(self.profile.user.id)
 
