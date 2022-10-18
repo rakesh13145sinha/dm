@@ -10,9 +10,7 @@ def get_age(string):
 
 def height(string):
     c=string.split("'")[:2]
-    
     c_s=c[0]+"."+c[1]
-    
     return c_s
     
     
