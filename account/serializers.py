@@ -14,7 +14,9 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=Person 
         exclude=('user','image')
-        
+
+
+       
 class GenderSerializer(serializers.ModelSerializer):
     class Meta:
         model=Person 

@@ -255,7 +255,7 @@ class Registration(APIView):
            
         data=request.data 
         try:
-            phone=data['phone_number'].strip()
+            phone=data['phone_number']
             email=data['email'].strip()
         except KeyError as msg:
             return Response({"message":os.environ.get("Key_Not_Found"),"KeyError":str(msg),"status":False})
