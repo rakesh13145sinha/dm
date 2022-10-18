@@ -15,7 +15,7 @@ def create_partner_preferance(pk):
                  caste= "Any", religion= "Any",star= "Any",occupation= "Any",  \
                  annual_income= "Any",job_sector= "Any",qualification="Any",  \
                  city= "Any",state= "Any",country= "Any",dosham= "Does'nt matter" ,\
-                #description="Good luck !"
+                description="Good luck !"
                  
                 )
     return created
@@ -37,9 +37,4 @@ def create_profile(sender, instance, created, **kwargs):
         
 
 
-for p in Person.objects.all():
-    
-    create_partner_preferance(p.id)
-# Partner_Preferences.objects.filter(id=1).delete()
 
-#print(Partner_Preferences.objects.values())
