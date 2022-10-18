@@ -30,7 +30,7 @@ def update_profile(sender, instance, created, **kwargs):
         person.active_plan=plan[0]
         person.total_access=int(plan[1])
         person.plan_taken_date=instance.created_date.date()
-        person.plan_expiry_date=instance.created_date.date()+timedelta(days=int(plan[2]))
+        person.plan_expiry_date=instance.created_date.date()+timedelta(days=int(plan[2])*30)
         person.save()
         instance.save()
         
