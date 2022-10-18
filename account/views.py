@@ -1276,20 +1276,17 @@ class PartnerPreference(APIView):
         if not request.POST._mutable:
             request.POST._mutable=True
         data=request.data
-        profile=Person.object.get(matrimonyid=request.GET['matrimony_id'])
-        pp=Partner_Preferences.objects.get(id=request.GET['preferanceid'])
-        if pp.exists():
-            serializers=PPSerializers(pp[0],many=False)
-            return Response({"message":"Preferace already created","status":True})       
+        pp=Partner_Preferences.objects.select_related('profile').filter(profile__matrimony_id=request.GET['matrimony_id'])
+              
+        data['profile']=pp[0].profile.id
+           
+        serializers=PPSerializers(pp[0],data=data,partial=True)
+        if serializers.is_valid():
+            serializers.save()
+            return Response({"message":"Partner Preferance Updated successfully","status":True},status=200)
         else:
-            data['profile']=profile.id
-            serializers=PPSerializers(pp[0],data=data,partial=True)
-            if serializers.is_valid():
-                serializers.save()
-                return Response({"message":"Partner Preferance Created successfully","status":True},status=200)
-            else:
-                print(serializers.errors)
-                return Response(serializers.errors) 
+            print(serializers.errors)
+            return Response(serializers.errors) 
             
     def delete(self,request):
         pp=Partner_Preferences.objects.select_related('profile').filter(profile__matrimony_id=request.GET['matrimony_id'])
