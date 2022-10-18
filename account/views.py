@@ -1301,7 +1301,7 @@ class PartnerPreference(APIView):
 
 """LIST OF PREMIUM USER"""
 class PremiumUser(APIView):
-   def get(self,request):
+    def get(self,request):
         matrimonyid=request.GET['matrimony_id']
         person=Person.objects.get(matrimony_id__iexact=matrimonyid)
         USER_PLAN=["Silver","Gold",'Diamond',"Platinum"]
@@ -1324,6 +1324,26 @@ class PremiumUser(APIView):
                 }
             response[person.id].update(height_and_age(person.height,person.dateofbirth))
         return Response(response.values())
-            
+#only for testing  this post methods
+    def post(self,request):
+       
+        USER_PLAN=["Silver","Gold",'Diamond',"Platinum"]
+        query=Q(
+            Q(active_plan__in=USER_PLAN)
+            )
+        response={}
+        persons=Person.objects.filter(query).order_by('-reg_date')[0:12]
+        for person in persons:
+            images=ProfileMultiImage.objects.filter(profile__id=person.id)
+            response[person.id]={
+                "image":images[0].files.url if images.exists() else None,
+                "matimony_id":person.matrimony_id,
+                "name":person.name,
+                "active_plan":person.active_plan__in
+                }
+            response[person.id].update(height_and_age(person.height,person.dateofbirth))
+        return Response(response.values())
+        
+               
 
 
