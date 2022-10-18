@@ -15,7 +15,7 @@ def create_partner_preferance(pk):
                  caste= "Any", religion= "Any",star= "Any",occupation= "Any",  \
                  annual_income= "Any",job_sector= "Any",qualification="Any",  \
                  city= "Any",state= "Any",country= "Any",dosham= "Does'nt matter" ,\
-                description="Good luck !"
+                #description="Good luck !"
                  
                 )
     return created
