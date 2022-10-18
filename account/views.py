@@ -233,6 +233,7 @@ class Registration(APIView):
                 serializers['profileimage']=[
                     {"id":image.id,"image":image.files.url if image.files else None}
                     for image in images ]
+                serializers["age"]=get_age(profile[0].dateofbirth)
                 return Response(serializers)
             else:
                 return Response({"message":"Invalid Matrimony Id","status":False},status=400)

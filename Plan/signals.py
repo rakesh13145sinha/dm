@@ -35,6 +35,6 @@ def update_profile(sender, instance, created, **kwargs):
 def delete_payment(sender, instance, **kwargs):
     person=Person.objects.get(matrimony_id=instance.profile)
     person.active_plan="Waiting"
-    person.total_access=None
+    person.total_access=0
     person.save()
     
