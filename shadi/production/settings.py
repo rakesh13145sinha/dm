@@ -42,3 +42,11 @@ if DEBUG:
 else:
     MEDIA_URL='/media/'
     MEDIA_ROOT=os.path.join(BASE_DIR,'mediafile/')
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST= 'smtp.zoho.in'
+EMAIL_PORT= 587
+EMAIL_HOST_USER= 'zuhoo123@zohomail.in'
+EMAIL_HOST_PASSWORD= 'Zuhoo@123'
+EMAIL_USE_TLS= True

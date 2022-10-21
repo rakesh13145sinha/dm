@@ -178,7 +178,9 @@ class Nation(APIView):
         else:
             states=State.objects.all()
             return Response([{"id":state.id,"name":state.name} for state in states]) 
-                
+
+
+########################PROFILE API#################################               
 """Single Profile get"""
 class SingleProfile(APIView):
     def get(self,request):
@@ -405,11 +407,6 @@ class Validate_OTPs(APIView):
 
 
 
-
-
-
-
-
 """Single Image Post"""
 class UploadProfileImage(APIView):
     def get(self,request):
@@ -503,6 +500,7 @@ class UploadProfileImage(APIView):
             return Response({"message":"Image Id not Found","status":False},status=404)
         
 
+#################################END###############################
 
 """NEW MATCH PROFILE"""
 class OppositeGenderProfile(APIView):
@@ -705,16 +703,16 @@ class MatchInPercentage(APIView):
         partner_user = Person.objects.filter(~Q(gender=main_user[0]["gender"])).values()
         for index , keys in enumerate(partner_user):
             response[index]={"id":keys['id']}
-            _list=['user_id' ,'id','reg_date','reg_update' ,'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name' ,'status','about_myself','matrimony_id','email','image']
+            _list=['user_id' ,'id','plan_taken_date','plan_expiry_date','reg_date','reg_update' ,'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name' ,'status','about_myself','matrimony_id','email','image']
             for i in _list:
                 del keys[i]
             user_full_details= dict(ChainMap(*[{k : True} if partner_user[index][k] == main_user[0][k] else {k:False} for k,v in keys.items()]))
             
             response[index].update(user_full_details)
         matrimonyid=[{"id":value['id'],"count":len([j for i, j in value.items() if j == True])} for key,value in response.items()]
-        print(matrimonyid)
+        
         sorted_list=sorted(matrimonyid,key=lambda x:x['count'],reverse=True)
-        print(sorted_list)
+        
         list_of_id=[ i['id'] for i in sorted_list]
         
         match_response={}
@@ -734,27 +732,16 @@ class MatchInPercentage(APIView):
 """HOW MUCH PROFILE UPDATED IN PERCENTAGE"""       
 class ProfileUpdatePercentage(APIView):
     def get(self,request):
-        
+        import json
         matrimonyid=request.GET['matrimony_id']
         change_into_dict = Person.objects.filter(matrimony_id=matrimonyid).values()[0]
-      
-         
-        _list=['user_id' ,'id','reg_date','reg_update','image' ,'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name' ,'status','matrimony_id']
+        
+        _list=['user_id' ,'id','reg_date','reg_update','plan_taken_date','plan_expiry_date','image' ,'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name' ,'status','matrimony_id']
         for i in _list:
             del change_into_dict[i]
-       
-        true_count=0
+        count=len( list (filter(lambda x:x!=None,change_into_dict.values())))
+        percentage=(count*100)//len(change_into_dict) 
         
-        for key ,value in change_into_dict.items():
-            if value is not None:
-                true_count+=1
-            else:
-                pass
-           
-        percentage=(true_count*100)//len(change_into_dict) 
-        print("================")
-        print(percentage)  
-        print("==================")  
         images=ProfileMultiImage.objects.select_related('profile').filter(profile__matrimony_id=matrimonyid)
         data={
             "profileimage":images[0].files.url if images.exists() else None,
@@ -1342,9 +1329,23 @@ class PremiumUser(APIView):
             response[person.id].update(height_and_age(person.height,person.dateofbirth))
         return Response(response.values())
         
-               
-
-
-
+            
+""""FOR WEB APPICATION"""
+class ProfileInfo(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        person=Person.objects.get(matrimony_id=matrimonyid)
+        image=person.profilemultiimage_set.all()
+        viewed_by_me=ViewedProfile.objects.filter(profile=person)
+        FriendRequests.objects.filter(requested_matrimony_id=matrimonyid)
+        response={
+            "profileimage":image[0].files.url if image.exists() else None,
+            "occupation":person.occupation,
+            "name":person.name,
+            "viewed_by_me": viewed_by_me[0].view.count() if viewed_by_me.exists() else 0,
+            "viewed_by_others":ViewedProfile.objects.filter(view__id=person.id).count(),
+            "interest":FriendRequests.objects.filter(requested_matrimony_id=matrimonyid).count()
+            }
+        return Response(response)
 
 

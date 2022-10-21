@@ -14,6 +14,7 @@ urlpatterns = [
     path('new/match',OppositeGenderProfile.as_view()),
     #profiles
     path('profile/all',AllProfiles.as_view()),
+    path('profile/info/',ProfileInfo.as_view()),
     path('profile/premium/',PremiumUser.as_view()),
     path('profile/',SingleProfile.as_view()),
     path('profile/complete',ProfileUpdatePercentage.as_view()),

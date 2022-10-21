@@ -9,12 +9,12 @@ def create_partner_preferance(pk):
     pp=Person.objects.get(id=pk)
     _,created=Partner_Preferences.objects.get_or_create(profile= pp,min_age= "18",  \
                  max_age= "40",min_height= "4'0'", max_height= "7'0''",  \
-                 physical_status= "Does'nt matter", mother_tongue= "Any",  \
-                 marital_status= "Does'nt matter", drinking_habbit= "Does'nt matter",  \
-                 smoking_habbit= "Does'nt matter",food= "Does'nt matter",  \
+                 physical_status= "Doesn't matter", mother_tongue= "Any",  \
+                 marital_status= "Doesn't matter", drinking_habbit= "Doesn't matter",  \
+                 smoking_habbit= "Doesn't matter",food= "Doesn't matter",  \
                  caste= "Any", religion= "Any",star= "Any",occupation= "Any",  \
                  annual_income= "Any",job_sector= "Any",qualification="Any",  \
-                 city= "Any",state= "Any",country= "Any",dosham= "Does'nt matter" ,\
+                 city= "Any",state= "Any",country= "India",dosham= "Doesn't matter" ,\
                 description="Good luck !"
                  
                 )
@@ -32,8 +32,8 @@ def create_profile(sender, instance, created, **kwargs):
     if created:
         instance.matrimony_id=generate_matrimonyid()
         instance.save()
-        create_partner_preferance(instance.id)
         sending_otp(random.randint(1000,9999), instance.phone_number)
+        create_partner_preferance(instance.id)
         
 
 
