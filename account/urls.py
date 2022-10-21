@@ -3,44 +3,39 @@ from .views import *
 urlpatterns = [
     path('signup',Registration.as_view(),name="registration"),
     path('preferance/',PartnerPreference.as_view()),
-    path('signup/update',NeedToUpdateFields.as_view(),name="profile update"),
+    path('signup/field/update',NeedToUpdateFields.as_view()),
     path('email/',Check_Email.as_view()),
     path('phone/',Check_Phone_Number.as_view()),
     path('state/',Nation.as_view()),
     path('verify/otp/',Validate_OTP.as_view()),
-    path('profile/',include([ 
-                             
-                             
-            path('image/upload/',UploadProfileImage.as_view()),
-            path('new/match',OppositeGenderProfile.as_view()),
-           
-            path('all',AllProfiles.as_view()),
-            path('info/',ProfileInfo.as_view()),
-            path('premium/',PremiumUser.as_view()),
-            path('',SingleProfile.as_view()),
-            path('complete',ProfileUpdatePercentage.as_view()),
-            path('connect/',SendFriendRequest.as_view()),
-            path('connect/send',GETSendedFriendRequest.as_view()),
-            path('connect/receive',ReceivedFriendRequest.as_view()),
-            path('connect/reject',RejectedFriendRequest.as_view()),
-            path('connect/accepted',ConnectedProfiles.as_view()),
-            
-            path('join',NewMatchProfile.as_view()),
-            path('bookmark/',BookMarkProfile.as_view()),
-            path('bookmark/show',Album.as_view()),
-            path('match/percentage',ProfileMatchPercentage.as_view()),
-            path('match/mutual/',MatchInPercentage.as_view()),
-            path('match/daily',DailyRecomandation.as_view()),
-            
-            
-            #profile viewed and saw
-            path('saw',ISawProfile.as_view()),
-            path('viewed',WhoSawMyProfile.as_view()),
-                             
-                             ])),
+    
+    #image upload
+    path('image/upload/',UploadProfileImage.as_view()),
+    path('new/match',OppositeGenderProfile.as_view()),
+    #profiles
+    path('profile/all',AllProfiles.as_view()),
+    path('profile/info/',ProfileInfo.as_view()),
+    path('profile/premium/',PremiumUser.as_view()),
+    path('profile/',SingleProfile.as_view()),
+    path('profile/complete',ProfileUpdatePercentage.as_view()),
+    path('profile/connect/',SendFriendRequest.as_view()),
+    path('profile/connect/send',GETSendedFriendRequest.as_view()),
+    path('profile/connect/receive',ReceivedFriendRequest.as_view()),
+    path('profile/connect/reject',RejectedFriendRequest.as_view()),
+    path('profile/connect/accepted',ConnectedProfiles.as_view()),
+    
+    path('new/join',NewMatchProfile.as_view()),
+    path('bookmark/',BookMarkProfile.as_view()),
+    path('bookmark/show',Album.as_view()),
+    path('match/percentage',ProfileMatchPercentage.as_view()),
+    path('match/mutual/',MatchInPercentage.as_view()),
+    path('match/daily',DailyRecomandation.as_view()),
     path('explor/',Explore.as_view()),
     path('explor/name',ExploreProfile.as_view()),
     
+    #profile viewed and saw
+    path('profile/saw',ISawProfile.as_view()),
+    path('profile/viewed',WhoSawMyProfile.as_view()),
     #admin
     path('banner',Banner.as_view()),
    
