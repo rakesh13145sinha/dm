@@ -1,4 +1,4 @@
-from urllib import response
+
 from django.shortcuts import  get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -11,6 +11,7 @@ from .serializers import *
 from .send_otp import *
 import os
 from age import *
+from datetime import datetime, date,timedelta
 from dotenv import load_dotenv
 # Create your views here.
 load_dotenv('.env')
@@ -1349,3 +1350,65 @@ class ProfileInfo(APIView):
         return Response(response)
 
 
+
+
+"""TEST CONDITION"""
+
+class HomeTabs(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        _q=request.GET['q'].strip()
+        _list=['matches','new','premium','mutual','viewed_by_me','viewed_by_other',
+               'location','horoscope','qualification','star','occupation',
+               'workplace','state','city'    
+                             ]
+        response={}
+        if _q not in _list:
+            return Response({"message":"This is not Valid query","status":False},status=403)
+        try:
+            person=Person.objects.get(matrimony_id=matrimonyid)
+        except Exception as e:
+            return Response({"message":"Invalid matrimony id","status":False},status=400)
+        
+        query=~Q(gender=person.gender)
+        if _q=="matches":
+            query
+        elif _q=="new":
+            query=query & Q( reg_date__gte=datetime.today().now()-timedelta(days=10) )
+        elif _q=="premium":
+            query=query & ~Q(active_plan="Waiting")
+        elif _q=="mutual":
+            pass
+        # elif _q=="viewed_by_me":
+        #     pass
+        # elif _q=="viewed_by_other":
+        #     pass
+       
+        elif _q=="location":
+            query=query & Q(state=getattr(person,_q)) 
+        elif _q=="state":
+            query=query & Q(state=getattr(person,_q)) 
+        elif _q=="star":     
+            query=query & Q(star=getattr(person,_q)) 
+        elif _q=="occupation":
+            query=query & Q(occupation=getattr(person,_q))     
+        elif _q=="workplace":
+            query=query & Q(workplace=getattr(person,_q))
+        elif _q=="city":
+            query=query & Q(city=getattr(person,_q))
+        elif _q=="horoscope":
+            query=query & Q(horoscope=getattr(person,_q))
+        elif _q=="qualification":
+            query=query & Q(qualification=getattr(person,_q))
+        print(query)
+        print(_q)
+        persons=Person.objects.filter(query).order_by('-id')
+        for person in persons:
+            images=person.profilemultiimage_set.all()
+            serializer=GenderSerializer(person,many=False).data
+            serializer['profileimage']=images[0].files.url if images.exists() else None
+            response[person.id]=serializer
+            response[person.id].update(height_and_age(person.height,person.dateofbirth))
+            response[person.id].update(connect_status(matrimonyid,person.matrimony_id ) )                          
+        return Response(response.values())
+        
