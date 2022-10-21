@@ -1379,7 +1379,7 @@ class HomeTabs(APIView):
     def get(self,request):
         matrimonyid=request.GET['matrimony_id']
         _q=request.GET['q'].strip()
-        _list=['matches','new','premium','mutual','viewed_by_me','viewed_by_other',
+        _list=['matches','new','premium','mutual','saw','viewed',
                'location','horoscope','qualification','star','occupation',
                'workplace','state','city'    
                              ]
