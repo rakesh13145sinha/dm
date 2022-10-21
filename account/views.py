@@ -1008,8 +1008,8 @@ class WhoSawMyProfile(APIView):
             images=ProfileMultiImage.objects.filter(profile__id=view.profile.id)
             serializer=GenderSerializer(view.profile,many=False).data
             serializer['profileimage']=images[0].files.url if images.exists() else None
-            serializer.update(height_and_age(view.height,view.dateofbirth))
-            serializer.update(connect_status(matrimonyid,view.matrimony_id))
+            serializer.update(height_and_age(view.profile.height,view.profile.dateofbirth))
+            serializer.update(connect_status(matrimonyid,view.profile.matrimony_id))
             response[view.id]=serializer
         return Response(response.values())
 
