@@ -236,11 +236,6 @@ class SingleProfile(APIView):
 """Registration for new user"""
 class Registration(APIView):
     
-    
-        
-    
-    
-    
     def get(self,request):
         matrimonyid=request.GET.get('matrimony_id')
         if matrimonyid is not None:
@@ -587,8 +582,13 @@ class ProfileMatchPercentage(APIView):
         profile=Person.objects.get(matrimony_id=matrimonyid)
         r_profile=Person.objects.get(matrimony_id=requestid)
         
-        r_age=get_age(r_profile.dateofbirth)
+        if r_profile.dateofbirth:
+            
+            r_age=get_age(r_profile.dateofbirth)
+        else:
+            r_age=random.randint(25,35)
         d_age=[i for i in range(25,35)]
+        
         d_height=[
         "4'1''","4'2''","4'3''","4'4''","4'5''","4'6''","4'7''","4'8''","4'9''","4'10''","4'11''","5'0''"  
         "5'1''","5'2''","5'3''","5'4''","5'5''","5'6''","5'7''","5'8''","5'9''","5'10''","5'11''","6'0''"
