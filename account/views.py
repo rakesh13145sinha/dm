@@ -549,47 +549,10 @@ class OppositeGenderProfile(APIView):
         return Response(response.values())
     
 
-"""NEW MATCH JOIN"""
-class NewMatchProfile(APIView):
-    def get(self,request):
-        matrimonyid=request.GET['matrimony_id']
-        person=Person.objects.get(matrimony_id__iexact=matrimonyid)
-        query=Q(
-            ~Q(gender=person.gender)
-            &
-            Q(block=False)
-            #&
-            # Q(reg_date)
-            )
-        response={}
-        persons=Person.objects.filter(query).order_by('-reg_date')#[13:]
-        for person in persons:
-            images=ProfileMultiImage.objects.filter(profile__id=person.id)
-            serializer=GenderSerializer(person,many=False).data
-            serializer['image']=images[0].files.url if images.exists() else None
-            response[person.id]=serializer
-            response[person.id].update(height_and_age(person.height,person.dateofbirth))
-            response[person.id].update(connect_status(matrimonyid,person.matrimony_id) )
-        return Response(response.values())
 
-"""ALL PROFILE """
-class AllProfiles(APIView):
-    def get(self,request):
-        matrimonyid=request.GET['matrimony_id']
-        person=Person.objects.get(matrimony_id__iexact=matrimonyid)
-        query=Q(
-            ~Q(gender=person.gender)
-            )
-        response={}
-        persons=Person.objects.filter(query).order_by('-id')
-        for person in persons:
-            images=ProfileMultiImage.objects.filter(profile__id=person.id)
-            serializer=GenderSerializer(person,many=False).data
-            serializer['profileimage']=images[0].files.url if images.exists() else None
-            response[person.id]=serializer
-            response[person.id].update(height_and_age(person.height,person.dateofbirth))
-            response[person.id].update(connect_status(matrimonyid,person.matrimony_id ) )                          
-        return Response(response.values())
+
+
+
 
 
 
@@ -1327,7 +1290,7 @@ class PremiumUser(APIView):
                 "image":images[0].files.url if images.exists() else None,
                 "matimony_id":person.matrimony_id,
                 "name":person.name,
-                "active_plan":person.active_plan__in
+                "active_plan":person.active_plan
                 }
             response[person.id].update(height_and_age(person.height,person.dateofbirth))
         return Response(response.values())
@@ -1397,10 +1360,11 @@ class HomeTabs(APIView):
         elif _q=="new":
             query=query & Q( reg_date__gte=datetime.today().now()-timedelta(days=10) )
         elif _q=="premium":
-            query=query & ~Q(active_plan="Waiting")
+            USER_PLAN=["Silver","Gold",'Diamond',"Platinum"]
+            query=query & Q(active_plan__in=USER_PLAN)
         elif _q=="mutual":
-            
             query=Q(id__in=mutual_match(matrimonyid))
+        
         elif _q=="saw":
             view_profile=ViewedProfile.objects.filter(profile=person)
             if view_profile.exists():

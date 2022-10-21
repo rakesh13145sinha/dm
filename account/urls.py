@@ -14,13 +14,13 @@ urlpatterns = [
     
     
     path('new/match',OppositeGenderProfile.as_view()),##
-    path('new/join',NewMatchProfile.as_view()),###
-    path('profile/all',AllProfiles.as_view()),###
+   
+    
     path('profile/premium/',PremiumUser.as_view()),###
-    path('match/mutual/',MatchInPercentage.as_view()),###
-    path('profile/saw',ISawProfile.as_view()),###
-    path('profile/viewed',WhoSawMyProfile.as_view()),###
-    path('explor/name',ExploreProfile.as_view()),###
+    #path('match/mutual/',MatchInPercentage.as_view()),###
+    #path('profile/saw',ISawProfile.as_view()),###
+    #path('profile/viewed',WhoSawMyProfile.as_view()),###
+    #path('explor/name',ExploreProfile.as_view()),###
     
     
     path('profile/info/',ProfileInfo.as_view()),
