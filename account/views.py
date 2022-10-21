@@ -136,6 +136,27 @@ def height_and_age(h,age):
     elif h is None:
         return {"age":get_age(age),'height':None}
 
+
+def mutual_match(matrimony_id):
+        response = {}
+        main_user = Person.objects.filter(matrimony_id=matrimony_id).values()
+        partner_user = Person.objects.filter(~Q(gender=main_user[0]["gender"])).values()
+        for index , keys in enumerate(partner_user):
+            response[index]={"id":keys['id']}
+            _list=['user_id' ,'id','plan_taken_date','plan_expiry_date','reg_date','reg_update' ,'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name' ,'status','about_myself','matrimony_id','email','image']
+            for i in _list:
+                del keys[i]
+            user_full_details= dict(ChainMap(*[{k : True} if partner_user[index][k] == main_user[0][k] else {k:False} for k,v in keys.items()]))
+            
+            response[index].update(user_full_details)
+        matrimonyid=[{"id":value['id'],"count":len([j for i, j in value.items() if j == True])} for key,value in response.items()]
+        
+        sorted_list=sorted(matrimonyid,key=lambda x:x['count'],reverse=True)
+        
+        list_of_id=[ i['id'] for i in sorted_list]
+        return list_of_id
+
+
 class Check_Phone_Number(APIView):
     def get(self,request):
         person_phone_number=Person.objects.filter(phone_number__iexact=request.GET['phone_number'])
@@ -1378,11 +1399,18 @@ class HomeTabs(APIView):
         elif _q=="premium":
             query=query & ~Q(active_plan="Waiting")
         elif _q=="mutual":
-            pass
-        # elif _q=="viewed_by_me":
-        #     pass
-        # elif _q=="viewed_by_other":
-        #     pass
+            
+            query=Q(id__in=mutual_match(matrimonyid))
+        elif _q=="saw":
+            view_profile=ViewedProfile.objects.filter(profile=person)
+            if view_profile.exists():
+                query=Q(id__in=[i.id for i in view_profile[0].view.all()])
+            else:
+                return Response([],status=200)
+        elif _q=="viewed":
+            
+            view_profile=ViewedProfile.objects.filter(view__id=person.id)
+            query=Q(id__in=[i.profile.id for i in view_profile])
        
         elif _q=="location":
             query=query & Q(state=getattr(person,_q)) 
