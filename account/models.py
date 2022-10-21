@@ -20,7 +20,7 @@ class Person(models.Model):
 				('Waiting','Waiting'),("Combo","Combo"),("Platinum","Platinum")
 				]
 	user = models.OneToOneField(User,on_delete=models.CASCADE)
-#66014444
+
 #basic info
 	name = models.CharField(max_length=20,null=True)
 	email=models.EmailField(null=True)

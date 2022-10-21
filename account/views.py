@@ -13,6 +13,7 @@ import os
 from age import *
 from datetime import datetime, date,timedelta
 from dotenv import load_dotenv
+import pytz
 # Create your views here.
 load_dotenv('.env')
 #print(os.getenv("Phone_nuber_exists_message"))
@@ -235,14 +236,7 @@ class SingleProfile(APIView):
 """Registration for new user"""
 class Registration(APIView):
     
-    def unique_phone_number(self,variable):
-        query=Q(
-            Q(phone_number__iexact=variable)
-            | 
-            Q(email__iexact=variable)
-            )
-        person_phone_number=Person.objects.filter(query)
-        return person_phone_number.exists() 
+    
         
     
     
@@ -279,26 +273,12 @@ class Registration(APIView):
             request.POST._mutable=True
            
         data=request.data 
-        try:
-            phone=data['phone_number']
-            email=data['email'].strip()
-        except KeyError as msg:
-            return Response({"message":os.environ.get("Key_Not_Found"),"KeyError":str(msg),"status":False})
 
-        if self.unique_phone_number(phone):
-            return Response({"message":os.environ.get("Phone_Number_Exists_Message"),
-                             "status":True
-                             })
-        if self.unique_phone_number(email):
-            return Response({"message":os.environ.get("Email_Exists"),
-                             "status":True
-                             })
-    
         serializers=PersonSerializers(data=data)
         if serializers.is_valid():
             serializers.save()
             return Response({"message":os.environ.get("Profile_Created"),
-                             "phone_number":phone
+                             "phone_number":data['phone_number']
                              })
         else:
             print(serializers.errors)
@@ -306,21 +286,11 @@ class Registration(APIView):
     
     def put(self,request):
         if not request.POST._mutable:
-            request.POST._mutable=True
-           
+            request.POST._mutable=True 
         data=request.data 
         person=Person.objects.get(matrimony_id=request.GET['matrimony_id'])
-        if data.get('phone_number'):
-            if self.unique_phone_number(data['phone_number']):
-                return Response({"message":os.environ.get("Phone_Number_Exists_Message"),
-                             "status":True
-                             })
-        if data.get('email'):
-            if self.unique_phone_number(data['email']):
-                return Response({"message":os.environ.get("Email_Exists"),
-                             "status":True
-                             })
         serializers=PersonSerializers(person,data=data,partial=True)
+        data['user']=person.user.id
         if serializers.is_valid():
             serializers.save()
             return Response({"message":"Profile Updated successfully",
@@ -1202,7 +1172,8 @@ class HomeTabs(APIView):
         if _q=="matches":
             query
         elif _q=="new":
-            query=query & Q( reg_date__gte=datetime.today().now()-timedelta(days=10) )
+            india=pytz.timezone('Asia/Kolkata')
+            query=query & Q( reg_date__gte=datetime.today().now(india)-timedelta(days=10) )
         elif _q=="premium":
             USER_PLAN=["Silver","Gold",'Diamond',"Platinum"]
             query=query & Q(active_plan__in=USER_PLAN)
@@ -1256,5 +1227,12 @@ class HomeTabs(APIView):
 
 class ProfileSearch(APIView):
     def get(self,request):
-        search_data=request.data 
+        response={}
+        persons=Person.objects.all()
+       
+        for person in persons:
+            
+            serializer=GenderSerializer(person,many=False)
+            serializer
+        return Response(serializer.data)
         pass
