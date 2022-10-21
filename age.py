@@ -6,7 +6,7 @@ def get_age(string):
     dbdate=datetime.date(int(string[0]), int(string[1]),int(string[2]))
     year=today-dbdate
     age= str((year//365))[:3]
-    return age
+    return age.strip()
 
 def height(string):
     c=string.split("'")[:2]

@@ -1250,3 +1250,11 @@ class HomeTabs(APIView):
             response[person.id].update(connect_status(matrimonyid,person.matrimony_id ) )                          
         return Response(response.values())
         
+        
+        
+"""SEARCH BY PREFERANCE AND SEARCH BY ID"""
+
+class ProfileSearch(APIView):
+    def get(self,request):
+        search_data=request.data 
+        pass
