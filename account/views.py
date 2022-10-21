@@ -1428,8 +1428,10 @@ class HomeTabs(APIView):
             query=query & Q(horoscope=getattr(person,_q))
         elif _q=="qualification":
             query=query & Q(qualification=getattr(person,_q))
-        print(query)
+        print("================================")
         print(_q)
+        print(query)
+        print("==============xxxxxxxxxxxxxxxxxx==================")
         persons=Person.objects.filter(query).order_by('-id')
         for person in persons:
             images=person.profilemultiimage_set.all()
