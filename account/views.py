@@ -678,40 +678,6 @@ class ProfileMatchPercentage(APIView):
         return Response(response,status=200)
           
 
-#MATCH PROFILE BASED ON FIELDS####################
-class MatchInPercentage(APIView):
-    def get(self,request):
-        
-        matrimonyid=request.GET['matrimony_id']
-        response = {}
-        main_user = Person.objects.filter(matrimony_id=matrimonyid).values()
-        partner_user = Person.objects.filter(~Q(gender=main_user[0]["gender"])).values()
-        for index , keys in enumerate(partner_user):
-            response[index]={"id":keys['id']}
-            _list=['user_id' ,'id','plan_taken_date','plan_expiry_date','reg_date','reg_update' ,'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name' ,'status','about_myself','matrimony_id','email','image']
-            for i in _list:
-                del keys[i]
-            user_full_details= dict(ChainMap(*[{k : True} if partner_user[index][k] == main_user[0][k] else {k:False} for k,v in keys.items()]))
-            
-            response[index].update(user_full_details)
-        matrimonyid=[{"id":value['id'],"count":len([j for i, j in value.items() if j == True])} for key,value in response.items()]
-        
-        sorted_list=sorted(matrimonyid,key=lambda x:x['count'],reverse=True)
-        
-        list_of_id=[ i['id'] for i in sorted_list]
-        
-        match_response={}
-        persons=Person.objects.filter(id__in=list_of_id)
-        
-        for person in persons:
-            
-            images=ProfileMultiImage.objects.filter(profile__id=person.id)
-            serializer=GenderSerializer(person,many=False).data
-            serializer['profileimage']=images[0].files.url if images.exists() else None
-            match_response[person.id]=serializer
-            match_response[person.id].update(height_and_age(person.height,person.dateofbirth))
-            match_response[person.id].update(connect_status(matrimonyid,person.matrimony_id ) )                          
-        return Response(match_response.values())
 
 
 """HOW MUCH PROFILE UPDATED IN PERCENTAGE"""       
@@ -893,113 +859,8 @@ class Explore(APIView):
         return Response(response.values())
     
 
-"""EXPLORE PART"""
-class ExploreProfile(APIView):
-    def get(self,request):
-        matrimonyid=request.GET['matrimony_id']
-        _q=request.GET['q']
-        
-        profile=Person.objects.get(matrimony_id=matrimonyid) 
-        _list=['star','occupation','workplace','state','city','horoscope','qualification']
-        if _q not in _list:
-        
-            return Response({"message":"Invalid query",'status':False},status=400)
-        elif _q=="state":
-        
-            query=Q(~Q(gender=profile.gender)& Q(state=getattr(profile,_q)) )
-        elif _q=="star":     
-            query=Q(~Q(gender=profile.gender)& Q(star=getattr(profile,_q)) )
-        elif _q=="occupation":
-            query=Q(~Q(gender=profile.gender)& Q(occupation=getattr(profile,_q)) )     
-        elif _q=="workplace":
-            query=Q(~Q(gender=profile.gender)& Q(workplace=getattr(profile,_q)) )
-        elif _q=="city":
-            query=Q(~Q(gender=profile.gender)& Q(city=getattr(profile,_q)) )
-        elif _q=="horoscope":
-            query=Q(~Q(gender=profile.gender)& Q(horoscope=getattr(profile,_q)) )
-        elif _q=="qualification":
-            query=Q(~Q(gender=profile.gender)& Q(qualification=getattr(profile,_q)) )
-    
-           
-            
-       
-        matches=Person.objects.filter(query).order_by('-id')  
-        if matches.exists():
-            response={}
-            for match in matches:
-                images=ProfileMultiImage.objects.filter(profile__id=match.id)
-                #bookmark
-                bookmark=Bookmark.objects.filter(profile=profile,album__matrimony_id=match.matrimony_id)
-                serializers=GenderSerializer(match,many=False).data
-                serializers['profileimage']=images[0].files.url if images.exists() else None
-                serializers['bookmark']= True if bookmark.exists() else False
-                serializers.update(height_and_age(match.height,match.dateofbirth))
-                serializers.update(connect_status(matrimonyid,match.matrimony_id))
-                response[match.id]=serializers
-            return Response(response.values())
-        else:
-            return Response([],status=400)
  
  
- 
-"""GET VIEWED PROFILE"""
-
-"""PROFILE I SAW  PROFILE """
-class ISawProfile(APIView):
-    def get(self,request):
-        matrimonyid=request.GET['matrimony_id']
-        query=request.GET['q']#saw,viewed
-        
-        if query != "saw":
-            return Response({"message":"Invalid query","status":False},status=200)
-        
-        profile=Person.objects.get(matrimony_id__iexact=matrimonyid)
-        
-        
-        
-        view_profile=ViewedProfile.objects.filter(profile=profile)
-        # if view_profile.exists()==False:
-        #     return Response([],status=200)
-        
-        response={}
-        for view in view_profile[0].view.all():
-            images=ProfileMultiImage.objects.filter(profile__id=view.id)
-            serializer=GenderSerializer(view,many=False).data
-            serializer['profileimage']=images[0].files.url if images.exists() else None
-            serializer.update(height_and_age(view.height,view.dateofbirth))
-            serializer.update(connect_status(matrimonyid,view.matrimony_id))
-            response[view.id]=serializer
-        return Response(response.values())
-    
-    
-"""PROFILE  WHO VIEWED MY PROFILE """
-class WhoSawMyProfile(APIView):
-    def get(self,request):
-        matrimonyid=request.GET['matrimony_id']
-        query=request.GET['q']#saw,viewed
-        
-        if query!="viewed":
-            return Response({"message":"Invalid query","status":False},status=200)
-        
-        person=Person.objects.get(matrimony_id__iexact=matrimonyid)
-        
-        filter_query=Q(view__id=person.id)
-        view_profile=ViewedProfile.objects.filter(filter_query)
-        if view_profile.exists()==False:
-            return Response([],status=200)
-        
-        response={}
-        for view in view_profile:
-            images=ProfileMultiImage.objects.filter(profile__id=view.profile.id)
-            serializer=GenderSerializer(view.profile,many=False).data
-            serializer['profileimage']=images[0].files.url if images.exists() else None
-            serializer.update(height_and_age(view.profile.height,view.profile.dateofbirth))
-            serializer.update(connect_status(matrimonyid,view.profile.matrimony_id))
-            response[view.id]=serializer
-        return Response(response.values())
-
-
-
 
 #######################FRIEND REQUEST SEND#########################    
 """SEND FRIEND REQUEST"""   
@@ -1225,24 +1086,7 @@ class PartnerPreference(APIView):
         else:
             return Response({"message":"No any Preferace Yet!"})    
     
-    def post(self,request):
-        if not request.POST._mutable:
-            request.POST._mutable=True
-        data=request.data
-        profile=Person.object.get(matrimonyid=request.GET['matrimony_id'])
-        pp=Partner_Preferences.objects.select_related('profile').filter(profile__matrimony_id=request.GET['matrimony_id'])
-        if pp.exists():
-            serializers=PPSerializers(pp[0],many=False)
-            return Response({"message":"Preferace already created","status":True})       
-        else:
-            data['profile']=profile.id
-            serializers=PPSerializers(data=data)
-            if serializers.is_valid():
-                serializers.save()
-                return Response({"message":"Partner Preferance Created successfully","status":True},status=200)
-            else:
-                print(serializers.errors)
-                return Response(serializers.errors)  
+    
             
     def put(self,request):
         if not request.POST._mutable:
@@ -1336,7 +1180,7 @@ class ProfileInfo(APIView):
 
 
 
-"""TEST CONDITION"""
+"""HOME TAB"""
 
 class HomeTabs(APIView):
     def get(self,request):

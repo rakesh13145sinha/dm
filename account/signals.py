@@ -8,7 +8,7 @@ import random
 def create_partner_preferance(pk):
     pp=Person.objects.get(id=pk)
     _,created=Partner_Preferences.objects.get_or_create(profile= pp,min_age= "18",  \
-                 max_age= "40",min_height= "4'0'", max_height= "7'0''",  \
+                 max_age= "40",min_height= "4'0''", max_height= "7'0''",  \
                  physical_status= "Doesn't matter", mother_tongue= "Any",  \
                  marital_status= "Doesn't matter", drinking_habbit= "Doesn't matter",  \
                  smoking_habbit= "Doesn't matter",food= "Doesn't matter",  \

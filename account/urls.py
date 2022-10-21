@@ -15,22 +15,22 @@ urlpatterns = [
     
     path('new/match',OppositeGenderProfile.as_view()),##
    
+    path("profile/",include([ 
+                             
+                             
+        path('premium/',PremiumUser.as_view()),###
     
-    path('profile/premium/',PremiumUser.as_view()),###
-    #path('match/mutual/',MatchInPercentage.as_view()),###
-    #path('profile/saw',ISawProfile.as_view()),###
-    #path('profile/viewed',WhoSawMyProfile.as_view()),###
-    #path('explor/name',ExploreProfile.as_view()),###
+        path('info/',ProfileInfo.as_view()),
+        path('',SingleProfile.as_view()),
+        path('complete',ProfileUpdatePercentage.as_view()),
+        path('connect/',SendFriendRequest.as_view()),
+        path('connect/send',GETSendedFriendRequest.as_view()),
+        path('connect/receive',ReceivedFriendRequest.as_view()),
+        path('connect/reject',RejectedFriendRequest.as_view()),
+        path('connect/accepted',ConnectedProfiles.as_view()),
+                             
+                             ])),
     
-    
-    path('profile/info/',ProfileInfo.as_view()),
-    path('profile/',SingleProfile.as_view()),
-    path('profile/complete',ProfileUpdatePercentage.as_view()),
-    path('profile/connect/',SendFriendRequest.as_view()),
-    path('profile/connect/send',GETSendedFriendRequest.as_view()),
-    path('profile/connect/receive',ReceivedFriendRequest.as_view()),
-    path('profile/connect/reject',RejectedFriendRequest.as_view()),
-    path('profile/connect/accepted',ConnectedProfiles.as_view()),
     
     
     path('bookmark/',BookMarkProfile.as_view()),
