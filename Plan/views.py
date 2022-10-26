@@ -8,6 +8,7 @@ from .serializers import *
 from account.models import Person
 load_dotenv('.env')
 import os
+from django.db.models import Q
 
 
 # Create your views here.
@@ -120,6 +121,16 @@ class PaymentCapture(APIView):
             request.POST._mutable=True 
         data=request.data
         matrimonyid=request.GET['matrimony_id']
+        query=Q(
+             Q (matrimony_id=matrimonyid)
+            &
+            Q(active_plan="Waiting")
+        )
+        profile=Person.objects.filter(query)
+        if profile.exists:
+            return Response({"message":"Your are premium user","status":False},status=200)
+       
+            
         planid=request.GET['planid']
         data['profile']=matrimonyid
         data['status']=True
