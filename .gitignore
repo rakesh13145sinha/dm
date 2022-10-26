@@ -16,3 +16,5 @@ local/
 celerybeat.pid
 celerybeat-schedule
 *nohup.out
+*readme.txt
+backup/

@@ -40,11 +40,7 @@ urlpatterns = [
     path('match/daily',DailyRecomandation.as_view()),
     path('explor/',Explore.as_view()),
     
-    
-    #profile viewed and saw
-    
-    
-    #admin
+    path('test/',TestPercentage.as_view()),
     path('tab/',HomeTabs.as_view(),name="home tab"),
     path('banner',Banner.as_view()),
    

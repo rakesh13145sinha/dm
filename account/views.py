@@ -647,7 +647,27 @@ class ProfileMatchPercentage(APIView):
     
         return Response(response,status=200)
           
+"""Test Mode"""
 
+class TestPercentage(APIView):
+    def get(self,request):
+        matrimonyid=request.GET['matrimony_id']
+        requestid=request.GET['requeted_matrimony_id']
+        
+        profile=Person.objects.filter(matrimony_id=matrimonyid).values()[0]
+        r_profile=Person.objects.filter(matrimony_id=requestid).values()[0]
+        _list=['user_id' ,'id','plan_taken_date','plan_expiry_date','reg_date','reg_update' ,'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name' ,'status','about_myself','matrimony_id','email','image']
+
+        for key in _list:
+           
+            del r_profile[key]
+        true_list=[{key: True if value==profile[key] else False } for key,value in r_profile.items()]
+        
+       
+       
+           
+    
+        return Response(true_list,status=200)
 
 
 """HOW MUCH PROFILE UPDATED IN PERCENTAGE"""       
@@ -1141,6 +1161,7 @@ class ProfileInfo(APIView):
             "profileimage":image[0].files.url if image.exists() else None,
             "occupation":person.occupation,
             "name":person.name,
+            "active_plan":person.active_plan,
             "viewed_by_me": viewed_by_me[0].view.count() if viewed_by_me.exists() else 0,
             "viewed_by_others":ViewedProfile.objects.filter(view__id=person.id).count(),
             "interest":FriendRequests.objects.filter(requested_matrimony_id=matrimonyid).count()
