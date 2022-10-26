@@ -127,10 +127,9 @@ class PaymentCapture(APIView):
             Q(active_plan="Waiting")
         )
         profile=Person.objects.filter(query)
-        if profile.exists:
+        if profile.exists==False:
             return Response({"message":"Your are premium user","status":False},status=200)
-       
-            
+        
         planid=request.GET['planid']
         data['profile']=matrimonyid
         data['status']=True
