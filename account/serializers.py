@@ -36,6 +36,28 @@ class PersonSerializers(serializers.ModelSerializer):
         user=User.objects.create(username=uuid.uuid4())
         return Person.objects.create(user=user,**validated_data)
     
+    def update(self, instance, validated_data):
+        
+        print(validated_data)
+        """
+        update instanse
+        """
+        
+        
+        
+        if instance.phone_number!=validated_data.get('phone_number'):
+            raise serializers.ValidationError("Phone Number can't change")
+        
+        
+        
+        if instance.email != validated_data.get('email'):
+            
+            raise serializers.ValidationError("Email Address can't update")
+        
+        
+        
+        return instance
+    
     
     
 class ProfileSerializer(serializers.ModelSerializer):
