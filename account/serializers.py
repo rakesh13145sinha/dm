@@ -43,8 +43,6 @@ class PersonSerializers(serializers.ModelSerializer):
         update instanse
         """
         
-        
-        
         if  validated_data.get('phone_number'):
             if instance.phone_number !=validated_data.get('phone_number'):
                 
@@ -57,7 +55,7 @@ class PersonSerializers(serializers.ModelSerializer):
                 raise serializers.ValidationError("Email Address can't update")
         
         
-        
+        instance.save()
         return instance
     
     
