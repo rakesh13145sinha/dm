@@ -53,7 +53,9 @@ class PersonSerializers(serializers.ModelSerializer):
         if validated_data.get('email'):
             if instance.email != validated_data.get('email'):
                 raise serializers.ValidationError("Email Address can't update")
-        
+        for key,value in validated_data.items():
+            print(getattr(instance,key))
+            setattr(instance, key, value)
         
         instance.save()
         return instance
