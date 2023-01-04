@@ -6,10 +6,9 @@ from account.models import Person
 from .models import *
 from .serializers import *
 from account.models import Person
-load_dotenv('.env')
-import os
-from django.db.models import Q
 
+from django.db.models import Q
+from decouple import config
 
 # Create your views here.
 class SubscriptionPla(APIView):
@@ -89,8 +88,8 @@ class PaymentCapture(APIView):
     def get(self,request):
         planid=request.GET['planid']
         matrimonyid=request.GET['matrimony_id']
-        KEY=os.environ.get("KEY")
-        SECRET =os.environ.get("SECRET")
+        KEY=config("KEY")
+        SECRET =config("SECRET")
         try:
             plan=MemberShip.objects.get(id=planid)
         except Exception as msg:

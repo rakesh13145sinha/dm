@@ -14,9 +14,7 @@ from age import *
 from datetime import datetime, date,timedelta
 from dotenv import load_dotenv
 import pytz
-# Create your views here.
-load_dotenv('.env')
-#print(os.getenv("Phone_nuber_exists_message"))
+from decouple import config
 
 def connection(**kwargs):
     return kwargs
@@ -178,7 +176,7 @@ class Check_Email(APIView):
     def get(self,request):
         person_email=Person.objects.filter(email__iexact=request.GET['email'])
         if person_email.exists():
-            return Response({"message":os.environ.get("Email_Exists"),
+            return Response({"message":config("Email_Exists"),
                             "status":person_email[0].status,
                             "matrimony_id":person_email[0].matrimony_id ,
                              
@@ -272,7 +270,7 @@ class Registration(APIView):
         serializers=PersonSerializers(data=data)
         if serializers.is_valid():
             serializers.save()
-            return Response({"message":os.environ.get("Profile_Created"),
+            return Response({"message":config("Profile_Created"),
                              "phone_number":data['phone_number']
                              })
         else:

@@ -18,3 +18,4 @@ celerybeat-schedule
 *nohup.out
 *readme.txt
 backup/
+doctorm/
