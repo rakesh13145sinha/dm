@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import *
 import uuid
 from django.contrib.auth.models import User
+import string
+import random
 class PersonSerializers(serializers.ModelSerializer):
     class Meta:
         model=Person 
@@ -32,8 +34,9 @@ class PersonSerializers(serializers.ModelSerializer):
             if profile.exists():
                 raise serializers.ValidationError("Email Address Already In Used")
         
-        
-        user=User.objects.create(username=uuid.uuid4())
+        res = ''.join(random.choices(string.ascii_uppercase +string.digits, k=8))
+                             
+        user=User.objects.create(username=str(res)+validated_data['name'])
         return Person.objects.create(user=user,**validated_data)
     
     def update(self, instance, validated_data):

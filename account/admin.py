@@ -4,3 +4,4 @@ from .models import *
 admin.site.register(City)
 admin.site.register(State)
 admin.site.register(SaveOTP)
+admin.site.register(BannerImage)
