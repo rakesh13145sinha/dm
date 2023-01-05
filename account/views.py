@@ -1271,7 +1271,7 @@ def get_total_number_request_and_view(request):
          total_viewed_profile=0
     total_request_receive=FriendRequests.objects \
     .filter(requested_matrimony_id=person.matrimony_id).only("requested_matrimony_id").count()
-    homeImage=HomeScreenImage.objects.all(status=True)
+    homeImage=HomeScreenImage.objects.filter(status=True)
     #search_list=["viewed profile","response received","album","match maker","wedding planner","astrologer"]
     response={}
     for image in homeImage:
