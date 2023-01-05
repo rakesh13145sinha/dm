@@ -824,15 +824,9 @@ class Explore(APIView):
                 
                 Q(city=profile.city)& ~Q(gender=profile.gender)
                 )),
-            state=Count('pk', filter=Q(
-                
-                Q(state=profile.state)& ~Q(gender=profile.gender)
-                )),
             
-            workplace=Count('pk', filter=Q(
-                
-                Q(workplace=profile.workplace)& ~Q(gender=profile.gender)
-                )),
+            
+           
         
         )   
         response={}
