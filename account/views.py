@@ -819,10 +819,10 @@ class Explore(APIView):
                 Q(qualification=profile.qualification)& ~Q(gender=profile.gender)
                 )),
             
-            horoscope=Count('pk', filter=Q(
+            # horoscope=Count('pk', filter=Q(
                 
-                Q(horoscope=profile.horoscope)& ~Q(gender=profile.gender)
-                )),
+            #     Q(horoscope=profile.horoscope)& ~Q(gender=profile.gender)
+            #     )),
            
             city=Count('pk', filter=Q(
                 
