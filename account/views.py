@@ -1,20 +1,24 @@
 
-from django.shortcuts import  get_object_or_404
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import status
-from .models import *
-from django.db.models import Q
-import random 
-from django.db.models import Count
-from .serializers import *
-from .send_otp import *
 import os
-from age import *
-from datetime import datetime, date,timedelta
-from dotenv import load_dotenv
+import random
+from datetime import date, datetime, timedelta
+
 import pytz
 from decouple import config
+from django.db.models import Count, Q
+from django.shortcuts import get_object_or_404
+from dotenv import load_dotenv
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from age import *
+
+from .models import *
+from .send_otp import *
+from .serializers import *
+
 
 def connection(**kwargs):
     return kwargs
@@ -209,7 +213,7 @@ class SingleProfile(APIView):
         requestid=request.GET['requeted_matrimony_id']
         
         profile=Person.objects.filter(matrimony_id=requestid)
-        if profile.exists():
+        if profile:
             images=ProfileMultiImage.objects.filter(profile__id=profile[0].id)
            
             #bookmark
@@ -1249,3 +1253,55 @@ class ProfileSearch(APIView):
             serializer
         return Response(serializer.data)
         pass
+    
+"""TOTAL VIEW AND TOTAL REQUEST RECEIVE"""
+
+@api_view(['GET'])
+def get_total_number_request_and_view(request):
+    matrimonyid=request.GET['matrimony_id']
+    try:
+        person=Person.objects.get(matrimony_id=matrimonyid)
+    except Exception as e:
+        return Response({"message":"error",
+                         "status":False,"homeResponse":{"message":"Invalid matrimony id"}},status=400)
+    try:
+        profile_view=ViewedProfile.objects.get(profile=person)
+        total_viewed_profile=profile_view.view.count()
+    except Exception as e:
+         total_viewed_profile=0
+    total_request_receive=FriendRequests.objects \
+    .filter(requested_matrimony_id=person.matrimony_id).only("requested_matrimony_id").count()
+    homeImage=HomeScreenImage.objects.all(status=True)
+    #search_list=["viewed profile","response received","album","match maker","wedding planner","astrologer"]
+    response={}
+    for image in homeImage:
+        if image.name=="viewed profile":
+            response[image.id]={
+                "id":image.id,
+                "name":image.name,
+                "image":image.image.url,
+                "count":total_viewed_profile
+            }
+        elif image.name=="response received":
+            response[image.id]={
+                 "id":image.id,
+                 "name":image.name,
+                "image":image.image.url,
+                "count":total_request_receive
+            }
+        
+        response[image.id]={
+                "id":image.id,
+                "name":image.name,
+                "image":image.image.url,
+                "count":total_request_receive
+            }
+        
+            
+    res ={
+        "message":"success",
+        "status":True ,
+        "homeResponse":response.values()
+    }  
+    return Response(res,status=200)      
+    

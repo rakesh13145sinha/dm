@@ -234,7 +234,17 @@ class FriendRequests(models.Model):
 	updated_date=models.DateTimeField(auto_now=False,auto_now_add=True)
 	status=models.BooleanField(default=False)
 	
-
+"""
+public demanod this will store view by
+me image and friend request receive image
+and other move image save
+"""
+class HomeScreenImage(models.Model):
+    name=models.CharField(max_length=20)
+    image=models.ImageField(upload_to='home')
+    status=models.BooleanField(default=False)
+    def __str__(self):
+        return self.name
 
 
 

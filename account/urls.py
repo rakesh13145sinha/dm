@@ -28,7 +28,7 @@ urlpatterns = [
         path('connect/receive',ReceivedFriendRequest.as_view()),
         path('connect/reject',RejectedFriendRequest.as_view()),
         path('connect/accepted',ConnectedProfiles.as_view()),
-                             
+        path("summary",get_total_number_request_and_view)                     
                              ])),
     
     
