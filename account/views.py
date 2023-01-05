@@ -840,8 +840,8 @@ class Explore(APIView):
             banner=BannerImage.objects.filter(name=key,status=True)
             response[key]={
                 "name":key,
-                "image":banner[0].image.url if banner.exists() else None,
-                "color":banner[0].background if banner.exists() else None,
+                "image":banner[0].image.url if banner else None,
+                "color":banner[0].background if banner else None,
                 "count":value
             }            
         return Response(response.values())
