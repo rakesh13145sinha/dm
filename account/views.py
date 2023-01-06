@@ -1,15 +1,11 @@
-
-
-
 import os
 import random
-from datetime import date, datetime, timedelta
+from datetime import datetime ,date
 
 import pytz
 from decouple import config
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
-from dotenv import load_dotenv
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
