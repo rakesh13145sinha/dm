@@ -1278,10 +1278,11 @@ def get_total_number_request_and_view(request):
         return Response({"message":"error",
                          "status":False,"homeResponse":{"message":"Invalid matrimony id"}},status=400)
     try:
-        profile_view=ViewedProfile.objects.get(profile=person)
-        total_viewed_profile=profile_view.view.count()
+        #my profile viewed by other ,how many member viewed my profile
+        viewed=ViewedProfile.objects.filter(view=person).count()
+        
     except Exception as e:
-         total_viewed_profile=0
+         viewed=0
     total_request_receive=FriendRequests.objects \
     .filter(requested_matrimony_id=person.matrimony_id).only("requested_matrimony_id").count()
     homeImage=HomeScreenImage.objects.filter(status=True)
@@ -1293,7 +1294,7 @@ def get_total_number_request_and_view(request):
                 "id":image.id,
                 "name":image.name,
                 "image":image.image.url,
-                "count":total_viewed_profile
+                "count":viewed
             }
         elif image.name=="response received":
             response[image.id]={
