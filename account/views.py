@@ -503,17 +503,30 @@ class OppositeGenderProfile(APIView):
             # &
             # Q(reg_date)
             )
-        response={}
+        
         persons=Person.objects.filter(query).order_by('-reg_date')[0:12]
-        for person in persons:
-            images=ProfileMultiImage.objects.filter(profile__id=person.id)
-            response[person.id]={
-                "image":images[0].files.url if images.exists() else None,
-                "matimony_id":person.matrimony_id,
-                "name":person.name
+        # for person in persons:
+        #     images=ProfileMultiImage.objects.filter(profile__id=person.id)
+        #     response[person.id]={
+        #         "image":images[0].files.url if images.exists() else None,
+        #         "matimony_id":person.matrimony_id,
+        #         "name":person.name
                 
-                }
-        return Response(response.values())
+        #         }
+       
+        data=[{
+            "image":person.profilemultiimage_set.all()[0].files.url if person.profilemultiimage_set.all() else None,
+            "matimony_id":person.matrimony_id,
+            "name":person.name,
+            "occupation":person.occupation,
+            "religion":person.religion,
+            "city":person.city,
+            "state":person.state,
+            "country":person.country,
+            }
+            for person in persons
+            ]
+        return Response({"message":"success","data":data})
     
 
 
