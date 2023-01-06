@@ -1311,10 +1311,10 @@ def get_total_number_request_and_view(request):
             }
         
             
-    res ={
-        "message":"success",
-        "status":True ,
-        "homeResponse":response.values()
-    }  
-    return Response(res,status=200)      
+    # res ={
+    #     "message":"success",
+    #     "status":True ,
+    #     "homeResponse":response.values()
+    # }  
+    return Response(response.values(),status=200)      
     
