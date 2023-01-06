@@ -1,12 +1,11 @@
 import os
 import random
-from datetime import date, datetime, timedelta
+from datetime import datetime ,date
 
 import pytz
 from decouple import config
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
-from dotenv import load_dotenv
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -1204,7 +1203,8 @@ class HomeTabs(APIView):
             query
         elif _q=="new":
             india=pytz.timezone('Asia/Kolkata')
-            query=query & Q( reg_date__gte=datetime.today().now(india)-timedelta(days=10) )
+            interval_time=datetime.today().now(india) - timedelta(days=10)
+            query=query & Q(reg_date__gte=interval_time)
         elif _q=="premium":
             USER_PLAN=["Silver","Gold",'Diamond',"Platinum"]
             query=query & Q(active_plan__in=USER_PLAN)
@@ -1279,10 +1279,11 @@ def get_total_number_request_and_view(request):
         return Response({"message":"error",
                          "status":False,"homeResponse":{"message":"Invalid matrimony id"}},status=400)
     try:
-        profile_view=ViewedProfile.objects.get(profile=person)
-        total_viewed_profile=profile_view.view.count()
+        #my profile viewed by other ,how many member viewed my profile
+        viewed=ViewedProfile.objects.filter(view=person).count()
+        
     except Exception as e:
-         total_viewed_profile=0
+         viewed=0
     total_request_receive=FriendRequests.objects \
     .filter(requested_matrimony_id=person.matrimony_id).only("requested_matrimony_id").count()
     homeImage=HomeScreenImage.objects.filter(status=True)
@@ -1294,7 +1295,7 @@ def get_total_number_request_and_view(request):
                 "id":image.id,
                 "name":image.name,
                 "image":image.image.url,
-                "count":total_viewed_profile
+                "count":viewed
             }
         elif image.name=="response received":
             response[image.id]={
