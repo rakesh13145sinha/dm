@@ -1,8 +1,8 @@
 import os
 import random
-from datetime import datetime ,date
-
-import pytz
+from datetime import datetime ,date,timedelta
+import datetime
+import pytz 
 from decouple import config
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
