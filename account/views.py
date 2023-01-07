@@ -1,7 +1,7 @@
 import os
 import random
-from datetime import datetime ,date,timedelta
-import datetime
+# from datetime import datetime ,date,timedelta
+
 import pytz 
 from decouple import config
 from django.db.models import Count, Q
@@ -1184,6 +1184,7 @@ class ProfileInfo(APIView):
 
 class HomeTabs(APIView):
     def get(self,request):
+        import datetime
         matrimonyid=request.GET['matrimony_id']
         _q=request.GET['q'].strip()
         _list=['matches','new','premium','mutual','saw','viewed',
@@ -1203,7 +1204,7 @@ class HomeTabs(APIView):
             query
         elif _q=="new":
             india=pytz.timezone('Asia/Kolkata')
-            interval_time=datetime.today().now(india) - timedelta(days=10)
+            interval_time=datetime.today().now(india) - datetime.timedelta(days=10)
             query=query & Q(reg_date__gte=interval_time)
         elif _q=="premium":
             USER_PLAN=["Silver","Gold",'Diamond',"Platinum"]
