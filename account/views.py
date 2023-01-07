@@ -17,6 +17,8 @@ from .models import *
 from .send_otp import *
 from .serializers import *
 
+print("This is testing phase. Don't mind it.................")
+
 
 def connection(**kwargs):
     return kwargs
