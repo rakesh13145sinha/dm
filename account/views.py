@@ -131,13 +131,13 @@ def connect_status(matrimonyid,requestid):
 def height_and_age(h,age):
    
     if h is not None and age is not None:
-        return {"age":get_age(age),'height':height(h)}   
+        return {"age":age,'height':height(h)}   
     elif h is None and age is None:
         return {"age":None,'height':None}    
     elif age is None:
         return {"age":None,'height':height(h)}
     elif h is None:
-        return {"age":get_age(age),'height':None}
+        return {"age":age,'height':None}
 
 
 def mutual_match(matrimony_id):
@@ -248,7 +248,7 @@ class Registration(APIView):
                 serializers['profileimage']=[
                     {"id":image.id,"image":image.files.url if image.files else None}
                     for image in images ]
-                serializers["age"]=get_age(profile[0].dateofbirth)
+                # serializers["age"]=get_age(profile[0].dateofbirth)
                 return Response(serializers)
             else:
                 return Response({"message":"Invalid Matrimony Id","status":False},status=400)
@@ -516,7 +516,7 @@ class OppositeGenderProfile(APIView):
             "state":person.state,
             "country":person.country,
             "caste":person.caste,
-            "age":get_age(person.dateofbirth),
+            "age":person.dateofbirth,
             "height":height(person.height)
             }
             for person in persons
@@ -594,7 +594,7 @@ class ProfileMatchPercentage(APIView):
         
         if r_profile.dateofbirth:
             
-            r_age=get_age(r_profile.dateofbirth)
+            r_age=r_profile.dateofbirth
         else:
             r_age=random.randint(25,35)
         d_age=[i for i in range(25,35)]
