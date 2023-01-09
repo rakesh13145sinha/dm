@@ -211,29 +211,30 @@ class SingleProfile(APIView):
     def get(self,request):
         matrimonyid=request.GET['matrimony_id']
         requestid=request.GET['requeted_matrimony_id']
+        try:
+            profile=Person.objects.get(matrimony_id=requestid)
+        except Exception as e:
+            return Response({"message":"Invalid matrimony id"},status=400)
+       
+        images=profile.profilemultiimage_set.all()
         
-        profile=Person.objects.filter(matrimony_id=requestid)
-        if profile:
-            images=ProfileMultiImage.objects.filter(profile__id=profile[0].id)
-           
-            #bookmark
-            bookmark=Bookmark.objects.filter(profile__matrimony_id=matrimonyid,album__matrimony_id=requestid)
-            #view profile
-            ViewedProfiles(matrimonyid,requestid)
-            #check phone number views statas
-            phone_status=ViewedPhoneNumber(matrimonyid,requestid)
+        #bookmark
+        bookmark=Bookmark.objects.filter(profile__matrimony_id=matrimonyid,album__matrimony_id=requestid)
+        #view profile
+        ViewedProfiles(matrimonyid,requestid)
+        #check phone number views statas
+        phone_status=ViewedPhoneNumber(matrimonyid,requestid)
+    
+        serializers=ProfileSerializer(profile,many=False).data
+        serializers['profileimage']=[
+            {"id":image.id,"image":image.files.url if image.files else None}
+            for image in images ]
         
-            serializers=ProfileSerializer(profile[0],many=False).data
-            serializers['profileimage']=[
-                {"id":image.id,"image":image.files.url if image.files else None}
-                for image in images ]
-            
-            serializers['bookmark']= True if bookmark.exists() else False
-            serializers.update(connect_status(matrimonyid,requestid))
-            serializers.update(height_and_age( profile[0].height,profile[0].dateofbirth ))
-            return Response(serializers)
-        else:
-            return Response({"message":"Invalid Matrimony Id","status":False},status=400)
+        serializers['bookmark']= True if bookmark.exists() else False
+        serializers.update(connect_status(matrimonyid,requestid))
+        serializers.update(height_and_age( profile[0].height,profile[0].dateofbirth ))
+        return Response(serializers)
+        
        
 """Registration for new user"""
 class Registration(APIView):

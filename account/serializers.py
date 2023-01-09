@@ -92,7 +92,7 @@ class PersonSerializers(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=Person 
-        exclude=('user')
+        exclude=('user',)
 
 
        
