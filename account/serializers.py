@@ -4,6 +4,30 @@ import uuid
 from django.contrib.auth.models import User
 import string
 import random
+from age import *
+from django.db.models import Q
+
+
+
+def connect_status(matrimonyid,requestid):
+    # assert matrimonyid is None ,"matrimony id can't be None"
+    # assert requestid is None ," requested matrimony id can't be None"
+    query=Q(
+        Q(profile__matrimony_id=matrimonyid,requested_matrimony_id=requestid)
+        |
+        Q(profile__matrimony_id=requestid,requested_matrimony_id=matrimonyid)
+    )
+    send_friend_request=FriendRequests.objects.filter(query)
+    if send_friend_request:
+        return send_friend_request[0].request_status
+    else:
+        return "connect"
+
+
+
+
+
+
 class PersonSerializers(serializers.ModelSerializer):
     class Meta:
         model=Person 
@@ -82,12 +106,35 @@ class GenderSerializer(serializers.ModelSerializer):
         
         
 class TabPersonSerializer(serializers.ModelSerializer):
+    profileimage=serializers.SerializerMethodField()
+    connect_status=serializers.SerializerMethodField()
+    
+    # response[person.id].update(height_and_age(person.height,person.dateofbirth))
+    #         response[person.id].update(connect_status(matrimonyid,person.matrimony_id ) )
+    
+    def get_profileimage(self,obj):
+        images=obj.profilemultiimage_set.all()
+        return [{"image":image.files.url  if image.files else None } for image in images ] 
+    def get_connect_status(self,obj):
+        status=connect_status(self.context['matrimony_id'],obj.matrimony_id)
+        return status
+                                      
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['age'] =get_age(instance.dateofbirth)
+        representation['height'] =height(instance.height)
+        # representation['like_status'] = instance.like.filter(id=self.context['userid']).exists()
+        # representation['bookmark_status'] = instance.bookmark.filter(id=self.context['userid']).exists()
+        # representation['posted_by'] = True if instance.userdetails.id==self.context['userid'] else False
+        return representation                                   
+                                
+    
     class Meta:
         model=Person 
         fields=['matrimony_id','name',
                 'city','state','about_myself',
                 'phone_number','occupation',
-                'qualification','caste','country',"active_plan"]
+                'qualification','caste','country',"active_plan","profileimage",'connect_status']
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:

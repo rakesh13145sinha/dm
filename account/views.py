@@ -1257,17 +1257,19 @@ class HomeTabs(APIView):
         print(query)
         print("==============xxxxxxxxxxxxxxxxxx==================")
         persons=Person.objects.filter(query).order_by('-id')
-        for person in persons:
-            images=person.profilemultiimage_set.all()
-            serializer=GenderSerializer(person,many=False).data
-            serializer['profileimage']=[{"image":image.files.url  if image.files else None } 
+        # for person in persons:
+        #     images=person.profilemultiimage_set.all()
+        #     serializer=GenderSerializer(person,many=False).data
+        #     serializer['profileimage']=[{"image":image.files.url  if image.files else None } 
                                         
-                                        for image in images 
-                                        ]
-            response[person.id]=serializer
-            response[person.id].update(height_and_age(person.height,person.dateofbirth))
-            response[person.id].update(connect_status(matrimonyid,person.matrimony_id ) )                          
-        return Response(response.values())
+        #                                 for image in images 
+        #                                 ]
+        #     response[person.id]=serializer
+        #     response[person.id].update(height_and_age(person.height,person.dateofbirth))
+        #     response[person.id].update(connect_status(matrimonyid,person.matrimony_id ) )
+        #return Response(response.values())
+        serializer=TabPersonSerializer(persons, context={'matrimony_id':matrimonyid},many=True)                         
+        return Response(serializer.data)
         
         
         
