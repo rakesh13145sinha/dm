@@ -122,9 +122,7 @@ class TabPersonSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['age'] =get_age(instance.dateofbirth)
         representation['height'] =height(instance.height)
-        # representation['like_status'] = instance.like.filter(id=self.context['userid']).exists()
-        # representation['bookmark_status'] = instance.bookmark.filter(id=self.context['userid']).exists()
-        # representation['posted_by'] = True if instance.userdetails.id==self.context['userid'] else False
+        
         return representation                                   
                                 
     
@@ -133,7 +131,8 @@ class TabPersonSerializer(serializers.ModelSerializer):
         fields=['matrimony_id','name',
                 'city','state','about_myself',
                 'phone_number','occupation',
-                'qualification','caste','country',"active_plan","profileimage",'connect_status']
+                'qualification','caste','country',
+                "active_plan","profileimage",'connect_status','profile_created_by']
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:
