@@ -887,7 +887,8 @@ class SendFriendRequest(APIView):
         
         try:
             send_friend_request=FriendRequests.objects.get(query)
-            return Response({"message":"Request Exsits","connect_status":send_friend_request.request_status})
+            return Response({"message":"Request Exsits",
+                             "connect_status":send_friend_request.request_status})
         except Exception as e:
             sender.friendrequests_set.create(requested_matrimony_id=receiver.matrimony_id,status=True)
             return Response({"message":"Request Send Successfully","connect_status":"Waiting"},status=200)
@@ -1226,13 +1227,14 @@ class HomeTabs(APIView):
         elif _q=="saw":
             view_profile=ViewedProfile.objects.filter(profile=person)
             if view_profile.exists():
-                query=Q(id__in=[i.id for i in view_profile[0].view.all()])
+                query=Q(id__in= view_profile[0].view.all().values_list('id',flat=True))
             else:
                 return Response([],status=200)
         elif _q=="viewed":
             
             view_profile=ViewedProfile.objects.filter(view__id=person.id)
-            query=Q(id__in=[i.profile.id for i in view_profile])
+            #query=Q(id__in=[i.profile.id for i in view_profile])
+            query=Q(id__in=view_profile.values_list('profile__id',flat=True))
        
         elif _q=="location":
             query=query & Q(state=getattr(person,_q)) 
@@ -1258,7 +1260,10 @@ class HomeTabs(APIView):
         for person in persons:
             images=person.profilemultiimage_set.all()
             serializer=GenderSerializer(person,many=False).data
-            serializer['profileimage']=images[0].files.url if images.exists() else None
+            serializer['profileimage']=[{"image":image.files.url  if images.files else None } 
+                                        
+                                        for image in images 
+                                        ]
             response[person.id]=serializer
             response[person.id].update(height_and_age(person.height,person.dateofbirth))
             response[person.id].update(connect_status(matrimonyid,person.matrimony_id ) )                          
