@@ -500,8 +500,7 @@ class OppositeGenderProfile(APIView):
            ~ Q(gender=person.gender)
             &
             Q(block=False)
-            # &
-            # Q(reg_date)
+           
             )
         
         persons=Person.objects.filter(query).order_by('-reg_date')[0:12]
@@ -512,7 +511,7 @@ class OppositeGenderProfile(APIView):
             "matimony_id":person.matrimony_id,
             "name":person.name,
             "occupation":person.occupation,
-            
+            "qualification":person.qualification,
             "city":person.city,
             "state":person.state,
             "country":person.country,
