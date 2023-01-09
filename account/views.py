@@ -621,68 +621,34 @@ class ProfileMatchPercentage(APIView):
             "marital_status": True if profile.marital_status==r_profile.marital_status else False,
             "marital_range":"Unmarried",
             
-            # 'drinking_habbit': True if profile.drinking_habbit==r_profile.drinking_habbit else False,
-            # "drinking_habbit_range":"Any",
-            # 'smoking_habbit': True if profile.smoking_habbit==r_profile.smoking_habbit else False,
-            # "smoking_habbit_range":"Any",
-            # 'diet_preference': True if profile.diet_preference==r_profile.diet_preference else False,
-            # "diet_preference_range":"Any",
             
-            # 'caste': True if profile.caste==r_profile.caste else False,
-            # "caste_range":"Any",
             'religion': True if profile.religion==r_profile.religion else False,
             "religion_range":"Any",
-            # 'star': True if profile.star==r_profile.star else False,
-            # "star_range":"Any",
+            
             'occupation': True if profile.occupation==r_profile.occupation else False,
             "occupation_range":"Any",
             "annual_income": True if profile.physical_status==r_profile.physical_status else False,
             "annual_income_range":"3-5",
-            # 'job_sector': True if profile.job_sector==r_profile.job_sector else False,
-            # "job_sector_range":"Any",
+            
             'country': True if profile.country==r_profile.country else False,
             "country_range":"Any",
-            # 'state': True if profile.state==r_profile.state else False,
-            # "state_range":"Any",
-            # 'dosham': False,
-            # "dosham_range":"Any",
+           
             "qualification":True if profile.qualification==r_profile.qualification else False,
             "qualification_range":"Any"
          }  
         
-        number_of_true=0
-        
-        for key,value in response.items():
-            if value is True:
-                number_of_true+=1
-            else:
-                pass
-        multi=(number_of_true*100)//10
-        response.update({"percentage":multi})
-        print(multi)
-        print(number_of_true)
-        print("=================")
-        #n=len(list(filter(lambda x:x==False,response.values())))
-        
-        
-        
-        ##############
-        
-        
-        matched_field=[True for key,value in response.items() if value is True ].count(True)
-        not_match_filed=[False for key,value in response.items() if value is False ].count(False)
-        print(matched_field)
-        print(not_match_filed)
        
-        print(matched_field+not_match_filed)
+        matched_field=sum([1 for value in response.values() if value is True ])
+        not_match_filed=sum([1 for value in response.values() if value is False ])
+       
+       
         number_of_fields=matched_field+not_match_filed
         try:
             updated_code=(matched_field*100)//number_of_fields
         except ZeroDivisionError:
             updated_code=0
-        print(updated_code)
-        print("=================")
-        response.update({"test_percentage":updated_code})
+        
+        response.update({"percentage":updated_code})
         
        
            
