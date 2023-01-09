@@ -753,7 +753,7 @@ class DailyRecomandation(APIView):
                 "matrimony_id":r_pro.matrimony_id,
                 "image":images[0].files.url if images.exists() else None,
                 "height":height(r_pro.height),
-                "age":r_pro.dateofbirth,
+                "dateofbirth":r_pro.dateofbirth,
                 "gender":r_pro.gender,
                 "name":r_pro.name,
                 "phone_number":r_pro.phone_number
