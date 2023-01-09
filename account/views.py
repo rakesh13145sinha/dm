@@ -650,9 +650,6 @@ class ProfileMatchPercentage(APIView):
         
         response.update({"percentage":updated_code})
         
-       
-           
-    
         return Response(response,status=200)
           
 """Test Mode"""
