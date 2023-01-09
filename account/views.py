@@ -675,8 +675,9 @@ class ProfileMatchPercentage(APIView):
         print(not_match_filed)
        
         print(matched_field+not_match_filed)
+        number_of_fields=matched_field+not_match_filed
         try:
-            updated_code=(matched_field*100)//matched_field+not_match_filed
+            updated_code=(matched_field*100)//number_of_fields
         except ZeroDivisionError:
             updated_code=0
         print(updated_code)
