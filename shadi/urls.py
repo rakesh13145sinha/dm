@@ -29,7 +29,8 @@ if settings.DEBUG:
                 include([
                     path('account/',include('account.urls')),
                     path('plan/',include('Plan.urls')),
-                    path('vendor/',include('Eventmanagement.urls'))
+                    path('vendor/',include('Eventmanagement.urls')),
+                    path('search/',include('search.urls'))
                 ])
             )
     ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
@@ -42,7 +43,8 @@ else:
                 include([
                     path('account/',include('account.urls')),
                     path('plan/',include('Plan.urls')),
-                    path('vendor/',include('Eventmanagement.urls'))
+                    path('vendor/',include('Eventmanagement.urls')),
+                    path('search/',include('search.urls'))
                 ])
             )
     ]

@@ -1242,29 +1242,14 @@ class HomeTabs(APIView):
             query=query & Q(horoscope=getattr(person,_q))
         elif _q=="qualification":
             query=query & Q(qualification=getattr(person,_q))
-        print("================================")
-        print(_q)
-        print(query)
-        print("==============xxxxxxxxxxxxxxxxxx==================")
+       
         persons=Person.objects.filter(query).order_by('-id')
         serializer=TabPersonSerializer(persons, context={'matrimony_id':matrimonyid},many=True)                         
         return Response(serializer.data)
         
         
         
-"""SEARCH BY PREFERANCE AND SEARCH BY ID"""
 
-class ProfileSearch(APIView):
-    def get(self,request):
-        response={}
-        persons=Person.objects.all()
-       
-        for person in persons:
-            
-            serializer=GenderSerializer(person,many=False)
-            serializer
-        return Response(serializer.data)
-        pass
     
 """TOTAL VIEW AND TOTAL REQUEST RECEIVE"""
 

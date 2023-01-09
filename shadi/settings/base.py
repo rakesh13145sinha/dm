@@ -21,7 +21,8 @@ INSTALLED_APPS = [
 
     'account.apps.AccountConfig',
     'Plan.apps.PlanConfig',
-    'Eventmanagement.apps.EventmanagementConfig'
+    'Eventmanagement.apps.EventmanagementConfig',
+    'search.apps.SearchConfig',
 ]
 
 MIDDLEWARE = [
