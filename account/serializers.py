@@ -132,7 +132,7 @@ class TabPersonSerializer(serializers.ModelSerializer):
                 'city','state','about_myself',
                 'phone_number','occupation',
                 'qualification','caste','country',
-                "active_plan","profileimage",'connect_status','profile_created_by','age']
+                "active_plan","profileimage",'connect_status','profile_created_by','dateofbirth']
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:
