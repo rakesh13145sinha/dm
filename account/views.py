@@ -128,16 +128,13 @@ def connect_status(matrimonyid,requestid):
     else:
         return {"connect_status":"connect"}   
         
-def height_and_age(h,age):
+def height_and_age(h,age=None):
    
-    if h is not None and age is not None:
-        return {"age":age,'height':height(h)}   
-    elif h is None and age is None:
-        return {"age":None,'height':None}    
-    elif age is None:
-        return {"age":None,'height':height(h)}
+    if h is not None:
+        return {'height':height(h)}   
+    
     elif h is None:
-        return {"age":age,'height':None}
+        return {'height':None}
 
 
 def mutual_match(matrimony_id):
@@ -232,7 +229,7 @@ class SingleProfile(APIView):
         
         serializers['bookmark']= True if bookmark.exists() else False
         serializers.update(connect_status(matrimonyid,requestid))
-        serializers.update(height_and_age( profile.height,profile.dateofbirth ))
+        # serializers.update(height_and_age( profile.height,profile.dateofbirth ))
         return Response(serializers)
         
        
@@ -263,7 +260,7 @@ class Registration(APIView):
                 serializers['profileimage']=[
                     {"id":image.id,"image":image.files.url if image.files else None}
                     for image in images ]
-                serializers.update(height_and_age( profile.height,profile.dateofbirth ))
+                # serializers.update(height_and_age( profile.height,profile.dateofbirth ))
                 response[profile.id]=serializers
             return Response(response.values())
     
@@ -931,15 +928,15 @@ class ConnectedProfiles(APIView):
         for view in send_friend_request:
             
             if matrimonyid==view.profile.matrimony_id:
-                print("xxxxxxxxxxxif ")
-                image_query=Q(profile__matrimony_id=view.requested_matrimony_id)
+               
+               
                 instance=get_object_or_404(Person,matrimony_id=view.requested_matrimony_id)
             else:
-                print("xxxxxxxxxxxelsse ")
-                image_query=Q(profile=view.profile) 
+                
+               
                 instance=get_object_or_404(Person,id=view.profile.id)
              
-            images=ProfileMultiImage.objects.filter(image_query)
+            images=instance.profilemultiimage_set.all()
                         
             serializer=GenderSerializer(instance,many=False).data
             serializer['profileimage']=images[0].files.url if images.exists() else None
@@ -947,7 +944,7 @@ class ConnectedProfiles(APIView):
             serializer['connectid']=view.id
             serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
             serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
-            serializer.update(height_and_age(instance.height,instance.dateofbirth))
+            # serializer.update(height_and_age(instance.height,instance.dateofbirth))
             response[view.id]=serializer
         return Response(response.values())
 
@@ -981,7 +978,7 @@ class ReceivedFriendRequest(APIView):
                 serializer['connectid']=item.id
                 serializer['created_date']=item.created_date.strftime("%Y-%b-%d")
                 serializer['updated_date']=item.updated_date.strftime("%Y-%b-%d")
-                serializer.update(height_and_age(instance.height,instance.dateofbirth))
+                # serializer.update(height_and_age(instance.height,instance.dateofbirth))
                 response[item.id]=serializer
             return Response(response.values())
         else:
@@ -1015,7 +1012,7 @@ class RejectedFriendRequest(APIView):
                 serializer['connectid']=view.id
                 serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
                 serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
-                serializer.update(height_and_age(instance.height,instance.dateofbirth))
+                # serializer.update(height_and_age(instance.height,instance.dateofbirth))
                 response[view.id]=serializer
             return Response(response.values())
         else:
@@ -1043,7 +1040,7 @@ class GETSendedFriendRequest(APIView):
                 serializer['profileimage']=images[0].files.url if images else None
                 serializer['connect_status']=view.request_status
                 serializer['connectid']=view.id
-                serializer.update(height_and_age(profileid.height,profileid.dateofbirth))
+                # serializer.update(height_and_age(profileid.height,profileid.dateofbirth))
                 serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
                 serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
             
@@ -1129,14 +1126,16 @@ class PremiumUser(APIView):
         response={}
         persons=Person.objects.filter(query).order_by('-reg_date')[0:12]
         for person in persons:
-            images=ProfileMultiImage.objects.filter(profile__id=person.id)
+            images=person.profilemultiimage_set.all()
             response[person.id]={
                 "image":images[0].files.url if images.exists() else None,
                 "matimony_id":person.matrimony_id,
                 "name":person.name,
+                "dateofbirth":person.dateofbirth,
+                "height":person.height,
                 "active_plan":person.active_plan
                 }
-            response[person.id].update(height_and_age(person.height,person.dateofbirth))
+            # response[person.id].update(height_and_age(person.height,person.dateofbirth))
         return Response(response.values())
 #only for testing  this post methods
     def post(self,request):
@@ -1153,9 +1152,11 @@ class PremiumUser(APIView):
                 "image":images[0].files.url if images.exists() else None,
                 "matimony_id":person.matrimony_id,
                 "name":person.name,
-                "active_plan":person.active_plan
+                "active_plan":person.active_plan,
+                 "dateofbirth":person.dateofbirth,
+                "height":person.height,
                 }
-            response[person.id].update(height_and_age(person.height,person.dateofbirth))
+            # response[person.id].update(height_and_age(person.height,person.dateofbirth))
         return Response(response.values())
         
             

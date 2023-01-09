@@ -102,7 +102,7 @@ class GenderSerializer(serializers.ModelSerializer):
         fields=['matrimony_id','name',
                 'city','state','about_myself',
                 'phone_number','occupation',
-                'qualification','caste','country',"active_plan"]
+                'qualification','caste','country',"active_plan",'dateofbirth','height']
         
         
 class TabPersonSerializer(serializers.ModelSerializer):
