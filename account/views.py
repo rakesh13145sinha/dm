@@ -232,7 +232,7 @@ class SingleProfile(APIView):
         
         serializers['bookmark']= True if bookmark.exists() else False
         serializers.update(connect_status(matrimonyid,requestid))
-        serializers.update(height_and_age( profile[0].height,profile[0].dateofbirth ))
+        serializers.update(height_and_age( profile.height,profile.dateofbirth ))
         return Response(serializers)
         
        
@@ -242,17 +242,18 @@ class Registration(APIView):
     def get(self,request):
         matrimonyid=request.GET.get('matrimony_id')
         if matrimonyid is not None:
-            profile=Person.objects.filter(matrimony_id=matrimonyid)
-            if profile.exists():
-                images=ProfileMultiImage.objects.filter(profile__id=profile[0].id)
-                serializers=ProfileSerializer(profile[0],many=False).data
-                serializers['profileimage']=[
-                    {"id":image.id,"image":image.files.url if image.files else None}
-                    for image in images ]
-                # serializers["age"]=get_age(profile[0].dateofbirth)
-                return Response(serializers)
-            else:
-                return Response({"message":"Invalid Matrimony Id","status":False},status=400)
+            try:
+                profile=Person.objects.get(matrimony_id=matrimonyid)
+            except Exception as e:
+                return Response({"message":"Invalid matrimony id"},status=400)
+            images=profile.profilemultiimage_set.all()
+            serializers=ProfileSerializer(profile,many=False).data
+            serializers['profileimage']=[
+                {"id":image.id,"image":image.files.url if image.files else None}
+                for image in images ]
+            
+            return Response(serializers)
+            
         else: 
             profiles=Person.objects.all().order_by("-id")
             response={}
