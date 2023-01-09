@@ -669,13 +669,16 @@ class ProfileMatchPercentage(APIView):
         ##############
         
         
-        matched_field=[True for key,value in response.items() if value is True ].count('True')
-        not_match_filed=[False for key,value in response.items() if value is False ].count('False')
+        matched_field=[True for key,value in response.items() if value is True ].count(True)
+        not_match_filed=[False for key,value in response.items() if value is False ].count(False)
         print(matched_field)
         print(not_match_filed)
        
         print(matched_field+not_match_filed)
-        updated_code=(matched_field*100)//matched_field+not_match_filed
+        try:
+            updated_code=(matched_field*100)//matched_field+not_match_filed
+        except ZeroDivisionError:
+            updated_code=0
         print(updated_code)
         print("=================")
         response.update({"test_percentage":updated_code})
