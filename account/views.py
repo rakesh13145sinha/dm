@@ -748,7 +748,7 @@ class DailyRecomandation(APIView):
         response={}
         r_profile=Person.objects.filter(query).order_by('-reg_date')
         for r_pro in r_profile:
-            images=ProfileMultiImage.objects.filter(profile=r_pro)
+            images=r_pro.profilemultiimage_set.all()
             response[r_pro.id]={
                 "matrimony_id":r_pro.matrimony_id,
                 "image":images[0].files.url if images.exists() else None,
