@@ -79,6 +79,15 @@ class GenderSerializer(serializers.ModelSerializer):
                 'city','state','about_myself',
                 'phone_number','occupation',
                 'qualification','caste','country',"active_plan"]
+        
+        
+class TabPersonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Person 
+        fields=['matrimony_id','name',
+                'city','state','about_myself',
+                'phone_number','occupation',
+                'qualification','caste','country',"active_plan"]
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:

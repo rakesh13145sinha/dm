@@ -1260,7 +1260,7 @@ class HomeTabs(APIView):
         for person in persons:
             images=person.profilemultiimage_set.all()
             serializer=GenderSerializer(person,many=False).data
-            serializer['profileimage']=[{"image":image.files.url  if images.files else None } 
+            serializer['profileimage']=[{"image":image.files.url  if image.files else None } 
                                         
                                         for image in images 
                                         ]
