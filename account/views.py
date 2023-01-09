@@ -935,16 +935,13 @@ class ConnectedProfiles(APIView):
                 
                
                 instance=get_object_or_404(Person,id=view.profile.id)
-             
-            images=instance.profilemultiimage_set.all()
-                        
+                     
             serializer=GenderSerializer(instance,many=False).data
-            serializer['profileimage']=images[0].files.url if images.exists() else None
             serializer['connect_status']=view.request_status
             serializer['connectid']=view.id
             serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
             serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
-            # serializer.update(height_and_age(instance.height,instance.dateofbirth))
+           
             response[view.id]=serializer
         return Response(response.values())
 
@@ -971,14 +968,12 @@ class ReceivedFriendRequest(APIView):
             response={}
             for item in received_requests: 
                 instance=Person.objects.get(id=item.profile.id)
-                images=instance.profilemultiimage_set.all()    
                 serializer=GenderSerializer(instance,many=False).data
-                serializer['profileimage']=images[0].files.url if images else None
                 serializer['connect_status']=item.request_status
                 serializer['connectid']=item.id
                 serializer['created_date']=item.created_date.strftime("%Y-%b-%d")
                 serializer['updated_date']=item.updated_date.strftime("%Y-%b-%d")
-                # serializer.update(height_and_age(instance.height,instance.dateofbirth))
+                
                 response[item.id]=serializer
             return Response(response.values())
         else:
@@ -1005,14 +1000,12 @@ class RejectedFriendRequest(APIView):
             response={}
             for view in send_friend_request:
                 instance=Person.objects.get(id=view.profile.id) 
-                images=instance.profilemultiimage_set.all() 
                 serializer=GenderSerializer(instance,many=False).data
-                serializer['profileimage']=images[0].files.url if images.exists() else None
                 serializer['connect_status']=view.request_status
                 serializer['connectid']=view.id
                 serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
                 serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
-                # serializer.update(height_and_age(instance.height,instance.dateofbirth))
+                
                 response[view.id]=serializer
             return Response(response.values())
         else:
@@ -1035,12 +1028,10 @@ class GETSendedFriendRequest(APIView):
             response={}
             for view in send_friend_request:
                 profileid=Person.objects.get(matrimony_id=view.requested_matrimony_id)
-                images=profileid.profilemultiimage_set.all()
+                
                 serializer=GenderSerializer(profileid,many=False).data
-                serializer['profileimage']=images[0].files.url if images else None
                 serializer['connect_status']=view.request_status
                 serializer['connectid']=view.id
-                # serializer.update(height_and_age(profileid.height,profileid.dateofbirth))
                 serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
                 serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
             

@@ -97,12 +97,20 @@ class ProfileSerializer(serializers.ModelSerializer):
 
        
 class GenderSerializer(serializers.ModelSerializer):
+    profileimage=serializers.SerializerMethodField()
+    
+    def get_profileimage(self,obj):
+        images=obj.profilemultiimage_set.all()
+        return images[0].files.url if images.exists() else None
+    
+    
+    
     class Meta:
         model=Person 
         fields=['matrimony_id','name',
                 'city','state','about_myself',
                 'phone_number','occupation',
-                'qualification','caste','country',"active_plan",'dateofbirth','height']
+                'qualification','caste','country',"active_plan",'dateofbirth','height','profileimage']
         
         
 class TabPersonSerializer(serializers.ModelSerializer):
