@@ -120,7 +120,7 @@ class TabPersonSerializer(serializers.ModelSerializer):
                                       
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['age'] =get_age(instance.dateofbirth)
+       
         representation['height'] =height(instance.height)
         
         return representation                                   
@@ -132,7 +132,7 @@ class TabPersonSerializer(serializers.ModelSerializer):
                 'city','state','about_myself',
                 'phone_number','occupation',
                 'qualification','caste','country',
-                "active_plan","profileimage",'connect_status','profile_created_by']
+                "active_plan","profileimage",'connect_status','profile_created_by','age']
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:

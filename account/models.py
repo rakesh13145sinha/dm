@@ -1,7 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import User
-
+from age import *
 
 
 class Person(models.Model):
@@ -28,7 +28,7 @@ class Person(models.Model):
 	phone_number = models.CharField(max_length=13,null=True)
 	gender = models.CharField(max_length=20,null=True,choices=GENDER)
 	dateofbirth = models.CharField(max_length=20,null=True)
-	image=models.ImageField(upload_to="profile/image",null=True,blank=True)
+	#image=models.ImageField(upload_to="profile/image",null=True,blank=True)
 
 #physical status
 	height = models.CharField(max_length=100,null=True)
@@ -107,7 +107,16 @@ class Person(models.Model):
 		unique_together = ("phone_number","matrimony_id",'email')
 	
 	def __str__(self):
+     
 		return "%s" %(self.user)
+
+	def save(self, *args, **kwargs):
+		self.dateofbirth=get_age(self.dateofbirth)
+		super().save(*args, **kwargs)  # Call the "real" save() method.
+       
+     
+     
+        
 
 	
 class Bookmark(models.Model):
