@@ -110,9 +110,9 @@ class Person(models.Model):
      
 		return "%s" %(self.user)
 
-	def save(self, *args, **kwargs):
-		self.dateofbirth=get_age(self.dateofbirth)
-		super().save(*args, **kwargs)  # Call the "real" save() method.
+	# def save(self, *args, **kwargs):
+	# 	self.dateofbirth=get_age(self.dateofbirth)
+	# 	super().save(*args, **kwargs)  # Call the "real" save() method.
        
      
      
