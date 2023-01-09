@@ -32,7 +32,7 @@ def generate_matrimonyid():
 def create_profile(sender, instance, created, **kwargs):
     if created:
         instance.matrimony_id=generate_matrimonyid()
-        instance.dataofbirth=get_age(instance.dataofbirth)
+        instance.dateofbirth=get_age(instance.dateofbirth)
         instance.save()
         sending_otp(random.randint(1000,9999), instance.phone_number)
         create_partner_preferance(instance.id)
