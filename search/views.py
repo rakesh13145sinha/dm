@@ -31,10 +31,72 @@ def search_by_matrimonyid(request):
     logged_matrimony_id=request.GET['matrimony_id']
     data=request.data 
     try:
-        logged_user=Person.objects.get(matrimony_id=logged_matrimony_id)
+        profile=Person.objects.get(matrimony_id=logged_matrimony_id)
     except Exception as e:
         return Response({"message":"Invalid matrimony id"},status=400)
-    query=~Q(gender=logged_user.gender)
+    
+    query=Q(
+           Q(   ~Q(gender=profile.gender)
+                &
+                Q(status=True)
+            )
+           &
+           Q(
+               Q(physical_status=profile.physical_status)
+               |
+               Q(mother_tongue=profile.mother_tongue)
+               |
+               Q(marital_status=profile.marital_status)
+               |
+               Q(drinking_habbit=profile.drinking_habbit)
+               |
+               Q(smoking_habbit=profile.smoking_habbit)
+               |
+               Q(diet_preference=profile.diet_preference)
+               |
+               Q(caste=profile.caste)
+               |
+               Q(religion=profile.religion)
+               |
+               Q(occupation=profile.occupation)
+               |
+               Q(job_sector=profile.job_sector)
+               |
+               Q(smoking_habbit=profile.smoking_habbit)
+               |
+               Q(city=profile.city)
+               |
+               Q(state=profile.state)
+               |
+               Q(religion=profile.religion)
+               |
+               Q(occupation=profile.occupation)
+               |
+               Q(qualification=profile.qualification)
+
+           ) 
+           
+            
+        )
+        
+    response={}
+    r_profile=Person.objects.filter(query).order_by('-reg_date')
+    for r_pro in r_profile:
+        images=ProfileMultiImage.objects.filter(profile=r_pro)
+        response[r_pro.id]={
+            "matrimony_id":r_pro.matrimony_id,
+            "image":images[0].files.url if images.exists() else None,
+            "height":height(r_pro.height),
+            "age":r_pro.dateofbirth,
+            "gender":r_pro.gender,
+            "name":r_pro.name,
+            "phone_number":r_pro.phone_number
+            
+        }
+        response[r_pro.id].update(connect_status(matrimonyid,r_pro.matrimony_id))
+    
+    return Response(response.values(),status=200)
+
     
     
    

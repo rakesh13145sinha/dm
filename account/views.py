@@ -515,8 +515,8 @@ class OppositeGenderProfile(APIView):
             "state":person.state,
             "country":person.country,
             "caste":person.caste,
-            "age":person.dateofbirth,
-            "height":height(person.height)
+            "dateofbirth":person.dateofbirth,
+            "height":person.height
             }
             for person in persons
             ]
@@ -604,7 +604,7 @@ class ProfileMatchPercentage(APIView):
             
             ]
         response={
-            "age":True if int(r_age) in d_age else False,
+            "dateofbirth":True if int(r_age) in d_age else False,
             "age_range":"25-35" ,
             "height":True if r_profile.height in d_height else False,
             "height_range":"4.5 -5.11",
