@@ -109,8 +109,7 @@ class TabPersonSerializer(serializers.ModelSerializer):
     profileimage=serializers.SerializerMethodField()
     connect_status=serializers.SerializerMethodField()
     
-    # response[person.id].update(height_and_age(person.height,person.dateofbirth))
-    #         response[person.id].update(connect_status(matrimonyid,person.matrimony_id ) )
+   
     
     def get_profileimage(self,obj):
         images=obj.profilemultiimage_set.all()

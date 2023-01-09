@@ -620,43 +620,66 @@ class ProfileMatchPercentage(APIView):
             "mother_tongue_range":"Any",
             "marital_status": True if profile.marital_status==r_profile.marital_status else False,
             "marital_range":"Unmarried",
-            'drinking_habbit': True if profile.drinking_habbit==r_profile.drinking_habbit else False,
-            "drinking_habbit_range":"Any",
-            'smoking_habbit': True if profile.smoking_habbit==r_profile.smoking_habbit else False,
-            "smoking_habbit_range":"Any",
-            'diet_preference': True if profile.diet_preference==r_profile.diet_preference else False,
-            "diet_preference_range":"Any",
-            'caste': True if profile.caste==r_profile.caste else False,
-            "caste_range":"Any",
+            
+            # 'drinking_habbit': True if profile.drinking_habbit==r_profile.drinking_habbit else False,
+            # "drinking_habbit_range":"Any",
+            # 'smoking_habbit': True if profile.smoking_habbit==r_profile.smoking_habbit else False,
+            # "smoking_habbit_range":"Any",
+            # 'diet_preference': True if profile.diet_preference==r_profile.diet_preference else False,
+            # "diet_preference_range":"Any",
+            
+            # 'caste': True if profile.caste==r_profile.caste else False,
+            # "caste_range":"Any",
             'religion': True if profile.religion==r_profile.religion else False,
             "religion_range":"Any",
-            'star': True if profile.star==r_profile.star else False,
-            "star_range":"Any",
+            # 'star': True if profile.star==r_profile.star else False,
+            # "star_range":"Any",
             'occupation': True if profile.occupation==r_profile.occupation else False,
             "occupation_range":"Any",
             "annual_income": True if profile.physical_status==r_profile.physical_status else False,
             "annual_income_range":"3-5",
-            'job_sector': True if profile.job_sector==r_profile.job_sector else False,
-            "job_sector_range":"Any",
-            'city': True if profile.city==r_profile.city else False,
-            "city_range":"Any",
-            'state': True if profile.state==r_profile.state else False,
-            "state_range":"Any",
-            'dosham': False,
-            "dosham_range":"Any",
+            # 'job_sector': True if profile.job_sector==r_profile.job_sector else False,
+            # "job_sector_range":"Any",
+            'country': True if profile.country==r_profile.country else False,
+            "country_range":"Any",
+            # 'state': True if profile.state==r_profile.state else False,
+            # "state_range":"Any",
+            # 'dosham': False,
+            # "dosham_range":"Any",
             "qualification":True if profile.qualification==r_profile.qualification else False,
             "qualification_range":"Any"
          }  
         
         number_of_true=0
+        
         for key,value in response.items():
             if value is True:
                 number_of_true+=1
             else:
                 pass
-        multi=(number_of_true*100)//18
+        multi=(number_of_true*100)//10
         response.update({"percentage":multi})
-        n=len(list(filter(lambda x:x==False,response.values())))
+        print(multi)
+        print(number_of_true)
+        print("=================")
+        #n=len(list(filter(lambda x:x==False,response.values())))
+        
+        
+        
+        ##############
+        
+        
+        matched_field=[True for key,value in response.items() if value is True ].count('True')
+        not_match_filed=[False for key,value in response.items() if value is False ].count('False')
+        print(matched_field)
+        print(not_match_filed)
+       
+        print(matched_field+not_match_filed)
+        updated_code=(matched_field*100)//matched_field+not_match_filed
+        print(updated_code)
+        print("=================")
+        response.update({"test_percentage":updated_code})
+        
        
            
     
@@ -1257,17 +1280,6 @@ class HomeTabs(APIView):
         print(query)
         print("==============xxxxxxxxxxxxxxxxxx==================")
         persons=Person.objects.filter(query).order_by('-id')
-        # for person in persons:
-        #     images=person.profilemultiimage_set.all()
-        #     serializer=GenderSerializer(person,many=False).data
-        #     serializer['profileimage']=[{"image":image.files.url  if image.files else None } 
-                                        
-        #                                 for image in images 
-        #                                 ]
-        #     response[person.id]=serializer
-        #     response[person.id].update(height_and_age(person.height,person.dateofbirth))
-        #     response[person.id].update(connect_status(matrimonyid,person.matrimony_id ) )
-        #return Response(response.values())
         serializer=TabPersonSerializer(persons, context={'matrimony_id':matrimonyid},many=True)                         
         return Response(serializer.data)
         

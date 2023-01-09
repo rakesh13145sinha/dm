@@ -124,6 +124,9 @@ class ProfileMultiImage(models.Model):
 	def __str__(self):
 		return "%s"%(self.id)
 
+
+
+
 class SaveOTP(models.Model):
 
 	phone_number = models.CharField(max_length=50,null=True)
