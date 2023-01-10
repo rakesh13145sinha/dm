@@ -701,9 +701,9 @@ def profile_match_percentage(request):
         ]
     
     _index={"min_height":_height_list.index(pp.min_height),"max_height":_height_list.index(pp.max_height)}
-    print(_index)
+    
     target_profile_index=_height_list.index(target_profile.height)
-    print(target_profile_index)
+    
     response={
         "dateofbirth":True if  int(target_profile.dateofbirth) in range(int(pp.min_age),int(pp.max_age)) else False,
         "height":True if target_profile_index in range(_index['min_height'],_index['max_height']) else False,
@@ -725,7 +725,7 @@ def profile_match_percentage(request):
     
     my_preference={
         "age_range":pp.min_age+"-"+pp.max_age ,
-        "height_range":pp.min_height+"-"+pp.min_height,
+        "height_range":pp.min_height+" "+"-"+" "+pp.min_height,
         "physical_range":pp.physical_status,
         
         "mother_tongue_range":pp.mother_tongue,

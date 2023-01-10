@@ -6,7 +6,7 @@ from django.db.models import Q
 
 """SEARCH BY MATRIMONY ID"""
 @api_view(['GET'])
-def delete_all_items(request):
+def search_by_matrimonyid(request):
     logged_matrimony_id=request.GET['matrimony_id']
     search_matrimony_id=request.GET['mid']
     try:
