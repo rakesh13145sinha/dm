@@ -70,7 +70,8 @@ class Person(models.Model):
 	college	= models.CharField(max_length=100,null=True)
 	orgnisation=models.CharField(max_length=255,null=True)
 	qualification	= models.CharField(max_length=100,null=True)
-	
+	degree=models.CharField(max_length=100,null=True)
+	specialization=models.CharField(max_length=100,null=True)
 
 #family details
 	total_family_members = models.CharField(max_length=100,null=True)
