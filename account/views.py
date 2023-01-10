@@ -674,7 +674,7 @@ class Percentage(APIView):
 
 ###########################testing of percentage match#####################
 @api_view(['GET'])
-def profile_match_percentage(self,request):
+def profile_match_percentage(request):
     matrimonyid=request.GET['matrimony_id']
     requestid=request.GET['requeted_matrimony_id']
     try:
