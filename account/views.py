@@ -274,6 +274,7 @@ class Registration(APIView):
         data=request.data 
 
         serializers=PersonSerializers(data=data)
+        print(data)
         if serializers.is_valid():
             serializers.save()
             return Response({"message":config("Profile_Created"),
