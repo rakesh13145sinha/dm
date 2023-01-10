@@ -1196,11 +1196,11 @@ class PartnerPreference(APIView):
         if not request.POST._mutable:
             request.POST._mutable=True
         data=request.data
-        pp=Partner_Preferences.objects.select_related('profile').filter(profile__matrimony_id=request.GET['matrimony_id'])
+        pp=Partner_Preferences.objects.select_related('profile').get(profile__matrimony_id=request.GET['matrimony_id'])
               
-        data['profile']=pp[0].profile.id
+        data['profile']=pp.profile.id
            
-        serializers=PPSerializers(pp[0],data=data,partial=True)
+        serializers=PPSerializers(pp,data=data,partial=True)
         if serializers.is_valid():
             serializers.save()
             return Response({"message":"Partner Preferance Updated successfully","status":True},status=200)
