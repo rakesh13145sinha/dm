@@ -705,7 +705,7 @@ def profile_match_percentage(self,request):
         
         'mother_tongue': True if pp.mother_tongue=="Any" or pp.mother_tongue==target_profile.mother_tongue else False,
         "marital_status": True if  pp.marital_status=="Any" or pp.marital_status==target_profile.marital_status else False,
-        'religion': True if (pp.religion=="Any") or  (pp.religion==target_profile.religion) else False,
+        'religion': True if (pp.religion=="Any" or pp.religion==target_profile.religion) else False,
         
         
         'occupation': True if pp.occupation=="Any" or pp.occupation==target_profile.occupation else False,
