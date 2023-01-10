@@ -35,12 +35,12 @@ urlpatterns = [
     
     path('bookmark/',BookMarkProfile.as_view()),
     path('bookmark/show',Album.as_view()),
-    path('match/percentage',ProfileMatchPercentage.as_view()),
+    path('match/percentage',profile_match_percentage),
     
     path('match/daily',DailyRecomandation.as_view()),
     path('explor/',Explore.as_view()),
     
-    path('test/',TestPercentage.as_view()),
+    path('test/',Percentage.as_view()),
     path('tab/',HomeTabs.as_view(),name="home tab"),
     path('banner',Banner.as_view()),
    

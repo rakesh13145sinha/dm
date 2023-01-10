@@ -9,13 +9,13 @@ from age import *
 def create_partner_preferance(pk):
     pp=Person.objects.get(id=pk)
     _,created=Partner_Preferences.objects.get_or_create(profile= pp,min_age= "18",  \
-                 max_age= "40",min_height= "4'0''", max_height= "7'0''",  \
-                 physical_status= "Doesn't matter", mother_tongue= "Any",  \
-                 marital_status= "Doesn't matter", drinking_habbit= "Doesn't matter",  \
-                 smoking_habbit= "Doesn't matter",food= "Doesn't matter",  \
-                 caste= "Any", religion= "Any",star= "Any",occupation= "Any",  \
-                 annual_income= "Any",job_sector= "Any",qualification="Any",  \
-                 city= "Any",state= "Any",country= "India",dosham= "Doesn't matter" ,\
+                 max_age="40",min_height="4'0''", max_height="7'0''",  \
+                 physical_status="Any", mother_tongue="Any",  \
+                 marital_status="Any", drinking_habbit="Any",  \
+                 smoking_habbit="Any",food="Any",  \
+                 caste="Any", religion="Any",star="Any",occupation="Any",  \
+                 annual_income= "Any",job_sector="Any",qualification="Any",  \
+                 city="Any",state="Any",country= "India",dosham="Any" ,\
                 description="Good luck !"
                  
                 )

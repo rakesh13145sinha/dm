@@ -602,21 +602,24 @@ class Album(APIView):
        
 ########################BOOKMARK API START#######################            
         
-        
-class ProfileMatchPercentage(APIView):
+"""not need"""      
+class Percentage(APIView):
     def get(self,request):
         matrimonyid=request.GET['matrimony_id']
         requestid=request.GET['requeted_matrimony_id']
+        try:
+            profile=Person.objects.get(matrimony_id=matrimonyid)
+        except Exception as e:
+            return Response({"message":"Invalid matrimony id","error":str(e)},status=400)
+        try:
+            target_profile=Person.objects.get(matrimony_id=requestid)
+        except Exception as e:
+            return Response({"message":"Invalid  requested matrimony id","error":str(e)},status=400)
         
-        profile=Person.objects.get(matrimony_id=matrimonyid)
-        r_profile=Person.objects.get(matrimony_id=requestid)
         
-        if r_profile.dateofbirth:
-            
-            r_age=r_profile.dateofbirth
-        else:
-            r_age=random.randint(25,35)
-        d_age=[i for i in range(25,35)]
+        
+        #my preference
+        pp=Partner_Preferences.objects.get(profile=profile)
         
         d_height=[
         "4'1''","4'2''","4'3''","4'4''","4'5''","4'6''","4'7''","4'8''","4'9''","4'10''","4'11''","5'0''"  
@@ -625,29 +628,29 @@ class ProfileMatchPercentage(APIView):
             ]
         response={
             "dateofbirth":True if int(r_age) in d_age else False,
-            "age_range":"25-35" ,
-            "height":True if r_profile.height in d_height else False,
-            "height_range":"4.5 -5.11",
-            'physical_status': True if profile.physical_status==r_profile.physical_status else False,
+            "age_range":pp.min_age+"-"+pp.max_age ,
+            "height":True if target_profile.height in d_height else False,
+            "height_range":pp.min_height+"-"+pp.min_height,
+            'physical_status': True if profile.physical_status==target_profile.physical_status else False,
             "physical_range":"Normal",
-            'mother_tongue': True if profile.mother_tongue==r_profile.mother_tongue else False,
+            'mother_tongue': True if profile.mother_tongue==target_profile.mother_tongue else False,
             "mother_tongue_range":"Any",
-            "marital_status": True if profile.marital_status==r_profile.marital_status else False,
+            "marital_status": True if profile.marital_status==target_profile.marital_status else False,
             "marital_range":"Unmarried",
             
             
-            'religion': True if profile.religion==r_profile.religion else False,
+            'religion': True if profile.religion==target_profile.religion else False,
             "religion_range":"Any",
             
-            'occupation': True if profile.occupation==r_profile.occupation else False,
+            'occupation': True if profile.occupation==target_profile.occupation else False,
             "occupation_range":"Any",
-            "annual_income": True if profile.physical_status==r_profile.physical_status else False,
+            "annual_income": True if profile.physical_status==target_profile.physical_status else False,
             "annual_income_range":"3-5",
             
-            'country': True if profile.country==r_profile.country else False,
+            'country': True if profile.country==target_profile.country else False,
             "country_range":"Any",
            
-            "qualification":True if profile.qualification==r_profile.qualification else False,
+            "qualification":True if profile.qualification==target_profile.qualification else False,
             "qualification_range":"Any"
          }  
         
@@ -665,28 +668,112 @@ class ProfileMatchPercentage(APIView):
         response.update({"percentage":updated_code})
         
         return Response(response,status=200)
-          
-"""Test Mode"""
 
-class TestPercentage(APIView):
-    def get(self,request):
-        matrimonyid=request.GET['matrimony_id']
-        requestid=request.GET['requeted_matrimony_id']
+###########################testing of percentage match#####################
+@api_view(['GET'])
+def profile_match_percentage(self,request):
+    matrimonyid=request.GET['matrimony_id']
+    requestid=request.GET['requeted_matrimony_id']
+    try:
+        profile=Person.objects.get(matrimony_id=matrimonyid)
+    except Exception as e:
+        return Response({"message":"Invalid matrimony id","error":str(e)},status=400)
+    try:
+        target_profile=Person.objects.get(matrimony_id=requestid)
+    except Exception as e:
+        return Response({"message":"Invalid  requested matrimony id","error":str(e)},status=400)
+    
+    
+    
+    #my preference
+    pp=Partner_Preferences.objects.get(profile=profile)
+    
+    d_height=[
+    "4'1''","4'2''","4'3''","4'4''","4'5''","4'6''","4'7''","4'8''","4'9''","4'10''","4'11''","5'0''"  
+    "5'1''","5'2''","5'3''","5'4''","5'5''","5'6''","5'7''","5'8''","5'9''","5'10''","5'11''","6'0''"
         
-        profile=Person.objects.filter(matrimony_id=matrimonyid).values()[0]
-        r_profile=Person.objects.filter(matrimony_id=requestid).values()[0]
-        _list=['user_id' ,'id','plan_taken_date','plan_expiry_date','reg_date','reg_update' ,'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name' ,'status','about_myself','matrimony_id','email','image']
+        ]
+    
+    
+    response={
+        "dateofbirth":True if  int(target_profile.dateofbirth) in range(int(pp.min_age),int(pp.max_age)) else False,
+        "height":True if pp.min_height== target_profile.height else False,
+        'physical_status': True if pp.physical_status=="Any" or  pp.physical_status== target_profile.physical_status else False,
+        
+        'mother_tongue': True if pp.mother_tongue=="Any" or pp.mother_tongue==target_profile.mother_tongue else False,
+        "marital_status": True if  pp.marital_status=="Any" or pp.marital_status==target_profile.marital_status else False,
+        'religion': True if pp.religion=="Any" or  pp.religion==target_profile.religion else False,
+        
+        
+        'occupation': True if pp.occupation=="Any" or pp.occupation==target_profile.occupation else False,
+        "annual_income": True if pp.annual_income=="Any" or pp.annual_income==target_profile.annual_income else False,
+        'country': True if pp.country=="Any" or pp.country==target_profile.country else False,
+        
+        
+        "qualification":True if pp.qualification=="Any" or pp.qualification==target_profile.qualification else False,
+        
+        }  
+    
+    my_preference={
+        "age_range":pp.min_age+"-"+pp.max_age ,
+        "height_range":pp.min_height+"-"+pp.min_height,
+        "physical_range":pp.physical_status,
+        
+        "mother_tongue_range":pp.mother_tongue,
+        "marital_range":pp.marital_status,
+        "religion_range":pp.religion,
+        
+        "occupation_range":pp.occupation,
+        "annual_income_range":pp.annual_income,
+        "country_range":pp.country,
+        "qualification_range":pp.qualification
+        
+        
+        }
+    
+    matched_field=sum([1 for value in response.values() if value is True ])
+    not_match_filed=sum([1 for value in response.values() if value is False ])
+    
+    
+    number_of_fields=matched_field+not_match_filed
+    try:
+        updated_code=(matched_field*100)//number_of_fields
+    except ZeroDivisionError:
+        updated_code=0
+    response.update(my_preference)
+    response.update({"percentage":updated_code})
+    
+    return Response(response,status=200)
 
-        for key in _list:
+
+
+
+
+
+
+
+       
+# """Test Mode"""
+
+# class TestPercentage(APIView):
+#     def get(self,request):
+#         matrimonyid=request.GET['matrimony_id']
+#         requestid=request.GET['requeted_matrimony_id']
+        
+#         profile=Person.objects.filter(matrimony_id=matrimonyid).values()[0]
+#         r_profile=Person.objects.filter(matrimony_id=requestid).values()[0]
+#         _list=['user_id' ,'id','plan_taken_date','plan_expiry_date','reg_date','reg_update' ,'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name' ,'status','about_myself','matrimony_id','email','image']
+
+#         for key in _list:
            
-            del r_profile[key]
-        true_list=[{key: True if value==profile[key] else False } for key,value in r_profile.items()]
+#             del r_profile[key]
+#         true_list=[{key: True if value==profile[key] else False } for key,value in r_profile.items()]
         
        
        
            
     
-        return Response(true_list,status=200)
+#         return Response(true_list,status=200)
 
 
 """HOW MUCH PROFILE UPDATED IN PERCENTAGE"""       
