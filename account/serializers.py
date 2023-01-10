@@ -116,7 +116,7 @@ class GenderSerializer(serializers.ModelSerializer):
 class TabPersonSerializer(serializers.ModelSerializer):
     profileimage=serializers.SerializerMethodField()
     connect_status=serializers.SerializerMethodField()
-    
+    album_status=serializers.SerializerMethodField()
    
     
     def get_profileimage(self,obj):
@@ -125,6 +125,16 @@ class TabPersonSerializer(serializers.ModelSerializer):
     def get_connect_status(self,obj):
         status=connect_status(self.context['matrimony_id'],obj.matrimony_id)
         return status
+    
+    def get_album_status(self,obj):
+       
+        bookmark=Bookmark.objects.get(profile__matrimony_id=self.context['matrimony_id'])
+        try:
+            bookmark.album.get(person=obj)
+            return True
+        except Exception as e:
+            return False
+        
                                       
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -140,7 +150,8 @@ class TabPersonSerializer(serializers.ModelSerializer):
                 'city','state','about_myself',
                 'phone_number','occupation',
                 'qualification','caste','country',
-                "active_plan","profileimage",'connect_status','profile_created_by','dateofbirth']
+                "active_plan","profileimage",'connect_status',"album_status",
+                'profile_created_by','dateofbirth']
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:

@@ -35,6 +35,44 @@ def search_by_matrimonyid(request):
     except Exception as e:
         return Response({"message":"Invalid matrimony id"},status=400)
     
+    # base filter query
+    query=Q(~Q(gender=profile.gender) & Q(status=True))
+
+    #location query
+    location_query=Q(
+        Q(city=profile.city)
+        |
+        Q(state=profile.state)
+        |
+        Q(country=profile.country)
+    )
+    query.add(location_query)
+    
+    #profession base filter
+    occupation_based=Q(
+        Q(occupation=profile.occupation)
+               |
+        Q(qualification=profile.qualification)
+        |
+        Q(job_sector=profile.job_sector)
+        |
+        Q(annual_income=profile.annual_income)
+    )
+    query.add(occupation_based)
+    #religious base filter
+    religion_base=Q(
+        Q(religion=profile.religion)
+               |
+         Q(caste=profile.caste)
+               |
+        Q(dosham=profile.dosham)
+               |
+        Q(star=profile.star)
+        
+    )
+        
+    
+    
     query=Q(
            Q(   ~Q(gender=profile.gender)
                 &

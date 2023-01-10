@@ -113,12 +113,7 @@ class Person(models.Model):
 	# def save(self, *args, **kwargs):
 	# 	self.dateofbirth=get_age(self.dateofbirth)
 	# 	super().save(*args, **kwargs)  # Call the "real" save() method.
-       
-     
-     
-        
-
-	
+ 
 class Bookmark(models.Model):
     profile=models.OneToOneField(Person,on_delete=models.CASCADE)
     album=models.ManyToManyField(Person,related_name="album")

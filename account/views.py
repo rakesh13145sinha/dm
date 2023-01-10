@@ -538,26 +538,46 @@ class BookMarkProfile(APIView):
         matrimonyid=request.GET['matrimony_id']
         requestid=request.GET['requeted_matrimony_id']
         
-        profile=Person.objects.filter(matrimony_id=requestid)
-        selfid=Person.objects.get(matrimony_id=matrimonyid)
         
-        if profile.exists():
-            bookmark=Bookmark.objects.filter(profile=selfid)   
-            if bookmark.exists():
-                if bookmark[0].album.filter(matrimony_id=requestid).exists():
-                    bookmark[0].album.remove(profile[0])
-                
-                    return Response({"bookmark":False,"status":False})
-                else:
-                    bookmark[0].album.add(profile[0])
-                    return Response({"bookmark":True,"status":True})
-                    
+        try:
+            selfid=Person.objects.get(matrimony_id=matrimonyid)
+        except Exception as e:
+            return Response({"message":"Invalid  matrimony id"},status=400)
+        
+        try:
+            profile=Person.objects.get(matrimony_id=requestid)
+        except Exception as e:
+            return Response({"message":"Invalid requested matrimony id"},status=400)
+        
+        
+        try:
+            bookmark=Bookmark.objects.get(profile=selfid) 
+            if bookmark.album.filter(matrimony_id=requestid):
+                bookmark.album.remove(profile)
+            
+                return Response({"bookmark":False,"status":False})
             else:
-                bookmark=Bookmark.objects.create(profile=selfid)
-                bookmark.album.add(profile[0])
+                bookmark.album.add(profile)
                 return Response({"bookmark":True,"status":True})
-        else:
-            return Response({"message":"Requested Matrimony Id Invalid","status":False})
+        except Exception as e:
+            bookmark=Bookmark.objects.create(profile=selfid)
+            bookmark.album.add(profile)
+            return Response({"bookmark":True,"status":True})
+              
+        # if bookmark.exists():
+        #     if bookmark[0].album.filter(matrimony_id=requestid).exists():
+        #         bookmark[0].album.remove(profile[0])
+            
+        #         return Response({"bookmark":False,"status":False})
+        #     else:
+        #         bookmark[0].album.add(profile[0])
+        #         return Response({"bookmark":True,"status":True})
+                
+        # else:
+        #     bookmark=Bookmark.objects.create(profile=selfid)
+        #     bookmark.album.add(profile[0])
+        #     return Response({"bookmark":True,"status":True})
+       
 
 class Album(APIView):
     def get(self,request) :
