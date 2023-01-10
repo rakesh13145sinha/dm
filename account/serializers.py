@@ -128,9 +128,9 @@ class TabPersonSerializer(serializers.ModelSerializer):
     
     def get_album_status(self,obj):
        
-        bookmark=Bookmark.objects.get(profile__matrimony_id=self.context['matrimony_id'])
         try:
-            bookmark.album.get(person=obj)
+            bookmark=Bookmark.objects.get(profile__matrimony_id=self.context['matrimony_id'])
+            bookmark.album.get(matrimony_id=obj.matrimony_id)
             return True
         except Exception as e:
             return False
