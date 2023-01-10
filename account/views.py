@@ -691,16 +691,22 @@ def profile_match_percentage(request):
     #my preference
     pp=Partner_Preferences.objects.get(profile=profile)
     
-    d_height=[
-    "4'1''","4'2''","4'3''","4'4''","4'5''","4'6''","4'7''","4'8''","4'9''","4'10''","4'11''","5'0''"  
-    "5'1''","5'2''","5'3''","5'4''","5'5''","5'6''","5'7''","5'8''","5'9''","5'10''","5'11''","6'0''"
+    _height_list=[
+    "3'1''","3'2''","3'3''","3'4''","3'5''","3'6''","3'7''","3'8''","3'9''","3'10''","3'11''","4'0''" , 
+    "4'1''","4'2''","4'3''","4'4''","4'5''","4'6''","4'7''","4'8''","4'9''","4'10''","4'11''","5'0''" , 
+    "5'1''","5'2''","5'3''","5'4''","5'5''","5'6''","5'7''","5'8''","5'9''","5'10''","5'11''","6'0''",
+    "6'1''","6'2''","6'3''","6'4''","6'5''","6'6''","6'7''","6'8''","6'9''","6'10''","6'11''","7'0''",
+    "7'1''","7'2''","7'3''","7'4''","7'5''","7'6''","7'7''","7'8''","7'9''","7'10''","7'11''","8'0''"
         
         ]
     
-    
+    _index={"min_height":_height_list.index(pp.min_height),"max_height":_height_list.index(pp.max_height)}
+    print(_index)
+    target_profile_index=_height_list.index(target_profile.height)
+    print(target_profile_index)
     response={
         "dateofbirth":True if  int(target_profile.dateofbirth) in range(int(pp.min_age),int(pp.max_age)) else False,
-        "height":True if pp.min_height== target_profile.height else False,
+        "height":True if target_profile_index in range(_index['min_height'],_index['max_height']) else False,
         'physical_status': True if pp.physical_status=="Any" or  pp.physical_status== target_profile.physical_status else False,
         
         'mother_tongue': True if pp.mother_tongue=="Any" or pp.mother_tongue==target_profile.mother_tongue else False,
