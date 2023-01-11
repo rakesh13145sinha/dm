@@ -39,13 +39,20 @@ def generate_request(request):
     if data['update_field_name'] not in  updated_field  :
         return Response({"message":"This field allready updated"},status=200)                                    
     
-    query=Q(other_profile=otherid,update_field_name=data['update_field_name'],request_status="Waiting")
+    query=Q(other_profile=otherid,
+            update_field_name=data['update_field_name'],
+            request_status="Waiting",self_profile=selfid
+            )
     try:
-        selfid.updaterequests_set.get(query)
+       
+        UpdateRequests.objects.get(query)
         return Response({"message":"Request allready done",},status=200)
     except Exception as e:
         
-        selfid.updaterequests_set.create(other_profile=otherid,update_field_name=data['update_field_name'])
+        UpdateRequests.objects.create(other_profile=otherid,\
+                                      update_field_name=data['update_field_name'],\
+                                       self_profile=selfid   
+                                      )
         return Response({"message":"Request sended successfully"},status=200)
     
 
