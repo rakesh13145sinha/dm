@@ -986,7 +986,7 @@ class ReceivedFriendRequest(APIView):
                 response[item.id]=serializer
             return Response(response.values())
         else:
-            return Response([],status=200)
+            return Response(response.values(),status=200)
 
 """REJECTED FRIEND REQUEST"""
 class RejectedFriendRequest(APIView):
