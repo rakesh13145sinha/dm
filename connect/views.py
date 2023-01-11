@@ -30,7 +30,7 @@ def generate_request(request):
     except Exception as e:
         return Response({"message":"Invalid matrimony id","error":str(e)},status=400)
     
-    if self_mid.gender==other_mid.gender:
+    if selfid.gender==otherid.gender:
         return Response({"message":"You con't request this matrimony id"})
     
     dict_value=Person.objects.filter(matrimony_id=other_mid)\
