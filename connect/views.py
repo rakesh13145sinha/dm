@@ -46,7 +46,7 @@ def generate_request(request):
     try:
        
         UpdateRequests.objects.get(query)
-        return Response({"message":"Request allready done",},status=200)
+        return Response({"message":"Request sent",},status=200)
     except Exception as e:
         
         UpdateRequests.objects.create(other_profile=otherid,\
