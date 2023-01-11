@@ -967,8 +967,8 @@ class ReceivedFriendRequest(APIView):
                 serializer['connectid']=sender.id
                 serializer['table']=2
                
-                serializer['created_date']=item.created_date.strftime("%Y-%b-%d")
-                serializer['updated_date']=item.updated_date.strftime("%Y-%b-%d")
+                serializer['created_date']=sender.created_date.strftime("%Y-%b-%d")
+                serializer['updated_date']=sender.updated_date.strftime("%Y-%b-%d")
                 
                 response[random.randint(1000,9999)]=serializer
                 
