@@ -29,6 +29,16 @@ def generate_request(request):
         otherid=Person.objects.get(matrimony_id=other_mid)
     except Exception as e:
         return Response({"message":"Invalid matrimony id","error":str(e)},status=400)
+    
+    if self_mid.gender==other_mid.gender:
+        return Response({"message":"You con't request this matrimony id"})
+    
+    dict_value=Person.objects.filter(matrimony_id=other_mid)\
+    .values('drinking_habbit','rashi','star','dosham','smoking_habbit','diet_preference')
+    updated_field=[key for key,value in dict_value[0].items() if value is None] 
+    if data['update_field_name'] not in  updated_field  :
+        return Response({"message":"This field allready updated"},status=200)                                    
+    
     query=Q(other_profile=otherid,update_field_name=data['update_field_name'],request_status="Waiting")
     try:
         selfid.updaterequests_set.get(query)
