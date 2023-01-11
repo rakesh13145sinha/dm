@@ -4,10 +4,13 @@ from account.models import Person
 
 class UpdateRequests(models.Model):
     UPDATE_FILED_REQUEST=[
-        ("Food","Food"),("Drink","Drink")
-        ("Star","Star"),("Smoke","Smoke")                              
-        ,("Rashi","Rashi"),("Dosham","Dosham")
-                          ]
+        ("Food","Food"),
+        ("Drink","Drink"),
+        ("Star","Star"),
+        ("Smoke","Smoke"),                              
+        ("Rashi","Rashi"),
+        ("Dosham","Dosham")
+    ]
     request_status_types = (
     ("Accepted","Accepted"),
     ("Waiting","Waiting"),
