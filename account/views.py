@@ -242,6 +242,8 @@ class SingleProfile(APIView):
         
         serializers['bookmark']= True if bookmark.exists() else False
         serializers['self_profile']=user_profile[0] 
+        list_of_field=[key for key in user_profile[0].keys()  ]
+        serializers['request_status']=request_status(self_profile[0],profile,list_of_field) 
         serializers.update(connect_status(matrimonyid,requestid))
         
         return Response(serializers)

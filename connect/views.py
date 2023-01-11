@@ -53,7 +53,7 @@ def generate_request(request):
                                       update_field_name=data['update_field_name'],\
                                        self_profile=selfid   
                                       )
-        return Response({"message":"Request sended successfully"},status=200)
+        return Response({"message":"Request sent successfully"},status=200)
     
 
 
