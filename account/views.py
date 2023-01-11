@@ -211,10 +211,19 @@ class SingleProfile(APIView):
     def get(self,request):
         matrimonyid=request.GET['matrimony_id']
         requestid=request.GET['requeted_matrimony_id']
+       
+        self_profile=Person.objects.filter(matrimony_id=matrimonyid).only('matrimony_id')
+        if self_profile:
+            #getting self these field for updated or not if not update then update
+            user_profile=self_profile.values('drinking_habbit','rashi','star','dosham',\
+                                             'smoking_habbit','diet_preference')
+        else:
+            return Response({"message":"Invalid matrimony_id"},status=200)
+        
         try:
             profile=Person.objects.get(matrimony_id=requestid)
         except Exception as e:
-            return Response({"message":"Invalid matrimony id"},status=400)
+            return Response({"message":"Invalid requested matrimony id"},status=400)
        
         images=profile.profilemultiimage_set.all()
         
@@ -231,8 +240,9 @@ class SingleProfile(APIView):
             for image in images ]
         
         serializers['bookmark']= True if bookmark.exists() else False
+        serializers['self_profile']=user_profile[0] 
         serializers.update(connect_status(matrimonyid,requestid))
-        # serializers.update(height_and_age( profile.height,profile.dateofbirth ))
+        
         return Response(serializers)
         
        
@@ -352,45 +362,6 @@ class Validate_OTP(APIView):
                 "status":contactnumber.status,
                 "active_plan":contactnumber.active_plan,
                
-                }
-            return Response(response,status=status.HTTP_202_ACCEPTED)
-            
-        else:
-            return Response({"message":"Enter wrong otp","status":False},status=status.HTTP_404_NOT_FOUND)
-
-"""only for tesing"""
-class Validate_OTPs(APIView):
-    def post(self,request) :
-        data=request.data
-
-        try:
-           
-            data['phone_number']
-            data['otp']
-            
-        except KeyError as msg:
-            return Response({"message":str(msg),"status":False,"required_field":True})
-        
-        
-        contactnumber= Person.objects.get(phone_number__iexact=data['phone_number'])    
-       
-        saved_otp=0000
-        images=ProfileMultiImage.objects.filter(profile=contactnumber)
-        
-        """OTP VARIFICATION """
-        if int(data['otp'])==saved_otp:
-            
-            contactnumber.status=True
-
-            contactnumber.save()
-        
-            response={
-                "message":"Login successfully",
-                "phone_number":contactnumber.phone_number,
-                "name":contactnumber.name,
-                "matrimony_id":contactnumber.matrimony_id,
-                "image":images[0].files.url if images.exists() else None,
-                "status":contactnumber.status,
                 }
             return Response(response,status=status.HTTP_202_ACCEPTED)
             
@@ -567,20 +538,6 @@ class BookMarkProfile(APIView):
             bookmark=Bookmark.objects.create(profile=selfid)
             bookmark.album.add(profile)
             return Response({"bookmark":True,"status":True})
-              
-        # if bookmark.exists():
-        #     if bookmark[0].album.filter(matrimony_id=requestid).exists():
-        #         bookmark[0].album.remove(profile[0])
-            
-        #         return Response({"bookmark":False,"status":False})
-        #     else:
-        #         bookmark[0].album.add(profile[0])
-        #         return Response({"bookmark":True,"status":True})
-                
-        # else:
-        #     bookmark=Bookmark.objects.create(profile=selfid)
-        #     bookmark.album.add(profile[0])
-        #     return Response({"bookmark":True,"status":True})
        
 
 class Album(APIView):
@@ -606,74 +563,7 @@ class Album(APIView):
        
 ########################BOOKMARK API START#######################            
         
-"""not need"""      
-class Percentage(APIView):
-    def get(self,request):
-        matrimonyid=request.GET['matrimony_id']
-        requestid=request.GET['requeted_matrimony_id']
-        try:
-            profile=Person.objects.get(matrimony_id=matrimonyid)
-        except Exception as e:
-            return Response({"message":"Invalid matrimony id","error":str(e)},status=400)
-        try:
-            target_profile=Person.objects.get(matrimony_id=requestid)
-        except Exception as e:
-            return Response({"message":"Invalid  requested matrimony id","error":str(e)},status=400)
-        
-        
-        
-        #my preference
-        pp=Partner_Preferences.objects.get(profile=profile)
-        
-        d_height=[
-        "4'1''","4'2''","4'3''","4'4''","4'5''","4'6''","4'7''","4'8''","4'9''","4'10''","4'11''","5'0''"  
-        "5'1''","5'2''","5'3''","5'4''","5'5''","5'6''","5'7''","5'8''","5'9''","5'10''","5'11''","6'0''"
-            
-            ]
-        response={
-            "dateofbirth":True if int(r_age) in d_age else False,
-            "age_range":pp.min_age+"-"+pp.max_age ,
-            "height":True if target_profile.height in d_height else False,
-            "height_range":pp.min_height+"-"+pp.min_height,
-            'physical_status': True if profile.physical_status==target_profile.physical_status else False,
-            "physical_range":"Normal",
-            'mother_tongue': True if profile.mother_tongue==target_profile.mother_tongue else False,
-            "mother_tongue_range":"Any",
-            "marital_status": True if profile.marital_status==target_profile.marital_status else False,
-            "marital_range":"Unmarried",
-            
-            
-            'religion': True if profile.religion==target_profile.religion else False,
-            "religion_range":"Any",
-            
-            'occupation': True if profile.occupation==target_profile.occupation else False,
-            "occupation_range":"Any",
-            "annual_income": True if profile.physical_status==target_profile.physical_status else False,
-            "annual_income_range":"3-5",
-            
-            'country': True if profile.country==target_profile.country else False,
-            "country_range":"Any",
-           
-            "qualification":True if profile.qualification==target_profile.qualification else False,
-            "qualification_range":"Any"
-         }  
-        
-       
-        matched_field=sum([1 for value in response.values() if value is True ])
-        not_match_filed=sum([1 for value in response.values() if value is False ])
-       
-       
-        number_of_fields=matched_field+not_match_filed
-        try:
-            updated_code=(matched_field*100)//number_of_fields
-        except ZeroDivisionError:
-            updated_code=0
-        
-        response.update({"percentage":updated_code})
-        
-        return Response(response,status=200)
 
-###########################testing of percentage match#####################
 @api_view(['GET'])
 def profile_match_percentage(request):
     matrimonyid=request.GET['matrimony_id']
@@ -763,27 +653,7 @@ def profile_match_percentage(request):
 
 
        
-# """Test Mode"""
 
-# class TestPercentage(APIView):
-#     def get(self,request):
-#         matrimonyid=request.GET['matrimony_id']
-#         requestid=request.GET['requeted_matrimony_id']
-        
-#         profile=Person.objects.filter(matrimony_id=matrimonyid).values()[0]
-#         r_profile=Person.objects.filter(matrimony_id=requestid).values()[0]
-#         _list=['user_id' ,'id','plan_taken_date','plan_expiry_date','reg_date','reg_update' ,'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name' ,'status','about_myself','matrimony_id','email','image']
-
-#         for key in _list:
-           
-#             del r_profile[key]
-#         true_list=[{key: True if value==profile[key] else False } for key,value in r_profile.items()]
-        
-       
-       
-           
-    
-#         return Response(true_list,status=200)
 
 
 """HOW MUCH PROFILE UPDATED IN PERCENTAGE"""       
