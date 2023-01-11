@@ -20,8 +20,8 @@ class UpdateRequests(models.Model):
 
 
 
-    self_profile = models.ForeignKey(Person, on_delete=models.CASCADE)#which person generating request
-    other_profile=models.ForeignKey(Person, on_delete=models.CASCADE)#which person receive this request
+    self_profile = models.ForeignKey(Person, on_delete=models.CASCADE,related_name='logged_user')#which person generating request
+    other_profile=models.ForeignKey(Person, on_delete=models.CASCADE,related_name='receiver_user')#which person receive this request
     request_status = models.CharField(choices = request_status_types, default="Waiting", max_length = 25)
     update_field_name = models.CharField(choices = UPDATE_FILED_REQUEST, max_length = 25)
     reject_status=models.BooleanField(default=False)#this will true when then person reject one request
