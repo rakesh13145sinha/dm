@@ -4,17 +4,16 @@ from account.models import Person
 
 class UpdateRequests(models.Model):
     UPDATE_FILED_REQUEST=[
-        ("Food","Food"),
-        ("Drink","Drink"),
-        ("Star","Star"),
-        ("Smoke","Smoke"),                              
-        ("Rashi","Rashi"),
-        ("Dosham","Dosham")
+        ("drinking_habbit","drinking_habbit"),
+        ("rashi","rashi"),
+        ("star","star"),
+        ("smoking_habbit","smoking_habbit"),                              
+        ("diet_preference","diet_preference"),
+        ("dosham","dosham")
+        
     ]
     request_status_types = (
-    ("Accepted","Accepted"),
     ("Waiting","Waiting"),
-    ("Rejected","Rejected"),
     )
 
 
@@ -24,7 +23,6 @@ class UpdateRequests(models.Model):
     other_profile=models.ForeignKey(Person, on_delete=models.CASCADE,related_name='receiver_user')#which person receive this request
     request_status = models.CharField(choices = request_status_types, default="Waiting", max_length = 25)
     update_field_name = models.CharField(choices = UPDATE_FILED_REQUEST, max_length = 25)
-    reject_status=models.BooleanField(default=False)#this will true when then person reject one request
     created_date=models.DateTimeField(auto_now=True,auto_now_add=False)
     updated_date=models.DateTimeField(auto_now=False,auto_now_add=True)
     

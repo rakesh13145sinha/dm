@@ -29,18 +29,7 @@ def generate_request(request):
         otherid=Person.objects.get(matrimony_id=other_mid)
     except Exception as e:
         return Response({"message":"Invalid matrimony id","error":str(e)},status=400)
-    query=Q(
-        Q(other_profile=otherid,
-          update_field_name=data['update_field_name'],
-          request_status="Waiting"
-          )
-        |
-         Q(other_profile=otherid,
-          update_field_name=data['update_field_name'],
-          request_status="Accepted"
-          )
-    )
-    
+    query=Q(other_profile=otherid,update_field_name=data['update_field_name'],request_status="Waiting")
     try:
         selfid.updaterequests_set.get(query)
         return Response({"message":"Request allready done",},status=200)

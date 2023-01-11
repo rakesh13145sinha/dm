@@ -16,6 +16,7 @@ from age import *
 from .models import *
 from .send_otp import *
 from .serializers import *
+from connect.status import *
 
 print("This is testing phase. Don't mind it.................")
 
@@ -303,6 +304,11 @@ class Registration(APIView):
         data['user']=person.user.id
         if serializers.is_valid():
             serializers.save()
+            get_fields=Person.objects.filter(id=person.id)\
+           .values('drinking_habbit','rashi','star','dosham',\
+                                             'smoking_habbit','diet_preference')
+            updated_field=[key for key,value in get_fields[0].items() if value is not None]
+            delete_request(person,updated_field)
             return Response({"message":"Profile Updated successfully",
                              
                              })
