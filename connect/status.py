@@ -1,5 +1,4 @@
 from account.models import Person 
-from django.db import Q
 from .models import UpdateRequests
 
 
