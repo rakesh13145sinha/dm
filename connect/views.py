@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status 
 from rest_framework.decorators import api_view
 from account.models import Person 
-from django.db import Q
+from django.db.models import Q
 from .models import *
 
 
