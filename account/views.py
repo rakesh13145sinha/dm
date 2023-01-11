@@ -956,16 +956,30 @@ class ReceivedFriendRequest(APIView):
               status=True
               )
         )
+        response={}
         received_requests=FriendRequests.objects.select_related('profile').filter(query).order_by("-updated_date")
-        
+        received_update=received_request(profile)
+        if received_update:
+            for sender in received_update:
+                instance=Person.objects.get(id=sender.self_profile.id)
+                serializer=GenderSerializer(instance,many=False).data
+                serializer['connect_status']=""
+                serializer['connectid']=sender.id
+                serializer['table']=2
+               
+                serializer['created_date']=item.created_date.strftime("%Y-%b-%d")
+                serializer['updated_date']=item.updated_date.strftime("%Y-%b-%d")
+                
+                response[random.randint(1000,9999)]=serializer
+                
         if received_requests:
             
-            response={}
             for item in received_requests: 
                 instance=Person.objects.get(id=item.profile.id)
                 serializer=GenderSerializer(instance,many=False).data
                 serializer['connect_status']=item.request_status
                 serializer['connectid']=item.id
+                serializer['table']=1
                 serializer['created_date']=item.created_date.strftime("%Y-%b-%d")
                 serializer['updated_date']=item.updated_date.strftime("%Y-%b-%d")
                 

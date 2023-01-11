@@ -29,7 +29,16 @@ def request_status(selfmid,othermid,field_choices):
         except Exception:
             pass
     
-    return response     
+    return response 
+
+
+"""received request for update"""
+def received_request(midobject) :
+    
+    get_item=UpdateRequests.objects.filter(other_profile=midobject)
+   
+    return get_item
+       
    
        
             
