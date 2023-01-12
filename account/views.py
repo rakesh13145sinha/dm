@@ -624,7 +624,7 @@ def profile_match_percentage(request):
     
     my_preference={
         "age_range":pp.min_age+"-"+pp.max_age ,
-        "height_range":pp.min_height+" "+"-"+" "+pp.min_height,
+        "height_range":pp.min_height+" "+"-"+" "+pp.max_height,
         "physical_range":pp.physical_status,
         
         "mother_tongue_range":pp.mother_tongue,
