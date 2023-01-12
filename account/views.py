@@ -588,7 +588,7 @@ def profile_match_percentage(request):
     
     
     #my preference
-    pp=Partner_Preferences.objects.get(profile=profile)
+    pp=Partner_Preferences.objects.get(profile=target_profile)
     
     _height_list=[
     "3'1''","3'2''","3'3''","3'4''","3'5''","3'6''","3'7''","3'8''","3'9''","3'10''","3'11''","4'0''" , 
@@ -601,24 +601,24 @@ def profile_match_percentage(request):
     
     _index={"min_height":_height_list.index(pp.min_height),"max_height":_height_list.index(pp.max_height)}
     
-    target_profile_index=_height_list.index(target_profile.height)
+    target_profile_index=_height_list.index(profile.height)
     
     response={
-        "dateofbirth":True if  int(target_profile.dateofbirth) in range(int(pp.min_age),int(pp.max_age)) else False,
+        "dateofbirth":True if  int(profile.dateofbirth) in range(int(pp.min_age),int(pp.max_age)) else False,
         "height":True if target_profile_index in range(_index['min_height'],_index['max_height']) else False,
-        'physical_status': True if pp.physical_status=="Any" or  pp.physical_status== target_profile.physical_status else False,
+        'physical_status': True if pp.physical_status=="Any" or  pp.physical_status== profile.physical_status else False,
         
-        'mother_tongue': True if pp.mother_tongue=="Any" or pp.mother_tongue==target_profile.mother_tongue else False,
-        "marital_status": True if  pp.marital_status=="Any" or pp.marital_status==target_profile.marital_status else False,
-        'religion': True if (pp.religion=="Any" or pp.religion==target_profile.religion) else False,
-        
-        
-        'occupation': True if pp.occupation=="Any" or pp.occupation==target_profile.occupation else False,
-        "annual_income": True if pp.annual_income=="Any" or pp.annual_income==target_profile.annual_income else False,
-        'country': True if pp.country=="Any" or pp.country==target_profile.country else False,
+        'mother_tongue': True if pp.mother_tongue=="Any" or pp.mother_tongue==profile.mother_tongue else False,
+        "marital_status": True if  pp.marital_status=="Any" or pp.marital_status==profile.marital_status else False,
+        'religion': True if (pp.religion=="Any" or pp.religion==profile.religion) else False,
         
         
-        "qualification":True if pp.qualification=="Any" or pp.qualification==target_profile.qualification else False,
+        'occupation': True if pp.occupation=="Any" or pp.occupation==profile.occupation else False,
+        "annual_income": True if pp.annual_income=="Any" or pp.annual_income==profile.annual_income else False,
+        'country': True if pp.country=="Any" or pp.country==profile.country else False,
+        
+        
+        "qualification":True if pp.qualification=="Any" or pp.qualification==profile.qualification else False,
         
         }  
     
