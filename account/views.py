@@ -1080,8 +1080,10 @@ def view_phone_nunmber(request):
                             "total_access":logged_profile.total_access,
                             "status":False},status=200)
     else:
-        
-        add_phone_number=ViewedPhonNumber.objects.create(profile=logged_profile)
+        try:
+            add_phone_number=ViewedPhonNumber.objects.get(profile=logged_profile)
+        except Exception as e:
+            add_phone_number=ViewedPhonNumber.objects.create(profile=logged_profile)
         add_phone_number.add(request_profile)
         logged_profile.total_access=str(int(logged_profile.total_access)-1)
         logged_profile.save()
