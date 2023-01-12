@@ -154,7 +154,7 @@ def take_free_trial(request):
     
     india=pytz.timezone('Asia/Kolkata')
     expiry_date=timedelta(days=15)
-    today_date=datetime.datetime.today().date(india)
+    today_date=datetime.datetime.today().date()
     profile.active_plan=plan.subscription
     profile.total_access=plan.total_access
     profile.plan_taken_date=today_date

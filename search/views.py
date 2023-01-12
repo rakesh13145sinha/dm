@@ -8,7 +8,7 @@ from django.db.models import Q
 @api_view(['GET'])
 def search_by_matrimonyid(request):
     logged_matrimony_id=request.GET['matrimony_id']
-    search_matrimony_id=request.GET['mid']
+    search_matrimony_id=request.GET['requeted_matrimony_id']
     try:
         logged_user=Person.objects.get(matrimony_id=logged_matrimony_id)
     except Exception as e:
