@@ -92,25 +92,16 @@ def ViewedProfiles(matrimonyid,requestid,status=None):
 
 """VIEW PHONE NUMBERS"""
 """This function for  view profile check"""
-def ViewedPhoneNumber(matrimonyid,requestid,status=None):
-    """self matrimony id"""
-    selfprofile=get_object_or_404(Person,matrimony_id=matrimonyid)
+def ViewedPhoneNumber(matrimonyid,requestid):
     
-    """requested matrimony id"""
-    requested_profile=get_object_or_404(Person,matrimony_id=requestid)
-    
-    view_profile=ViewedPhonNumber.objects.filter(profile__id=selfprofile.id)
-                 
-    if view_profile.exists():
-        if view_profile[0].view.filter(id=requested_profile.id).exists():
+    try:
+        view_profile=ViewedPhonNumber.objects.get(profile=matrimonyid)
+        check_phone_number=view_profile.view.filter(id=requestid.id)
+        if check_phone_number:
             return True
         else:
-            view_profile[0].view.add(requested_profile)
             return False
-    else:
-        
-        view_profile=ViewedPhonNumber.objects.create(profile=selfprofile)
-        view_profile.view.add(requested_profile)
+    except Exception as e:
         return False
    
 
@@ -233,13 +224,13 @@ class SingleProfile(APIView):
         #view profile
         ViewedProfiles(matrimonyid,requestid)
         #check phone number views statas
-        phone_status=ViewedPhoneNumber(matrimonyid,requestid)
+        phone_status=ViewedPhoneNumber(self_profile[0],profile)
     
         serializers=ProfileSerializer(profile,many=False).data
         serializers['profileimage']=[
             {"id":image.id,"image":image.files.url if image.files else None}
             for image in images ]
-        
+        serializers['phone_status']= phone_status
         serializers['bookmark']= True if bookmark.exists() else False
         serializers['self_profile']=user_profile[0] 
         list_of_field=[key for key in user_profile[0].keys()  ]
@@ -1029,21 +1020,7 @@ class RejectedFriendRequest(APIView):
         
         
         
-        # if send_friend_request:
-            
-        #     response={}
-        #     for view in send_friend_request:
-        #         instance=Person.objects.get(id=view.profile.id) 
-        #         serializer=GenderSerializer(instance,many=False).data
-        #         serializer['connect_status']=view.request_status
-        #         serializer['connectid']=view.id
-        #         serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
-        #         serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
-                
-        #         response[view.id]=serializer
-        #     return Response(response.values())
-        # else:
-        #     return Response([],status=200)
+        
         
 
 
@@ -1079,23 +1056,39 @@ class GETSendedFriendRequest(APIView):
 ######################FINISH####################################
 
 
-class ViewPhoneNunmber(APIView):
-    def post(self,request):
-        if not request.POST._mutable:
-            request.POST._mutable=True
-        person=Person.objects.get(request.GET['matrimony_id'])
-        phone_status=ViewedPhoneNumber(request.GET['matrimony_id'],request.GET['request_matrimony_id'])
-        if phone_status:
-            return Response({"message":"Allready add this profile in your Id",
-                             "total_access":person.total_access,
-                             "status":False},status=200)
-        else:
-            person.total_access=str(int(person.total_access)-1)
-            person.save()
-            return Response({"message":"total access updated",
-                             "total_access":person.total_access,
-                             "status":False},status=200)
-                
+@api_view(['POST'])
+def view_phone_nunmber(request):
+    if not request.POST._mutable:
+        request.POST._mutable=True
+    try:
+        selfmid=request.GET['matrimony_id']
+        othermid=request.GET['request_matrimony_id']
+    except KeyError as e:
+        return Response({"message":"mandatory keys","errors":str(e)},status=400)
+    try:
+        logged_profile=Person.objects.get(matrimony_id=selfmid)
+    except Exception as e:
+        return Response({"message":"Invalid matrimony id","errors":str(e)},status=400)
+    try:
+        request_profile=Person.objects.get(matrimony_id=othermid)
+    except Exception as e:
+        return Response({"message":"Invalid matrimony id","errors":str(e)},status=400)
+        
+    phone_status=ViewedPhoneNumber(logged_profile,request_profile)
+    if phone_status:
+        return Response({"message":"Allready add this profile in your Id",
+                            "total_access":logged_profile.total_access,
+                            "status":False},status=200)
+    else:
+        
+        add_phone_number=ViewedPhonNumber.objects.create(profile=logged_profile)
+        add_phone_number.add(request_profile)
+        logged_profile.total_access=str(int(logged_profile.total_access)-1)
+        logged_profile.save()
+        return Response({"message":"total access updated",
+                            "total_access":logged_profile.total_access,
+                            "status":False},status=200)
+            
 
 
 

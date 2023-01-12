@@ -28,11 +28,12 @@ urlpatterns = [
         path('connect/receive',ReceivedFriendRequest.as_view()),
         path('connect/reject',RejectedFriendRequest.as_view()),
         path('connect/accepted',ConnectedProfiles.as_view()),
-        path("summary",get_total_number_request_and_view)                     
+        path("summary",get_total_number_request_and_view),
+                          
                              ])),
     
     
-    
+    path('mobile/view',view_phone_nunmber),  
     path('bookmark/',BookMarkProfile.as_view()),
     path('bookmark/show',Album.as_view()),
     path('match/percentage',profile_match_percentage),
