@@ -1056,10 +1056,10 @@ class GETSendedFriendRequest(APIView):
 ######################FINISH####################################
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def view_phone_nunmber(request):
-    if not request.POST._mutable:
-        request.POST._mutable=True
+    # if not request.POST._mutable:
+    #     request.POST._mutable=True
     try:
         selfmid=request.GET['matrimony_id']
         othermid=request.GET['request_matrimony_id']
