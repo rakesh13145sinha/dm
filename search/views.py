@@ -27,7 +27,7 @@ def search_by_matrimonyid(request):
     
 """SEARCH BY ANY THING"""   
 @api_view(['GET'])
-def search_by_matrimonyid(request):
+def test(request):
     logged_matrimony_id=request.GET['matrimony_id']
     data=request.data 
     try:
