@@ -17,12 +17,8 @@ from rest_framework.decorators import api_view
 def subscription_plan(request):
     plan=request.GET['q']
     if plan is not None:
-        if int(plan) ==15:
-            trial=MemberShip.objects.get(days=int(plan))
-            serializers=PlanSerializer(trial,many=False)
-        else:
-            plans=MemberShip.objects.filter(days=int(plan))
-            serializers=PlanSerializer(plans,many=True)
+        plans=MemberShip.objects.filter(days=int(plan))
+        serializers=PlanSerializer(plans,many=True)
         return Response(serializers.data)
     else:
         return Response({"message":"Invalid request"},status=200)
@@ -125,6 +121,15 @@ class GetAllPayment(APIView):
                 response[pay.id]=serializer
                 
             return  Response(response.values())
+    
+"""FREE TRIAL API""" 
+def take_free_trial(request):
+    taken_planid=request.GET['plan_id']
+    mid=request.GET['matrimony_id']
+    try:
+        profile=Person.objects.get(matrimony_id=mid)
+    except Exception as e:
+        return Response({"message":"Invalid matrimony_id"},status=400)
     
     
     
