@@ -36,7 +36,7 @@ def request_status(selfmid,othermid,field_choices):
 """received request for update"""
 def received_request(midobject) :
     
-    get_item=UpdateRequests.objects.filter(other_profile=midobject)
+    get_item=UpdateRequests.objects.filter(other_profile=midobject,request_status="Waiting")
    
     return get_item
 
