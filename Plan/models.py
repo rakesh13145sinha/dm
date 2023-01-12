@@ -17,7 +17,7 @@ class MemberShip(models.Model):
     MONTHS=[(15,15),(90,90),(180,180),(360,360)]
     subscription=models.CharField(max_length=20,choices=membership)
     days=models.PositiveIntegerField(null=True,choices=MONTHS)
-    price=models.CharField(max_length=100)
+    price=models.FloatField(null=True)
     status=models.BooleanField(default=True)
     total_access=models.CharField(max_length=10,null=True,blank=True)
     created=models.DateTimeField(auto_now_add=False,auto_now=True)
