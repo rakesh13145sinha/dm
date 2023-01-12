@@ -17,7 +17,8 @@ class Person(models.Model):
 	USER_PLAN=[
 				("Expire","Expire"),("Silver","Silver")
 				,("Gold","Gold"),('Diamond','Diamond'),
-				('Waiting','Waiting'),("Combo","Combo"),("Platinum","Platinum")
+				('Waiting','Waiting'),("Combo","Combo"),("Platinum","Platinum"),
+				("Trial","Trial")
 				]
 	user = models.OneToOneField(User,on_delete=models.CASCADE)
 

@@ -10,6 +10,9 @@ from account.models import Person
 from django.db.models import Q
 from decouple import config
 from rest_framework.decorators import api_view
+from datetime import timedelta
+import datetime 
+import pytz 
 
 # Create your views here.
 """get Plans"""
@@ -123,13 +126,39 @@ class GetAllPayment(APIView):
             return  Response(response.values())
     
 """FREE TRIAL API""" 
+@api_view(['GET'])
 def take_free_trial(request):
-    taken_planid=request.GET['plan_id']
-    mid=request.GET['matrimony_id']
+    try:
+        taken_planid=request.GET['plan_id']
+        mid=request.GET['matrimony_id']
+    except Exception as e:
+        return Response({"message":"Key error","error":str(e)},status=400)
     try:
         profile=Person.objects.get(matrimony_id=mid)
     except Exception as e:
         return Response({"message":"Invalid matrimony_id"},status=400)
+    try:
+        plan=MemberShip.objects.get(id=taken_planid)
+        if plan.subscription!="Trial":
+            return Response({"message":"We are Test Beta vesion,User can chooice only trial plan"},status=200)
+            
+    except Exception as e:
+        return Response({"message":"Invalid planid"},status=400)
+    _taken_plan=["Expire","Waiting"]
+				
+				
+				
+    if profile.active_plan not in _taken_plan:
+        return Response({"message":"You have already one plan"},status=200)
     
     
+    india=pytz.timezone('Asia/Kolkata')
+    expiry_date=timedelta(days=15)
+    today_date=datetime.datetime.today().date(india)
+    profile.active_plan=plan.subscription
+    profile.total_access=plan.total_access
+    profile.plan_taken_date=today_date
+    profile.plan_expiry_date=today_date+expiry_date
+    profile.save()
+    return Response({"message":"Now you are in trial plan"},status=200)
     
