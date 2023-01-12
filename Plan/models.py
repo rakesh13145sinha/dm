@@ -12,21 +12,28 @@ class MemberShip(models.Model):
         ("Gold","Gold"),
         ("Diamond","Diamond"),
         ("Combo","Combo"),
+        ("Platinum","Platinum")
     ]
+    MONTHS=[(15,15),(90,90),(180,180),(360,360)]
     subscription=models.CharField(max_length=20,choices=membership)
-    month=models.CharField( max_length=6)
+    days=models.PositiveIntegerField(null=True,choices=MONTHS)
     price=models.CharField(max_length=100)
-    message1=models.CharField(max_length=100)
-    message2=models.CharField(max_length=100)
-    message3=models.CharField(max_length=100,null=True,blank=True)
-    message4=models.CharField(max_length=100,null=True,blank=True)
-    message5=models.CharField(max_length=100,null=True,blank=True)
     status=models.BooleanField(default=True)
     total_access=models.CharField(max_length=10,null=True,blank=True)
     created=models.DateTimeField(auto_now_add=False,auto_now=True)
-    planid=models.CharField(max_length=100,null=True,blank=True)
+    recommended=models.CharField(max_length=100,null=True,blank=True)#order to show in ui part
     def __str__(self):
         return self.subscription
+    
+
+class PlanFeature(models.Model):
+    membership=models.ForeignKey(MemberShip,on_delete=models.CASCADE)
+    title=models.CharField(max_length=500)
+    image=models.ImageField(upload_to='member/icon')
+    priority=models.PositiveIntegerField()
+    def __str__(self):
+        return self.title
+    
     
 
 
