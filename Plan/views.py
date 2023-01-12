@@ -23,7 +23,7 @@ def subscription_plan(request):
         else:
             plans=MemberShip.objects.filter(days=int(plan))
             serializers=PlanSerializer(plans,many=True)
-        return Response({"data":serializers.data},status=200)
+        return Response(serializers.data)
     else:
         return Response({"message":"Invalid request"},status=200)
      
