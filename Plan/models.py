@@ -20,7 +20,7 @@ class MemberShip(models.Model):
     discount=models.FloatField(null=True)
     price=models.FloatField(null=True)
     status=models.BooleanField(default=True)
-    total_access=models.CharField(max_length=10,null=True,blank=True)
+    total_access=models.CharField(max_length=10,null=True,blank=True,default="2000")
     created=models.DateTimeField(auto_now_add=False,auto_now=True)
     recommended=models.CharField(max_length=100,null=True,blank=True)#order to show in ui part
     def __str__(self):
