@@ -12,7 +12,7 @@ class MemberShip(models.Model):
         ("Gold","Gold"),
         ("Diamond","Diamond"),
         ("Combo","Combo"),
-        ("Platinum","Platinum")
+        ("Trial","Trial")
     ]
     MONTHS=[(15,15),(90,90),(180,180),(360,360)]
     subscription=models.CharField(max_length=20,choices=membership)
