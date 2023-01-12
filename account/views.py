@@ -987,7 +987,7 @@ class ReceivedFriendRequest(APIView):
 class RejectedFriendRequest(APIView):
     def get(self,request):
         matrimonyid=request.GET['matrimony_id']
-        
+        response={}
         try:
             profile=Person.objects.get(matrimony_id=matrimonyid)
         except Exception as e:
@@ -999,21 +999,52 @@ class RejectedFriendRequest(APIView):
         send_friend_request=FriendRequests.objects.select_related('profile')\
         .filter(query).order_by("-created_date")
         
-        if send_friend_request:
-            
-            response={}
-            for view in send_friend_request:
-                instance=Person.objects.get(id=view.profile.id) 
+        
+        
+        #decline update profile request
+        get_decline=decline_requests(profile)
+        all_request=chain(get_decline,send_friend_request)
+        for sender in all_request:
+            try:
+                instance=Person.objects.get(id=sender.self_profile.id)
                 serializer=GenderSerializer(instance,many=False).data
-                serializer['connect_status']=view.request_status
-                serializer['connectid']=view.id
-                serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
-                serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
+                serializer['table']=2
+                serializer['request_id']=sender.id
+                serializer['status']=sender.request_status
+                serializer['notify']=sender.update_field_name
+            except Exception:
+                instance=Person.objects.get(id=sender.profile.id)
+                serializer=GenderSerializer(instance,many=False).data
+                serializer['connect_status']=sender.request_status
+                serializer['connectid']=sender.id
+                serializer['table']=1
+            
+            serializer['created_date']=sender.created_date.strftime("%Y-%b-%d")
+            serializer['updated_date']=sender.updated_date.strftime("%Y-%b-%d")
+            
+            response[random.randint(1000,9999)]=serializer
+        return Response(response.values())
+        
+        
+        
+        
+        
+        # if send_friend_request:
+            
+        #     response={}
+        #     for view in send_friend_request:
+        #         instance=Person.objects.get(id=view.profile.id) 
+        #         serializer=GenderSerializer(instance,many=False).data
+        #         serializer['connect_status']=view.request_status
+        #         serializer['connectid']=view.id
+        #         serializer['created_date']=view.created_date.strftime("%Y-%b-%d")
+        #         serializer['updated_date']=view.updated_date.strftime("%Y-%b-%d")
                 
-                response[view.id]=serializer
-            return Response(response.values())
-        else:
-            return Response([],status=200)
+        #         response[view.id]=serializer
+        #     return Response(response.values())
+        # else:
+        #     return Response([],status=200)
+        
 
 
 """number of  friend requests sended by me"""  
