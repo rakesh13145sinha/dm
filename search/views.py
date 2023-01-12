@@ -21,7 +21,7 @@ def search_by_matrimonyid(request):
         serializer=TabPersonSerializer(search_mid, context={'matrimony_id':logged_matrimony_id},many=False)                         
         return Response(serializer.data)
     else:
-        return Response({},status=200)
+        return Response({"matrimony_id":None},status=200)
     
     
     
