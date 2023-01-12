@@ -9,76 +9,25 @@ from account.models import Person
 
 from django.db.models import Q
 from decouple import config
+from rest_framework.decorators import api_view
 
 # Create your views here.
-class SubscriptionPla(APIView):
-    def get(self,request):
-        month=request.GET.get('month')
-        months=request.GET.get('months')#for web appication
-        plan=request.GET.get('membership')
-        planid=request.GET.get('planid')
-       
-        if plan is not  None:
-            members=MemberShip.objects.filter(month=month).order_by('-id')
-            serializers=SubscriptionSerializer(members,many=True)
-            return Response(serializers.data)
-        elif months:
-            response={}
-            members=MemberShip.objects.filter(month=months)
-            for i in members:
-                serializers=SubscriptionSerializer(i,many=False).data
-                response[i.subscription]=serializers
-            return Response(response)
-            
-        elif plan is not None and month is not None:
-            print("============xxxxxxxxxxxxxxx===============") 
-            members=MemberShip.objects.filter(month=month,subscription=plan).order_by('-id')
-            serializers=SubscriptionSerializer(members,many=True)
-            return Response(serializers.data)
-        elif planid is not None:
-            print("============yyyyyyyyyyyyyyyyyyyyy===============")
-            members=MemberShip.objects.get(id=planid)
-            serializers=SubscriptionSerializer(members,many=False)
-            return Response(serializers.data)
+"""get Plans"""
+@api_view(['GET'])
+def subscription_plan(request):
+    plan=request.GET['q']
+    if plan is not None:
+        if int(plan) ==15:
+            trial=MemberShip.objects.get(days=int(plan))
+            serializers=PlanSerializer(trial,many=False)
         else:
-            print("================")
-            members=MemberShip.objects.all().order_by('-id')
-            serializers=SubscriptionSerializer(members,many=True)
-            return Response(serializers.data)
-        
-    def post(self,request):
-        if not request.POST._mutable:
-            request.POST._mutable=True
-        data=request.data 
-        data['status']=True
-        serializers=PlanSerializer(data=data)
-        if serializers.is_valid():
-            serializers.save()
-            return Response({"message":"Plan Posted successfully","status":True})
-        else:
-            print(serializers.errors)
-            return Response(serializers.errors,status=400)
-        
-    def put(self,request):
-        data=request.data
-        planid=request.GET['planid']
-        member=MemberShip.objects.get(id=planid)
-        serializers=PlanSerializer(member,data=data,partial=True)
-        if serializers.is_valid():
-            serializers.save()
-            return Response({"message":"Plan Update successfully","status":True})
-        else:
-            print(serializers.errors)
-            return Response(serializers.errors,status=400) 
-        
-    def delete(self,request):
-        planid=request.GET['planid']
-        member=MemberShip.objects.filter(id=planid)
-        if member.exists():
-            member.delete()
-            return Response({"message":"Plan Deleted successfully","status":True})
-        else:
-            return Response({"message":"Invalid Id","status":True})
+            plans=MemberShip.objects.filter(days=int(plan))
+            serializers=PlanSerializer(plans,many=True)
+        return Response(serializers.data)
+    else:
+        return Response({"message":"Invalid request"},status=200)
+     
+   
         
 
 
