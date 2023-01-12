@@ -55,6 +55,31 @@ def generate_request(request):
                                       )
         return Response({"message":"Request sent successfully"},status=200)
     
+    
 
 
+"""request reject"""
+@api_view(['Put'])
+def update_request(request):
+    data=request.data
+    try:
+        #self matrimony id
+        self_mid=request.GET['matrimony_id']
+        tableid=request.GET['request_id']
+    except KeyError as e:
+        return Response({"message":"All Keys mandatory","error":str(e)},status=400)
+    
+    try:
+        selfid=Person.objects.get(matrimony_id=self_mid)
+    except Exception as e:
+        return Response({"message":"Invalid matrimony id","error":str(e)},status=400)
+
+    try:
+        update_request=UpdateRequests.objects.get(id=tableid,other_profile=selfid)
+    except Exception as e:
+        return Response({"message":"Invalid request id"},status=400)
+    
+    update_request.request_status=data['request_status']
+    update_request.save()
+    return Response({"message":"Response updated successfully"},status=200)
 

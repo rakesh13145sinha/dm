@@ -45,9 +45,6 @@ class PersonSerializers(serializers.ModelSerializer):
         if validated_data['name'] is None or len(validated_data['name'])<3:
             raise serializers.ValidationError("Name is Mandatory Fields")
         
-        if len(validated_data['phone_number']) < 10 or 10 < len(validated_data['phone_number']):
-            raise serializers.ValidationError("Phone Number should be 10 digit")
-        
         if len(validated_data['phone_number']) > 9:
             profile=Person.objects.filter(phone_number=validated_data['phone_number'])
             if profile.exists():

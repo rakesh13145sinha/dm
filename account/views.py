@@ -965,9 +965,10 @@ class ReceivedFriendRequest(APIView):
             try:
                 instance=Person.objects.get(id=sender.self_profile.id)
                 serializer=GenderSerializer(instance,many=False).data
-                serializer['connect_status']=""
-                serializer['connectid']=sender.id
+                # serializer['connect_status']=""
+                # serializer['connectid']=sender.id
                 serializer['table']=2
+                serializer['request_id']=sender.id
                 serializer['notify']=sender.update_field_name
             except Exception:
                 instance=Person.objects.get(id=sender.profile.id)
@@ -981,25 +982,7 @@ class ReceivedFriendRequest(APIView):
             
             response[random.randint(1000,9999)]=serializer
         return Response(response.values())
-        # shorted_list=sorted(response.values() key="created_date" reversed=True )
-        
-               
-        # if received_requests:
-            
-        #     for item in received_requests: 
-        #         instance=Person.objects.get(id=item.profile.id)
-        #         serializer=GenderSerializer(instance,many=False).data
-        #         serializer['connect_status']=item.request_status
-        #         serializer['connectid']=item.id
-        #         serializer['table']=1
-        #         serializer['created_date']=item.created_date.strftime("%Y-%b-%d")
-        #         serializer['updated_date']=item.updated_date.strftime("%Y-%b-%d")
-                
-        #         response[item.id]=serializer
-        #     return Response(response.values())
-        # else:
-        #     return Response(response.values(),status=200)
-
+    
 """REJECTED FRIEND REQUEST"""
 class RejectedFriendRequest(APIView):
     def get(self,request):

@@ -14,6 +14,7 @@ class UpdateRequests(models.Model):
     ]
     request_status_types = (
     ("Waiting","Waiting"),
+    ("Rejected","Rejected"),
     )
 
 
