@@ -17,9 +17,6 @@ class UpdateRequests(models.Model):
     ("Rejected","Rejected"),
     )
 
-
-
-
     self_profile = models.ForeignKey(Person, on_delete=models.CASCADE,related_name='logged_user')#which person generating request
     other_profile=models.ForeignKey(Person, on_delete=models.CASCADE,related_name='receiver_user')#which person receive this request
     request_status = models.CharField(choices = request_status_types, default="Waiting", max_length = 25)

@@ -59,7 +59,7 @@ def generate_request(request):
 
 
 """request reject"""
-@api_view(['Put'])
+@api_view(['PUT'])
 def update_request(request):
     data=request.data
     try:
