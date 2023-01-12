@@ -1073,7 +1073,9 @@ def view_phone_nunmber(request):
         request_profile=Person.objects.get(matrimony_id=othermid)
     except Exception as e:
         return Response({"message":"Invalid matrimony id","errors":str(e)},status=400)
-        
+    if logged_profile.gender==request_profile.gender:
+        return Response({"message":"both are same gender"},status=200)
+       
     phone_status=ViewedPhoneNumber(logged_profile,request_profile)
     if phone_status:
         return Response({"message":"Allready add this profile in your Id",
@@ -1084,7 +1086,7 @@ def view_phone_nunmber(request):
             add_phone_number=ViewedPhonNumber.objects.get(profile=logged_profile)
         except Exception as e:
             add_phone_number=ViewedPhonNumber.objects.create(profile=logged_profile)
-        add_phone_number.add(request_profile)
+        add_phone_number.view.add(request_profile)
         logged_profile.total_access=str(int(logged_profile.total_access)-1)
         logged_profile.save()
         return Response({"message":"total access updated",
