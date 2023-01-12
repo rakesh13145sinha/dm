@@ -964,12 +964,17 @@ class ReceivedFriendRequest(APIView):
         for sender in all_request:
             try:
                 instance=Person.objects.get(id=sender.self_profile.id)
+                serializer=GenderSerializer(instance,many=False).data
+                serializer['connect_status']=""
+                serializer['connectid']=sender.id
+                serializer['table']=2
+                serializer['notify']=sender.update_field_name
             except Exception:
                 instance=Person.objects.get(id=sender.profile.id)
-            serializer=GenderSerializer(instance,many=False).data
-            serializer['connect_status']=""
-            serializer['connectid']=sender.id
-            serializer['table']=2
+                serializer=GenderSerializer(instance,many=False).data
+                serializer['connect_status']=""
+                serializer['connectid']=sender.id
+                serializer['table']=1
             
             serializer['created_date']=sender.created_date.strftime("%Y-%b-%d")
             serializer['updated_date']=sender.updated_date.strftime("%Y-%b-%d")

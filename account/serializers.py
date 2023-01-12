@@ -109,7 +109,7 @@ class GenderSerializer(serializers.ModelSerializer):
         model=Person 
         fields=['matrimony_id','name',
                 'city','state','about_myself',
-                'phone_number','occupation',
+                'phone_number','occupation',"gender",
                 'qualification','caste','country',"active_plan",'dateofbirth','height','profileimage']
         
         
