@@ -195,7 +195,9 @@ class Nation(APIView):
             if query=="Tangana":
                 return Response([{"name":city} for city in telangana]) 
             elif query=="Andhra Pradesh": 
-                return Response([{"name":city} for city in andhara])   
+                return Response([{"name":city} for city in andhara])
+            else:
+                return Response([])  
         else:
             return Response([{"name":state} for state in states]) 
 
