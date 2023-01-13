@@ -1214,7 +1214,7 @@ class HomeTabs(APIView):
         _q=request.GET['q'].strip()
         _list=['matches','new','premium','mutual','saw','viewed',
                'location','horoscope','qualification','star','occupation',
-               'workplace','state','city'    
+               'workplace'    
                              ]
         response={}
         if _q not in _list:
@@ -1250,9 +1250,16 @@ class HomeTabs(APIView):
             query=Q(id__in=view_profile.values_list('profile__id',flat=True))
        
         elif _q=="location":
-            query=query & Q(state=getattr(person,_q)) 
-        elif _q=="state":
-            query=query & Q(state=getattr(person,_q)) 
+            query=query & Q(
+                Q(city__iexact=person.city)
+                |
+                Q(state__iexact=person.state)
+                |
+                Q(mother_tongue__iexact=person.mother_tongue)
+                
+                )
+            
+        
         elif _q=="star":     
             query=query & Q(star=getattr(person,_q)) 
         elif _q=="occupation":
