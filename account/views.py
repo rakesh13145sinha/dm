@@ -17,6 +17,7 @@ from .models import *
 from .send_otp import *
 from .serializers import *
 from connect.status import *
+from record import *
 
 print("This is testing phase. Don't mind it.................")
 
@@ -189,12 +190,14 @@ class Nation(APIView):
     def get(self,request):
         query=request.GET.get('q')
         response={}
-        if query:
-            cities=City.objects.filter(state__name=query)
-            return Response([{"id":city.id,"name":city.name} for city in cities])    
+        if query is not None:
+            # cities=City.objects.filter(state__name=query)
+            if query=="Tangana":
+                return Response([{"name":city.name} for city in telangana]) 
+            elif query=="Andhra Pradesh": 
+                return Response([{"name":city.name} for city in andhara])   
         else:
-            states=State.objects.all()
-            return Response([{"id":state.id,"name":state.name} for state in states]) 
+            return Response([{"name":state.name} for state in states]) 
 
 
 ########################PROFILE API#################################               
