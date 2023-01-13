@@ -1276,7 +1276,11 @@ class HomeTabs(APIView):
         elif _q=="horoscope":
             query=query & Q(horoscope=getattr(person,_q))
         elif _q=="qualification":
-            query=query & Q(qualification=getattr(person,_q))
+            query=query & Q(
+                ~Q(specialization=person.specialization)
+                |
+                ~Q(qualification=person.qualification)
+                )
        
         persons=Person.objects.filter(query).order_by('-id')
         serializer=TabPersonSerializer(persons, context={'matrimony_id':matrimonyid},many=True)                         
