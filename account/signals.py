@@ -24,7 +24,8 @@ def create_partner_preferance(pk):
 
 def generate_matrimonyid():
     client=Person.objects.latest("id")
-    new_id="DM-2022-"+str(client.user.id)+"-"+str(client.id)
+    pattern=102023
+    new_id="DM"+str(pattern+1)
     return new_id
 
 
