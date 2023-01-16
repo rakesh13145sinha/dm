@@ -1143,7 +1143,7 @@ class PremiumUser(APIView):
     def get(self,request):
         matrimonyid=request.GET['matrimony_id']
         person=Person.objects.get(matrimony_id__iexact=matrimonyid)
-        USER_PLAN=["Silver","Gold",'Diamond',"Platinum"]
+        USER_PLAN=["Silver","Gold",'Diamond',"Platinum",'Trial']
         query=Q(
            ~ Q(gender=person.gender)
             &
@@ -1152,7 +1152,7 @@ class PremiumUser(APIView):
             Q(active_plan__in=USER_PLAN)
             )
         response={}
-        persons=Person.objects.filter(query).order_by('-reg_date')[0:12]
+        persons=Person.objects.filter(query).order_by('-reg_date')#[0:12]
         for person in persons:
             images=person.profilemultiimage_set.all()
             response[person.id]={
