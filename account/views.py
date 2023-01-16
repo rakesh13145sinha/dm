@@ -1237,7 +1237,7 @@ class HomeTabs(APIView):
             interval_time=datetime.datetime.today().now(india) - datetime.timedelta(days=10)
             query=query & Q(reg_date__gte=interval_time)
         elif _q=="premium":
-            USER_PLAN=["Silver","Gold",'Diamond',"Platinum"]
+            USER_PLAN=["Silver","Gold",'Diamond',"Platinum","Trial"]
             query=query & Q(active_plan__in=USER_PLAN)
         elif _q=="mutual":
             query=Q(id__in=mutual_match(matrimonyid))
