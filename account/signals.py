@@ -26,7 +26,7 @@ def generate_matrimonyid():
 
     client=Person.objects.all().only('id').order_by('id')
     length=len(client)
-    client=client.latest("id")
+    #client=client.latest("id")
     print(client.id)
     if length > 2:
         client_obj=client[length-1]
