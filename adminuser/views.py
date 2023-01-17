@@ -10,6 +10,6 @@ def dashboard(request):
     dashboard=Person.objects.\
     annotate(male=Count("gender",filter("Male")),
              female=Count("gender",filter("Female")),
-             subscribe=Count("active_plan",filter('Trial'))
+             subscribe=Count("active_plan",filter('Trial')))
     return Response(dashboard)
     
