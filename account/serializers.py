@@ -6,7 +6,7 @@ import string
 import random
 from age import *
 from django.db.models import Q
-from .views import ViewedPhoneNumberStatus
+
 
 
 def connect_status(matrimonyid,requestid):
@@ -24,6 +24,17 @@ def connect_status(matrimonyid,requestid):
         return "connect"
 
 
+def ViewedPhoneNumberStatus(matrimonyid,requestid):
+    
+    try:
+        view_profile=ViewedPhonNumber.objects.get(profile=matrimonyid)
+        check_phone_number=view_profile.view.filter(id=requestid.id)
+        if check_phone_number:
+            return True
+        else:
+            return False
+    except Exception as e:
+        return False
 
 
 
