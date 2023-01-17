@@ -24,13 +24,15 @@ def create_partner_preferance(pk):
 
 def generate_matrimonyid():
 
-    client=Person.objects.all().only('id').order_by('id')
-    length=len(client)
+    clients=Person.objects.all().order_by('id')
+    for i in clients:
+        print(i.id,i.matrimony_id)
+    length=len(clients)
     #client=client.latest("id")
     # print(client.id)
     if length > 2:
     
-        new_matrimonyid="DM"+str(int(client[length-1].matrimony_id[2:])+1)
+        new_matrimonyid="DM"+str(int(clients[length-1].matrimony_id[2:])+1)
         print(new_matrimonyid)
         return new_matrimonyid
     else:
