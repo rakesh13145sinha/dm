@@ -40,7 +40,7 @@ def gender(request):
 
 @api_view(['GET'])
 def profile(request):
-    profile=Person.objects.get(id=request.GET['id']).only('id')
+    profile=Person.objects.get(id=request.GET['id'])
     images=profile.profilemultiimage_set.all()
     serializers=AdminPersonSerializer(profile,many=False) 
     serializers['image']=images[0].files.url if images.exists() else None
