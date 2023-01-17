@@ -125,7 +125,7 @@ class TabPersonSerializer(serializers.ModelSerializer):
     profileimage=serializers.SerializerMethodField()
     connect_status=serializers.SerializerMethodField()
     album_status=serializers.SerializerMethodField()
-    phone_status=serializers.SerializerMethodField()
+    
     
     def get_profileimage(self,obj):
         images=obj.profilemultiimage_set.all()
