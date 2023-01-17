@@ -8,8 +8,8 @@ from django.db.models import Count
 @api_view(['GET'])
 def dashboard(request):
     dashboard=Person.objects.\
-    annotate(male=Count("gender",filter(gender="Male")),
-             female=Count("gender",filter(gender="Female")),
-             subscribe=Count("active_plan", active_plan='Trial'))
+    annotate(male=Count("gender",filter("Male")),
+             female=Count("gender",filter("Female")),
+             subscribe=Count("active_plan",filter('Trial'))
     return Response(dashboard)
     
