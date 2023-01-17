@@ -47,6 +47,10 @@ def profile(request):
     return Response(serializers,status=200)
     
 
+@api_view(['GET'])
+def search(request):
+    profile=Person.objects.values(request.GET['q']).distinct()
+    return Response(profile,status=200)
         
     
 
