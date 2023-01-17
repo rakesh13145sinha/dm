@@ -129,6 +129,14 @@ def height_and_age(h,age=None):
     elif h is None:
         return {'height':None}
 
+clients=Person.objects.all().order_by('id')
+count=0
+while count<= len(clients)-1:
+    
+    clients[count].matrimony_id="DM"+str(102022+count)
+    clients[count].save()
+    count+=1
+
 
 def mutual_match(matrimony_id):
         response = {}
