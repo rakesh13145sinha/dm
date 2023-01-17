@@ -24,7 +24,7 @@ def gender(request):
         response[pro.id]={
             "id":pro.id,
             "matrimony_id":pro.matrimony_id,
-            "image":[{"image":i.image.url} for i in images],
+            "image":[{"image":i.files.url} for i in images],
             "gender":pro.gender,
             "name":pro.name,
             "phone_number":pro.phone_number,
