@@ -93,7 +93,7 @@ def ViewedProfiles(matrimonyid,requestid,status=None):
 
 """VIEW PHONE NUMBERS"""
 """This function for  view profile check"""
-def ViewedPhoneNumber(matrimonyid,requestid):
+def ViewedPhoneNumberStatus(matrimonyid,requestid):
     
     try:
         view_profile=ViewedPhonNumber.objects.get(profile=matrimonyid)
@@ -231,7 +231,7 @@ class SingleProfile(APIView):
         #view profile
         ViewedProfiles(matrimonyid,requestid)
         #check phone number views statas
-        phone_status=ViewedPhoneNumber(self_profile[0],profile)
+        phone_status=ViewedPhoneNumberStatus(self_profile[0],profile)
     
         serializers=ProfileSerializer(profile,many=False).data
         serializers['profileimage']=[
@@ -1083,7 +1083,7 @@ def view_phone_nunmber(request):
     if logged_profile.gender==request_profile.gender:
         return Response({"message":"both are same gender"},status=200)
        
-    phone_status=ViewedPhoneNumber(logged_profile,request_profile)
+    phone_status=ViewedPhoneNumberStatus(logged_profile,request_profile)
     if phone_status:
         return Response({"message":"Allready add this profile in your Id",
                             "total_access":logged_profile.total_access,

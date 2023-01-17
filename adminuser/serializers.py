@@ -35,10 +35,5 @@ class AdminPersonSerializer(serializers.ModelSerializer):
     
     class Meta:
         model=Person 
-        # fields=['matrimony_id','name',
-        #         'city','state','about_myself',
-        #         'phone_number','occupation',
-        #         'qualification','caste','country',
-        #         "active_plan","profileimage",'connect_status',"album_status",
-        #         'profile_created_by','dateofbirth']
+       
         exclude=('user',)

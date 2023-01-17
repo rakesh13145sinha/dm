@@ -6,7 +6,7 @@ import string
 import random
 from age import *
 from django.db.models import Q
-
+from .views import ViewedPhoneNumberStatus
 
 
 def connect_status(matrimonyid,requestid):
@@ -114,7 +114,7 @@ class TabPersonSerializer(serializers.ModelSerializer):
     profileimage=serializers.SerializerMethodField()
     connect_status=serializers.SerializerMethodField()
     album_status=serializers.SerializerMethodField()
-   
+    phone_status=serializers.SerializerMethodField()
     
     def get_profileimage(self,obj):
         images=obj.profilemultiimage_set.all()
@@ -137,6 +137,7 @@ class TabPersonSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
        
         representation['height'] =height(instance.height)
+        representation['phone_status'] =ViewedPhoneNumberStatus(instance.matrimony_id,self.context['matrimony_id'])
         
         return representation                                   
                                 
@@ -148,7 +149,7 @@ class TabPersonSerializer(serializers.ModelSerializer):
                 'phone_number','occupation',
                 'qualification','caste','country',
                 "active_plan","profileimage",'connect_status',"album_status",
-                'profile_created_by','dateofbirth']
+                'profile_created_by','dateofbirth',"active_plan"]
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:

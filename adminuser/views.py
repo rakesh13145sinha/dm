@@ -44,7 +44,6 @@ def profile(request):
     images=profile.profilemultiimage_set.all()
     serializers=AdminPersonSerializer(profile,many=False).data
     serializers['image']=images[0].files.url if images.exists() else None
-        
     return Response(serializers,status=200)
     
 

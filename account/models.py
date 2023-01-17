@@ -34,7 +34,7 @@ class Person(models.Model):
 #physical status
 	height = models.CharField(max_length=100,null=True)
 	physical_status = models.CharField(max_length=100,null=True)
-	weight	= models.CharField(max_length=100,null=True)
+	weight	= models.CharField(max_length=100,null=True)#no need
 	
 
 #life status
@@ -46,11 +46,11 @@ class Person(models.Model):
 	
 #caster & religious
 	
-	gotram	= models.CharField(max_length=100,null=True)
+	gotram	= models.CharField(max_length=100,null=True)#no need
 	star	= models.CharField(max_length=100,null=True)
 	rashi = models.CharField(max_length=100,null=True)
 	caste = models.CharField(max_length=100,null=True)
-	sub_caste	= models.CharField(max_length=100,null=True)
+	sub_caste	= models.CharField(max_length=100,null=True)#no need
 	religion = models.CharField(max_length=100,null=True)
 	horoscope=models.CharField(max_length=200,null=True)
 	habbits=models.CharField(max_length=200,null=True)
