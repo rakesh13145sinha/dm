@@ -42,10 +42,10 @@ def gender(request):
 def profile(request):
     profile=Person.objects.get(id=request.GET['id'])
     images=profile.profilemultiimage_set.all()
-    serializers=AdminPersonSerializer(profile,many=False) 
+    serializers=AdminPersonSerializer(profile,many=False).data
     serializers['image']=images[0].files.url if images.exists() else None
         
-    return Response(serializers.data,status=200)
+    return Response(serializers,status=200)
     
 
         
