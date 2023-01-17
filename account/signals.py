@@ -23,16 +23,21 @@ def create_partner_preferance(pk):
 
 
 def generate_matrimonyid():
+    
     client=Person.objects.latest("id")
-    if client.matrimony_id is not None:
-        new_id="DM" +str(int(client.matrimony_id)[2:]+1)
-        return new_id   
+    print(client.id)
+    # if client.matrimony_id is None:
+    #     print(client.matrimony_id)
+    #     new_id="DM" +str(int(client.matrimony_id)[2:]+1)
+    #     return new_id   
         
-    else:
-        pattern=102023
-        new_id="DM"+str(pattern+1)
-        return new_id
-
+    # else:
+    #     pattern=102023
+    #     new_id="DM"+str(pattern+1)
+    #     return new_id
+    t=Person.objects.last()
+    print(t.id)
+    return "DM102023"
 
 @receiver(post_save, sender=Person)
 def create_profile(sender, instance, created, **kwargs):
