@@ -52,7 +52,31 @@ def search(request):
     profile=Person.objects.values(request.GET['q']).distinct()
     return Response(profile,status=200)
         
+
+
+# @api_view(['GET'])
+# def filter_search(request):
+#     query=Q(
+#         Q(state=request.GET.get())
+#     )
     
+#     profiles=Person.objects.filter(gender=request.GET['gender']).only('id')
+#     response={}
+#     for pro in profiles:
+#         images=pro.profilemultiimage_set.all()
+#         response[pro.id]={
+#             "id":pro.id,
+#             "matrimony_id":pro.matrimony_id,
+#             "image":images[0].files.url if images.exists() else None,
+#             "gender":pro.gender,
+#             "name":pro.name,
+#             "phone_number":pro.phone_number,
+#             "status":pro.status
+            
+#         }
+        
+        
+#     return Response(response.values(),status=200)   
 
     
     

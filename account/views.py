@@ -194,7 +194,7 @@ class Nation(APIView):
         response={}
         if query is not None:
             # cities=City.objects.filter(state__name=query)
-            if query=="Tangana":
+            if query=="Telangana":
                 return Response([{"name":city} for city in telangana]) 
             elif query=="Andhra Pradesh": 
                 return Response([{"name":city} for city in andhara])
