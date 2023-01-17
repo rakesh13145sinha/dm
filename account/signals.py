@@ -32,7 +32,7 @@ def generate_matrimonyid():
     # print(client.id)
     if length > 2:
     
-        new_matrimonyid="DM"+str(int(clients[length-1].matrimony_id[2:])+1)
+        new_matrimonyid="DM"+str(int(clients[length-2].matrimony_id[2:])+1)
         print(new_matrimonyid)
         return new_matrimonyid
     else:
