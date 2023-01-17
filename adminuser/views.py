@@ -1,9 +1,11 @@
-from django.shortcuts import render
 from rest_framework.response import Response 
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from account.models import *
 from django.db.models import Count,Q
+
+
+from adminuser.serializers import AdminPersonSerializer
 
 # Create your views here.
 @api_view(['GET'])
@@ -24,7 +26,7 @@ def gender(request):
         response[pro.id]={
             "id":pro.id,
             "matrimony_id":pro.matrimony_id,
-            "image":[{"image":i.files.url} for i in images],
+            "image":images[0].files.url if images.exists() else None,
             "gender":pro.gender,
             "name":pro.name,
             "phone_number":pro.phone_number,
@@ -34,6 +36,16 @@ def gender(request):
         
         
     return Response(response.values(),status=200)
+
+
+@api_view(['GET'])
+def profile(request):
+    profile=Person.objects.get(id=request.GET['id']).only('id')
+    images=profile.profilemultiimage_set.all()
+    serializers=AdminPersonSerializer(profile,many=False) 
+    serializers['image']=images[0].files.url if images.exists() else None
+        
+    return Response(serializers.data,status=200)
     
 
         
