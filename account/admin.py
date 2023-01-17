@@ -6,5 +6,7 @@ admin.site.register(State)
 admin.site.register(SaveOTP)
 admin.site.register(BannerImage)
 admin.site.register(HomeScreenImage)
-admin.site.register(Person)
+class PersonAdmin(admin.ModelAdmin):
+    list_display=['id','matrimony_id']
+admin.site.register(Person,PersonAdmin)
 admin.site.register(ProfileMultiImage)
