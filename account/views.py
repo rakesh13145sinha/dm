@@ -133,7 +133,7 @@ clients=Person.objects.all().order_by('id')
 count=0
 while count<= len(clients)-1:
     
-    clients[count].matrimony_id="DM"+str(102022+count)
+    clients[count].matrimony_id="DM"+str(102023+count)
     clients[count].save()
     count+=1
 
