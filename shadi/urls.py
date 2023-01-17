@@ -31,7 +31,8 @@ if settings.DEBUG:
                     path('plan/',include('Plan.urls')),
                     path('vendor/',include('Eventmanagement.urls')),
                     path('search/',include('search.urls')),
-                    path('connect/',include('connect.urls'))
+                    path('connect/',include('connect.urls')),
+                    path('admin/',include('adminuser.urls'))
                 ])
             )
     ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
@@ -46,7 +47,8 @@ else:
                     path('plan/',include('Plan.urls')),
                     path('vendor/',include('Eventmanagement.urls')),
                     path('search/',include('search.urls')),
-                    path('connect/',include('connect.urls'))
+                    path('connect/',include('connect.urls')),
+                    path('admin/',include('adminuser.urls'))
                 ])
             )
     ]

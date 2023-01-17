@@ -17,6 +17,8 @@ INSTALLED_APPS = [
     #third party application
     'rest_framework',
     "corsheaders",
+    'rest_framework.authtoken',
+    
     #project base application
 
     'account.apps.AccountConfig',
@@ -24,6 +26,7 @@ INSTALLED_APPS = [
     'Eventmanagement.apps.EventmanagementConfig',
     'search.apps.SearchConfig',
     'connect.apps.ConnectConfig',
+    "adminuser.apps.AdminuserConfig",
 ]
 
 MIDDLEWARE = [
