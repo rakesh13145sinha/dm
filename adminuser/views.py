@@ -12,5 +12,5 @@ def dashboard(request):
     annotate(male=Count("gender",filter=Q(gender="Male")),
              female=Count("gender",filter=Q(gender="Female")),
              subscribe=Count("active_plan",filter=Q(active_plan='Trial')))
-    return Response({"data":dashboard.items()})
+    return Response({"data":dashboard.values("male","female","subscribe")})
     
