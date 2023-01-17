@@ -31,8 +31,9 @@ def generate_matrimonyid():
     if length > 2:
         client_obj=client[length-1]
         concurrentid=client_obj.matrimony_id
-        print(concurrentid[2:])
+        print(concurrentid)
         new_matrimonyid="DM"+str(int(concurrentid[2:])+1)
+        print(new_matrimonyid)
         return new_matrimonyid
     else:
         pattern=102023
