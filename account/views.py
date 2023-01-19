@@ -173,15 +173,15 @@ class Check_Phone_Number(APIView):
         if phone=="8500001406":
             SaveOTP.objects.get_or_create(phone_number=phone,otp=1406)
             return Response({"message":"Testing purpose only",
-                            "status":person_phone_number[0].status,
-                            "matrimony_id":person_phone_number[0].matrimony_id                             
+                            "status":person_phone_number.status,
+                            "matrimony_id":person_phone_number.matrimony_id                             
                             },status=200)
         else:   
             generate_otp=random.randint(1000,9999)
             sending_otp(generate_otp,phone)
             return Response({"message":"OTP send successfully",
-                            "status":person_phone_number[0].status,
-                            "matrimony_id":person_phone_number[0].matrimony_id                             
+                            "status":person_phone_number.status,
+                            "matrimony_id":person_phone_number.matrimony_id                             
                             },status=200)
        
 
