@@ -683,17 +683,18 @@ class ProfileUpdatePercentage(APIView):
         matrimonyid=request.GET['matrimony_id']
         change_into_dict = Person.objects.filter(matrimony_id=matrimonyid).values()[0]
         
-        _list=['user_id' ,'id','reg_date','reg_update','plan_taken_date','plan_expiry_date' ,
-               'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name' ,
+        _list=['user_id','id','reg_date','reg_update','plan_taken_date','plan_expiry_date' ,
+               'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name',
                'status','matrimony_id']
         for i in _list:
             del change_into_dict[i]
         count=len( list (filter(lambda x:x!=None,change_into_dict.values())))
         percentage=(count*100)//len(change_into_dict) 
         
-        images=ProfileMultiImage.objects.select_related('profile').filter(profile__matrimony_id=matrimonyid)
+        images=ProfileMultiImage.objects \
+        .select_related('profile').filter(profile__matrimony_id=matrimonyid).only('id')
         data={
-            "profileimage":images[0].files.url if images.exists() else None,
+            "profileimage":images[0].files.url if images else None,
             "matrimony_id":matrimonyid,
             "percentage":percentage
         }            

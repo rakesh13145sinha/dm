@@ -29,12 +29,12 @@ class Person(models.Model):
 	phone_number = models.CharField(max_length=13,null=True)
 	gender = models.CharField(max_length=20,null=True,choices=GENDER)
 	dateofbirth = models.CharField(max_length=20,null=True)
-	#image=models.ImageField(upload_to="profile/image",null=True,blank=True)
+	
 
 #physical status
 	height = models.CharField(max_length=100,null=True)
 	physical_status = models.CharField(max_length=100,null=True)
-	#weight	= models.CharField(max_length=100,null=True)#no need
+	
 	
 
 #life status
@@ -46,15 +46,11 @@ class Person(models.Model):
 	
 #caster & religious
 	
-	#gotram	= models.CharField(max_length=100,null=True)#no need
 	star	= models.CharField(max_length=100,null=True)
 	rashi = models.CharField(max_length=100,null=True)
 	caste = models.CharField(max_length=100,null=True)
-	#sub_caste	= models.CharField(max_length=100,null=True)#no need
 	religion = models.CharField(max_length=100,null=True)
 	horoscope=models.CharField(max_length=200,null=True)
-	#habbits=models.CharField(max_length=200,null=True)
-	#workplace=models.CharField(max_length=20,null=True)
 	dosham=models.CharField(max_length=20,null=True)
 	birth_place=models.CharField(max_length=20,null=True)
 #location & contact
@@ -68,7 +64,6 @@ class Person(models.Model):
 	occupation = models.CharField(max_length=100,null=True)#working as
 	annual_income = models.CharField(max_length=100,null=True)
 	job_sector = models.CharField(max_length=100,null=True)
-	college	= models.CharField(max_length=100,null=True)
 	orgnisation=models.CharField(max_length=255,null=True)
 	qualification	= models.CharField(max_length=100,null=True)
 	degree=models.CharField(max_length=100,null=True)
