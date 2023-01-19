@@ -692,7 +692,7 @@ class ProfileUpdatePercentage(APIView):
         percentage=(count*100)//len(change_into_dict) 
         
         images=ProfileMultiImage.objects \
-        .select_related('profile').filter(profile__matrimony_id=matrimonyid).only('id')
+        .select_related('profile').filter(profile__matrimony_id=matrimonyid)
         data={
             "profileimage":images[0].files.url if images else None,
             "matrimony_id":matrimonyid,
