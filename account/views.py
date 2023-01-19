@@ -157,19 +157,33 @@ def mutual_match(matrimony_id):
 
 class Check_Phone_Number(APIView):
     def get(self,request):
-        person_phone_number=Person.objects.filter(phone_number__iexact=request.GET['phone_number'])
-        if person_phone_number.exists():
-            generate_otp=random.randint(1000,9999)
-            sending_otp(generate_otp,request.GET['phone_number'])
-            return Response({"message":"OTP send successfully",
-                             "status":person_phone_number[0].status,
-                             "matrimony_id":person_phone_number[0].matrimony_id                             
-                             },status=200)
-        else:
+        try:
+            phone=request.GET['phone_number']
+        except KeyError as e:
+            return Response({"message":"Phone number is mandatory key","error":str(e)})
+        try:   
+            person_phone_number=Person.objects.get(phone_number__iexact=phone)
+        except Exception as e:
             return Response({"message":"Accepted",
                             "status":False,
                             "matrimony_id":None                            
                              },status=200)
+        
+        #only testing purpose only
+        if phone=="8500001406":
+            SaveOTP.objects.get_or_create(phone_number=phone,otp=1406)
+            return Response({"message":"Testing purpose only",
+                            "status":person_phone_number[0].status,
+                            "matrimony_id":person_phone_number[0].matrimony_id                             
+                            },status=200)
+        else:   
+            generate_otp=random.randint(1000,9999)
+            sending_otp(generate_otp,phone)
+            return Response({"message":"OTP send successfully",
+                            "status":person_phone_number[0].status,
+                            "matrimony_id":person_phone_number[0].matrimony_id                             
+                            },status=200)
+       
 
 class Check_Email(APIView):
     def get(self,request):
@@ -1344,3 +1358,10 @@ def get_total_number_request_and_view(request):
     # }  
     return Response(response.values(),status=200)      
     
+    
+    
+@api_view(['GET'])
+def name(request):
+    return Response({
+    "message": "hello user"
+})
