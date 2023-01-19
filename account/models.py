@@ -52,7 +52,6 @@ class Person(models.Model):
 	religion = models.CharField(max_length=100,null=True)
 	horoscope=models.CharField(max_length=200,null=True)
 	dosham=models.CharField(max_length=20,null=True)
-	birth_place=models.CharField(max_length=20,null=True)
 #location & contact
 	city = models.CharField(max_length=100,null=True)
 	state = models.CharField(max_length=100,null=True)
@@ -64,14 +63,13 @@ class Person(models.Model):
 	occupation = models.CharField(max_length=100,null=True)#working as
 	annual_income = models.CharField(max_length=100,null=True)
 	job_sector = models.CharField(max_length=100,null=True)
-	orgnisation=models.CharField(max_length=255,null=True)
 	qualification	= models.CharField(max_length=100,null=True)
 	degree=models.CharField(max_length=100,null=True)
 	specialization=models.CharField(max_length=100,null=True)
 	pursuing_degree=models.BooleanField(default=False)#pursuing or finish
 
 #family details
-	total_family_members = models.CharField(max_length=100,null=True)
+	
 	father_details = models.CharField(max_length=100,null=True)
 	mother_details = models.CharField(max_length=100,null=True)
 	unmarried_brother=models.IntegerField(null=True)

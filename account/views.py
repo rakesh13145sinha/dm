@@ -770,9 +770,6 @@ class DailyRecomandation(APIView):
             response[r_pro.id].update(connect_status(matrimonyid,r_pro.matrimony_id))
         
         return Response(response.values(),status=200)
-    
-    
-
 
 """SHFFLEING PROFILE SHOWING OPPISITE GENDER PROFILE"""
 class NeedToUpdateFields(APIView):
@@ -791,7 +788,7 @@ class NeedToUpdateFields(APIView):
                 
                 response[info]={ 
                                 "name":info,
-                                "about":"Get 90 imes more boostup your profile"
+                                "about":"Get 90 more boostup your profile"
                                 }                             
             else:
                 pass                   
