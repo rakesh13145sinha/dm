@@ -779,13 +779,13 @@ class NeedToUpdateFields(APIView):
         
         profile=Person.objects.get(matrimony_id=matrimonyid)
         
-        _list=['horoscope','star',"total_family_members","annual_income"]
+        _list=['horoscope','star',"annual_income"]
                
         
         
         for info in _list:
             if getattr(profile,info)=="" or getattr(profile,info) is None :
-                
+
                 response[info]={ 
                                 "name":info,
                                 "about":"Get 90 more boostup your profile"
