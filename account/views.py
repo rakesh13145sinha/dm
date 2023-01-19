@@ -734,8 +734,6 @@ class DailyRecomandation(APIView):
                |
                Q(occupation=profile.occupation)
                |
-               Q(job_sector=profile.job_sector)
-               |
                Q(smoking_habbit=profile.smoking_habbit)
                |
                Q(city=profile.city)
