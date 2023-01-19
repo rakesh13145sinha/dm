@@ -50,7 +50,6 @@ class Person(models.Model):
 	rashi = models.CharField(max_length=100,null=True)
 	caste = models.CharField(max_length=100,null=True)
 	religion = models.CharField(max_length=100,null=True)
-	horoscope=models.CharField(max_length=200,null=True)
 	dosham=models.CharField(max_length=20,null=True)
 #location & contact
 	city = models.CharField(max_length=100,null=True)
@@ -62,7 +61,6 @@ class Person(models.Model):
 #profession & education
 	occupation = models.CharField(max_length=100,null=True)#working as
 	annual_income = models.CharField(max_length=100,null=True)
-	job_sector = models.CharField(max_length=100,null=True)
 	qualification	= models.CharField(max_length=100,null=True)
 	degree=models.CharField(max_length=100,null=True)
 	specialization=models.CharField(max_length=100,null=True)
