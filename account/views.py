@@ -1263,7 +1263,7 @@ class HomeTabs(APIView):
         elif _q=="viewed":
             
             view_profile=ViewedProfile.objects.filter(view__id=person.id)
-            #query=Q(id__in=[i.profile.id for i in view_profile])
+           
             query=Q(id__in=view_profile.values_list('profile__id',flat=True))
        
         elif _q=="location":
@@ -1273,10 +1273,7 @@ class HomeTabs(APIView):
                 Q(state__iexact=person.state)
                 |
                 Q(mother_tongue__iexact=person.mother_tongue)
-                
                 )
-            
-        
         elif _q=="star":     
             query=query & Q(star=getattr(person,_q)) 
         elif _q=="occupation":
@@ -1356,8 +1353,3 @@ def get_total_number_request_and_view(request):
     
     
     
-@api_view(['GET'])
-def name(request):
-    return Response({
-    "message": "hello user"
-})
