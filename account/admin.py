@@ -8,5 +8,6 @@ admin.site.register(BannerImage)
 admin.site.register(HomeScreenImage)
 class PersonAdmin(admin.ModelAdmin):
     list_display=['id','matrimony_id','name','phone_number']
+    list_editable=['matrimony_id']
 admin.site.register(Person,PersonAdmin)
 admin.site.register(ProfileMultiImage)
