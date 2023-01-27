@@ -33,11 +33,11 @@ def search_by_matrimonyid(request):
     try:
         logged_user=Person.objects.get(matrimony_id=logged_matrimony_id)
     except Exception as e:
-        return Response({"message":"Invalid matrimony id"},status=400)
+        return Response({"message":"Invalid matrimony id"},status=200)
     try:
         search_mid=Person.objects.get(matrimony_id=search_matrimony_id)
     except Exception as e:
-        return Response({"matrimony_id":None},status=400)
+        return Response({"message":"Invalid requested matrimony id"},status=200)
     if logged_user.gender!=search_mid.gender:
         serializer=TabPersonSerializer(search_mid, context={'matrimony_id':logged_matrimony_id},many=False)                         
         return Response(serializer.data)
