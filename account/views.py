@@ -229,7 +229,7 @@ class SingleProfile(APIView):
         if self_profile:
             #getting self these field for updated or not if not update then update
             user_profile=self_profile.values('drinking_habbit','rashi','star','dosham',\
-                                             'smoking_habbit','diet_preference')
+                                             'smoking_habbit','diet_preference','active_plan')
         else:
             return Response({"message":"Invalid matrimony_id"},status=200)
         
@@ -684,7 +684,7 @@ class ProfileUpdatePercentage(APIView):
         change_into_dict = Person.objects.filter(matrimony_id=matrimonyid).values()[0]
         
         _list=['user_id','id','reg_date','reg_update','plan_taken_date','plan_expiry_date' ,
-               'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number','name',
+               'total_access','active_plan','verify' , 'block',  'gender' ,'phone_number',
                'status','matrimony_id']
         for i in _list:
             del change_into_dict[i]
@@ -696,7 +696,8 @@ class ProfileUpdatePercentage(APIView):
         data={
             "profileimage":images[0].files.url if images else None,
             "matrimony_id":matrimonyid,
-            "percentage":percentage
+            "percentage":percentage,
+            "name":change_into_dict['name']
         }            
         return Response(data)
         
@@ -762,7 +763,8 @@ class DailyRecomandation(APIView):
                 "dateofbirth":r_pro.dateofbirth,
                 "gender":r_pro.gender,
                 "name":r_pro.name,
-                "phone_number":r_pro.phone_number
+                "phone_number":r_pro.phone_number,
+                "active_plan":r_pro.active_plan
                 
             }
             response[r_pro.id].update(connect_status(matrimonyid,r_pro.matrimony_id))
