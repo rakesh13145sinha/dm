@@ -156,7 +156,7 @@ class TabPersonSerializer(serializers.ModelSerializer):
     class Meta:
         model=Person 
         fields=['matrimony_id','name',
-                'city','state','about_myself',
+                'city','state','about_myself','dateofbirth',
                 'phone_number','occupation',
                 'qualification','caste','country',
                 "active_plan","profileimage",'connect_status',"album_status",

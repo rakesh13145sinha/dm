@@ -7,7 +7,6 @@ from age import *
 class Person(models.Model):
 	GENDER=[('Male','Male'),('Female','Female')]
 	MATRIMONY=[
-				
 				('Never Married','Never Married'),
 				('Widowed','Widowed'),
 				('Divorced','Divorced'),

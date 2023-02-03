@@ -9,5 +9,8 @@ admin.site.register(HomeScreenImage)
 class PersonAdmin(admin.ModelAdmin):
     list_display=['id','matrimony_id','name','phone_number']
     list_editable=['matrimony_id']
+class FriendRequestsAdmin(admin.ModelAdmin):
+    list_display=['id','profile','requested_matrimony_id','request_status','status']
+    list_editable=['status']
 admin.site.register(Person,PersonAdmin)
-admin.site.register(ProfileMultiImage)
+admin.site.register(FriendRequests)
