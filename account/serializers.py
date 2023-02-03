@@ -147,7 +147,7 @@ class TabPersonSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
        
-        representation['height'] =height(instance.height)
+        representation['height'] =instance.height
         representation['phone_status'] =ViewedPhoneNumberStatus(instance.matrimony_id,self.context['matrimony_id'])
         
         return representation                                   
