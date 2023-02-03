@@ -658,7 +658,11 @@ class Album(APIView):
                 images=ProfileMultiImage.objects.filter(profile__id=person.id)
                 response[person.id]={
                     "profileimage":images[0].files.url if images.exists() else None,
-                    "matrimony_id":person.matrimony_id
+                    "matrimony_id":person.matrimony_id,
+                    "name":person.name,
+                    "height":person.height,
+                    "dateofbirth":person.dateofbirth,
+                    "active_plan":person.active_plan
                     }
                                         
             return Response(response.values())
