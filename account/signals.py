@@ -43,7 +43,7 @@ def create_profile(sender, instance, created, **kwargs):
         instance.matrimony_id=generate_matrimonyid()
         instance.dateofbirth=get_age(instance.dateofbirth)
         instance.save()
-        SaveOTP.objects.get_or_create(phone_number=instance.phone_number,otp=0123)
+        SaveOTP.objects.get_or_create(phone_number=instance.phone_number,otp=1234)
         #sending_otp(random.randint(1000,9999), instance.phone_number)
         create_partner_preferance(instance.id)
         
