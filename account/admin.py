@@ -13,4 +13,4 @@ class FriendRequestsAdmin(admin.ModelAdmin):
     list_display=['id','profile','requested_matrimony_id','request_status','status']
     list_editable=['status']
 admin.site.register(Person,PersonAdmin)
-admin.site.register(FriendRequests)
+admin.site.register(FriendRequests,FriendRequestsAdmin)
