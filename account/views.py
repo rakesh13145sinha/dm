@@ -96,6 +96,9 @@ def religion_by_caste(request):
     query=request.GET.get('q')
     response={}
     if query is not None:
+        # dict={
+        #     "caste"
+        # }
        
         if query=="Hindu":
             return Response([{"name":caste} for caste in Hindu],status=200) 
@@ -1401,7 +1404,7 @@ def get_total_number_request_and_view(request):
     except Exception as e:
          viewed=0
     total_request_receive=FriendRequests.objects \
-    .filter(requested_matrimony_id=person.matrimony_id).only("requested_matrimony_id").count()
+    .filter(requested_matrimony_id=person.matrimony_id,status=False).only("requested_matrimony_id").count()
     homeImage=HomeScreenImage.objects.filter(status=True)
     #search_list=["viewed profile","response received","album","match maker","wedding planner","astrologer"]
     response={}
