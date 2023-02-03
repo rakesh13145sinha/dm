@@ -7,12 +7,11 @@ from age import *
 class Person(models.Model):
 	GENDER=[('Male','Male'),('Female','Female')]
 	MATRIMONY=[
-				('Married','Married'),
-				('UnMarried','UnMarried'),
-				('Widow','Widow'),
-				('widower','widower'),
-				('Divorce','Divorce'),
-				('Ready To Divorce','Ready To Divorce'),
+				
+				('Never Married','Never Married'),
+				('Widowed','Widowed'),
+				('Divorced','Divorced'),
+				('Awaiting Divorce','Awaiting Divorce'),
 				]
 	USER_PLAN=[
 				("Expire","Expire"),("Silver","Silver")
