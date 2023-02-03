@@ -1,5 +1,7 @@
 import os
 import random
+from bs4 import BeautifulSoup
+import requests
 # from datetime import datetime ,date,timedelta
 
 import pytz 
@@ -205,17 +207,65 @@ class Check_Email(APIView):
 class Nation(APIView):
     def get(self,request):
         query=request.GET.get('q')
-        response={}
+
         if query is not None:
+            
+            Headers = {
+                    "Accept": "application/json",
+                    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJfZW1haWwiOiJyYWtlc2hzaW5oYTgyOTJAZ21haWwuY29tIiwiYXBpX3Rva2VuIjoiTktUaGVCODNnSUhBNDA0M014Tml1b0xPM1o2X3FvNEJyNkJMcDBfSE9aQ3gzYk1HMHRIaHVDUHpVUkptRi1TdTdLNCJ9LCJleHAiOjE2NzU0MDk0NDB9.a11jSGQE3Ld2WufJgkYJM1b1VPFYqCK3Kza2fzEo1KU",
+                    "Accept": "application/json" 
+                    }
+            
+            
+            """this is state of city"""
+            req = requests.get("https://www.universal-tutorial.com/api/cities/"+query,headers=Headers);
+            print(req.status_code)
+            if req.status_code==200:
+                return Response(req.json())
+            elif req.status_code==500:
+                GenHeaders = {"Accept": "application/json",
+                    "api-token": "NKTheB83gIHA4043MxNiuoLO3Z6_qo4Br6BLp0_HOZCx3bMG0tHhuCPzURJmF-Su7K4",
+                    "user-email": "rakeshsinha8292@gmail.com" 
+                    }
+                """new token generate"""
+                req = requests.get("https://www.universal-tutorial.com/api/getaccesstoken",headers=GenHeaders);
+                if req.status_code ==200:
+                    authtoken=req.json()
+                    Headers = {
+                    "Accept": "application/json",
+                    "Authorization": "Bearer"+" "+ authtoken['auth_token'],
+                    "Accept": "application/json" 
+                    }
+                    req = requests.get("https://www.universal-tutorial.com/api/cities/"+query,headers=Headers);
+            
+                    if req.status_code==200:
+                        return Response(req.json())
+                    
+                    
+                else:
+                    return Response({"message":"wait for solve this issue"},status=500)   
             # cities=City.objects.filter(state__name=query)
-            if query=="Telangana":
-                return Response([{"name":city} for city in telangana]) 
-            elif query=="Andhra Pradesh": 
-                return Response([{"name":city} for city in andhara])
-            else:
-                return Response([])  
+            # if query=="Telangana":
+            #     return Response([{"name":city} for city in telangana]) 
+            # elif query=="Andhra Pradesh": 
+            #     return Response([{"name":city} for city in andhara])
+            # else:
+            #     return Response([])  
         else:
-            return Response([{"name":state} for state in states]) 
+            
+            web=requests.get('https://www.britannica.com/topic/list-of-cities-and-towns-in-India-2033033')
+            content=web.text
+            soup = BeautifulSoup(content)
+            #print(soup.prettify())
+            states=[]
+            for a in soup.findAll('h2', attrs={'class':'h1'}):
+                # print(a)
+                title_element = a.find("a", class_="md-crosslink")
+                #print(title_element.text)
+                states.append(title_element.text)
+            
+            
+            return Response([{"name":state} for state in states])  
 
 
 ########################PROFILE API#################################               
