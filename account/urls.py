@@ -7,6 +7,7 @@ urlpatterns = [
     path('email/',Check_Email.as_view()),
     path('phone/',Check_Phone_Number.as_view()),
     path('state/',Nation.as_view()),
+    path('religionlist',religion_by_caste,name="religionlist"),
     path('verify/otp/',Validate_OTP.as_view()),
     
     #image upload
