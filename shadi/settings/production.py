@@ -1,24 +1,52 @@
-
-
 from .base import *
 
-# Database
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME':'matrimony',
-#         'USER': 'sanjitsinha',
-#         'PASSWORD': 'sanjit@13145',
-#         'HOST': '127.0.0.1',
-#         'PORT': "5432"
-#         }
+SECRET_KEY =config('DEV_SECRET_KEY')
+
+
+ALLOWED_HOSTS=[str(host) for host in config('DEV_ALLOWED_HOSTS').split(",")]
+
+DEBUG=config('DEBUG')
+
+
+
+# SERVER Database
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME':config('NAME'),
+        'USER': config('USER'),
+        'PASSWORD': config('PASSWORD'),
+        'HOST': config('HOST'),
+        'PORT': config('PORT')
+        }
    
            
-# }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
+}
+
+STATIC_URL='/static/'
+MEDIA_URL='media/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'media_dir')
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_COOKIE_SECURE=True
+SESSION_COOKIE_SECURE=True
+SECURE_SSL_REDIRECT=True
+SECURE_HSTS_SECONDS=True
+SECURE_HSTS_INCLUDE_SUBDOMAINS=True
+SECURE_HSTS_PRELOAD=True
+
+
+
+CORS_ORIGIN_ALLOW_ALL = False
+
+CORS_ALLOWED_ORIGINS=config('WHITE_LIST', cast=lambda v: [s.strip() for s in v.split(',')])
+CORS_ORIGIN_WHITELIST = config('WHITE_LIST', cast=lambda v: [s.strip() for s in v.split(',')])
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = config('WHITE_LIST', cast=lambda v: [s.strip() for s in v.split(',')])
+CORS_ALLOW_METHODS = ["DELETE","GET","OPTIONS","PATCH","POST","PUT"]
+CORS_ALLOW_HEADERS = ["accept","accept-encoding","authorization","content-type","dnt","origin",
+    "user-agent","x-csrftoken","x-requested-with"]
+        
+

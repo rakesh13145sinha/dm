@@ -215,8 +215,9 @@ class Check_Phone_Number(APIView):
                             "matrimony_id":person_phone_number.matrimony_id                             
                             },status=200)
         else:   
-            generate_otp=random.randint(1000,9999)
-            sending_otp(generate_otp,phone)
+            # generate_otp=random.randint(1000,9999)
+            # sending_otp(generate_otp,phone)
+            SaveOTP.objects.get_or_create(phone_number=phone,otp=0123)
             return Response({"message":"OTP send successfully",
                             "status":person_phone_number.status,
                             "matrimony_id":person_phone_number.matrimony_id                             

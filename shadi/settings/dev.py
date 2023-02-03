@@ -1,5 +1,5 @@
 from .base import *
-from decouple import config
+#from decouple import config
 
 SECRET_KEY =config('DEV_SECRET_KEY')
 
