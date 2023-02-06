@@ -89,7 +89,7 @@ def update_request(request):
 
 """document upload"""
 
-@api_view(['POST'])
+
 class DocumentVerify(APIView):
     def get(self,request):
         docs_statement={
