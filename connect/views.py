@@ -128,7 +128,7 @@ class DocumentVerify(APIView):
                 "name_of_document":i,
                 "status":True if i=="Mobile" else status,
                 "descriptions":docs_statement[i],
-                "upload_status":upload
+                "upload_status":True if i=="Mobile" else upload
 
             }
         return Response(response.values())
