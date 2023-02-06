@@ -27,7 +27,7 @@ class UpdateRequests(models.Model):
 
 class DocumentUpload(models.Model):
     DOC=[('Id','Id'),('Salary_Slip','Salary_Slip'),("Mobile","Mobile"),("Photo","Photo")]
-    profile = models.ForeignKey(Person, on_delete=models.CASCADE,related_name='logged_user')
+    profile = models.ForeignKey(Person, on_delete=models.CASCADE)
     document=models.ImageField(upload_to='doc/')
     name_of_documunt=models.CharField(max_length=100,choices=DOC)
     status=models.BooleanField(default=False)
