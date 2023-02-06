@@ -25,8 +25,8 @@ andhara=['Visakhapatnam', 'Vijayawada', 'Krishna', 'Guntur', 'Nellore', 'Kurnool
 #         pass
 
 MES="""
-        The following documents to verify you profile details this will not be stored or shown to others members.
-        Adhar card,PAN card,Driving License and Voter ID.
+        The following documents to verify you profile details this will not be stored or shown to others members.Adhar card,PAN card,Driving License and Voter ID.
+        
 
 """
 

@@ -9,6 +9,7 @@ from .models import *
 import random
 
 
+
 """Send request for update profile"""
 
 @api_view(['POST'])
@@ -92,8 +93,10 @@ def update_request(request):
 
 class DocumentVerify(APIView):
     def get(self,request):
+        statement="The following documents to verify you profile details this will not be stored or shown to others members.Adhar card,PAN card,Driving License and Voter ID."
+
         docs_statement={
-            "Id":"The following documents to verify you profile details this will not be stored or shown to others members.Adhar card,PAN card,Driving License and Voter ID."
+            "Id":statement,
             "Photo":"Add photo to your profile and verify it .",
             "Salary_Slip":"Upload your salary slip(pay slip)and help us to verify your current salary it will not stored or shown members.",
             "Mobile":"Your mobile number verified successfully."
