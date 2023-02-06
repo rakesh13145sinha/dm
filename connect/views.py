@@ -120,12 +120,15 @@ class DocumentVerify(APIView):
             try:
                 doc=selfid.documentupload_set.get(name_of_documunt=i)
                 status=doc.status
+                upload=doc.upload_status
             except Exception as e:
                 status=False
+                upload=False
             response[random.randint(1000,9999)]={
                 "name_of_document":i,
                 "status":True if i=="Mobile" else status,
-                "descriptions":docs_statement[i]
+                "descriptions":docs_statement[i],
+                "upload_status":upload
 
             }
         return Response(response.values())
@@ -151,7 +154,9 @@ class DocumentVerify(APIView):
             return Response({"message":"Invalid matrimony id","error":str(e)},status=400)
         
         doc_name_list=['Id',"Photo","Salary_Slip","Mobile"]
-        get,create=DocumentUpload.objects.get_or_create(profile=selfid,document=request.FILES['document'],name_of_document=data['name'])
+        if data['name'] not in doc_name_list:
+            return Response({"message":"document name invalid"},status=400)
+        get,create=DocumentUpload.objects.get_or_create(profile=selfid,document=request.FILES['document'],name_of_document=data['name'],upload_status=True)
         if create:
             return Response({"message":"Document uploaded successfully.Wait for update"},status=200)
         else:
