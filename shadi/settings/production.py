@@ -4,9 +4,9 @@ from .base import *
 SECRET_KEY =config('DEV_SECRET_KEY')
 
 
-ALLOWED_HOSTS=[str(host) for host in config('DEV_ALLOWED_HOSTS').split(",")]
+ALLOWED_HOSTS=[str(host) for host in config('PRODUCTION_ALLOWED_HOSTS').split(",")]
 
-DEBUG=config('DEBUG')
+DEBUG=config('PRODUCTION_DEBUG')
 
 
 
