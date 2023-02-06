@@ -93,8 +93,7 @@ def update_request(request):
 class DocumentVerify(APIView):
     def get(self,request):
         docs_statement={
-            "Id":"""The following documents to verify you profile details this will not be stored or shown to others members.
-                    Adhar card,PAN card,Driving License and Voter ID.""",
+            "Id":"The following documents to verify you profile details this will not be stored or shown to others members.Adhar card,PAN card,Driving License and Voter ID."
             "Photo":"Add photo to your profile and verify it .",
             "Salary_Slip":"Upload your salary slip(pay slip)and help us to verify your current salary it will not stored or shown members.",
             "Mobile":"Your mobile number verified successfully."
