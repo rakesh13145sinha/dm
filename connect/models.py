@@ -29,7 +29,7 @@ class DocumentUpload(models.Model):
     DOC=[('Id','Id'),('Salary_Slip','Salary_Slip'),("Mobile","Mobile"),("Photo","Photo")]
     profile = models.ForeignKey(Person, on_delete=models.CASCADE)
     document=models.ImageField(upload_to='doc/')
-    name_of_documunt=models.CharField(max_length=100,choices=DOC)
+    name_of_document=models.CharField(max_length=100,choices=DOC)
     status=models.BooleanField(default=False)#after verification it become true
     upload_status=models.BooleanField(default=True)
     created_date=models.DateTimeField(auto_now=True,auto_now_add=False)

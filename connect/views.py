@@ -118,7 +118,7 @@ class DocumentVerify(APIView):
         for i in docs_statement.keys():
           
             try:
-                doc=selfid.documentupload_set.get(name_of_documunt=i)
+                doc=selfid.documentupload_set.get(name_of_document=i)
                 status=doc.status
                 upload=doc.upload_status
             except Exception as e:
