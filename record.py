@@ -23,4 +23,22 @@ andhara=['Visakhapatnam', 'Vijayawada', 'Krishna', 'Guntur', 'Nellore', 'Kurnool
 #             City.objects.get_or_create(name=town,state=get)
 #     else:
 #         pass
-        
+
+MES="""
+        The following documents to verify you profile details this will not be stored or shown to others members.
+        Adhar card,PAN card,Driving License and Voter ID.
+
+"""
+
+photo= """
+        Add photo to your profile and verify it
+"""      
+salary="""
+        Upload your salary slip(pay slip)and help us to verify your current salary it will not stored or shown members.
+"""  
+
+mobile="""
+        Your mobile number verified successfully.
+""" 
+
+    

@@ -1,3 +1,4 @@
+import ast
 from rest_framework.views import APIView
 from rest_framework.response import Response 
 from rest_framework import status 
@@ -5,6 +6,7 @@ from rest_framework.decorators import api_view
 from account.models import Person 
 from django.db.models import Q
 from .models import *
+import random
 
 
 """Send request for update profile"""
@@ -82,4 +84,73 @@ def update_request(request):
     update_request.request_status=data['request_status']
     update_request.save()
     return Response({"message":"Response updated successfully"},status=200)
+
+
+
+"""document upload"""
+
+@api_view(['POST'])
+class DocumentVerify(APIView):
+    def get(self,request):
+        docs_statement={
+            "Id":"""The following documents to verify you profile details this will not be stored or shown to others members.
+                    Adhar card,PAN card,Driving License and Voter ID.""",
+            "Photo":"Add photo to your profile and verify it .",
+            "Salary_Slip":"Upload your salary slip(pay slip)and help us to verify your current salary it will not stored or shown members.",
+            "Mobile":"Your mobile number verified successfully."
+        }
+        
+        try:
+            #self matrimony id
+            self_mid=request.GET['matrimony_id']
+        except KeyError as e:
+            return Response({"message":"All Keys mandatory","error":str(e)},status=400)
+        
+        try:
+            selfid=Person.objects.get(matrimony_id=self_mid)
+        except Exception as e:
+            return Response({"message":"Invalid matrimony id","error":str(e)},status=400)
+        
+        docs=selfid.documentupload_set.all()
+        response={}
+        for i in docs_statement.keys():
+            try:
+                doc=selfid.documentupload_set.get(name_of_documunt=i)
+                status=doc.status
+            except Exception as e:
+                status=False
+            response[random.randint(1,10)]={
+                "name_of_document":i,
+                "status":status,
+                "descriptions":docs_statement[i]
+
+            }
+        return Response(response.values())
+    
+    def post(self,request):
+        if not request.POST._mutable:
+            request.POST._mutable=True
+            
+        try:
+            data = ast.literal_eval(request.data['registerdata'])
+        except Exception as e:
+        
+            data=request.data
+        try:
+            #self matrimony id
+            self_mid=request.GET['matrimony_id']
+        except KeyError as e:
+            return Response({"message":"All Keys mandatory","error":str(e)},status=400)
+        
+        try:
+            selfid=Person.objects.get(matrimony_id=self_mid)
+        except Exception as e:
+            return Response({"message":"Invalid matrimony id","error":str(e)},status=400)
+        
+        doc_name_list=['Id',"Photo","Salary_Slip","Mobile"]
+        get,create=DocumentUpload.objects.get_or_create(profile=selfid,document=request.FILES['document'],name_of_document=data['name'])
+        if create:
+            return Response({"message":"Document uploaded successfully.Wait for update"},status=200)
+        else:
+            return Response({"message":"Document allready uploaded"},status=200)
 

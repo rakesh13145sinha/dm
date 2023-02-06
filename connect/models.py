@@ -24,3 +24,18 @@ class UpdateRequests(models.Model):
     created_date=models.DateTimeField(auto_now=True,auto_now_add=False)
     updated_date=models.DateTimeField(auto_now=False,auto_now_add=True)
     
+
+class DocumentUpload(models.Model):
+    DOC=[('Id','Id'),('Salary_Slip','Salary_Slip'),("Mobile","Mobile"),("Photo","Photo")]
+    profile = models.ForeignKey(Person, on_delete=models.CASCADE,related_name='logged_user')
+    document=models.ImageField(upload_to='doc/')
+    name_of_documunt=models.CharField(max_length=100,choices=DOC)
+    status=models.BooleanField(default=False)
+    created_date=models.DateTimeField(auto_now=True,auto_now_add=False)
+    updated_date=models.DateTimeField(auto_now=False,auto_now_add=True)
+    
+    def __str__(self):
+        return self.profile
+    
+    
+    
