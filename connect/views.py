@@ -93,12 +93,12 @@ def update_request(request):
 
 class DocumentVerify(APIView):
     def get(self,request):
-        statement="The following documents to verify you profile details this will not be stored or shown to others members.Adhar card,PAN card,Driving License and Voter ID."
-
+        id="The following documents to verify you profile details this will not be stored or shown to others members.Adhar card,PAN card,Driving License and Voter ID."
+        slary_slip="Upload your salary slip(pay slip)and help us to verify your current salary it will not stored or shown members."
         docs_statement={
-            "Id":statement,
+            "Id":id,
             "Photo":"Add photo to your profile and verify it .",
-            "Salary_Slip":"Upload your salary slip(pay slip)and help us to verify your current salary it will not stored or shown members.",
+            "Salary_Slip":slary_slip,
             "Mobile":"Your mobile number verified successfully."
         }
         
@@ -113,15 +113,16 @@ class DocumentVerify(APIView):
         except Exception as e:
             return Response({"message":"Invalid matrimony id","error":str(e)},status=400)
         
-        docs=selfid.documentupload_set.all()
+       
         response={}
         for i in docs_statement.keys():
+            print(i)
             try:
                 doc=selfid.documentupload_set.get(name_of_documunt=i)
                 status=doc.status
             except Exception as e:
                 status=False
-            response[random.randint(1,10)]={
+            response[random.randint(1000,9999)]={
                 "name_of_document":i,
                 "status":status,
                 "descriptions":docs_statement[i]
