@@ -116,7 +116,7 @@ class DocumentVerify(APIView):
        
         response={}
         for i in docs_statement.keys():
-            print(i)
+          
             try:
                 doc=selfid.documentupload_set.get(name_of_documunt=i)
                 status=doc.status
@@ -124,7 +124,7 @@ class DocumentVerify(APIView):
                 status=False
             response[random.randint(1000,9999)]={
                 "name_of_document":i,
-                "status":status,
+                "status":True if i=="Mobile" else status,
                 "descriptions":docs_statement[i]
 
             }
