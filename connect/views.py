@@ -144,7 +144,7 @@ class DocumentVerify(APIView):
             data=request.data
         try:
             #self matrimony id
-            self_mid=request.GET['matrimony_id']
+            self_mid=data['matrimony_id']
         except KeyError as e:
             return Response({"message":"All Keys mandatory","error":str(e)},status=400)
         
