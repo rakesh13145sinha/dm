@@ -23,11 +23,11 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media_dir')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME':config('NAME'),
-        'USER': config('USER'),
-        'PASSWORD': config('PASSWORD'),
-        'HOST': config('HOST'),
-        'PORT': config('PORT')
+        'NAME':config('PRO_DB_NAME'),
+        'USER': config('PRO_DB_USER'),
+        'PASSWORD': config('PRO_DB_PASSWORD'),
+        'HOST': config('PRO_DB_HOST'),
+        'PORT': "5432"
         }
    
            
