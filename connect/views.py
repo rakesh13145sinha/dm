@@ -147,18 +147,19 @@ class DocumentVerify(APIView):
             self_mid=data['matrimony_id']
         except KeyError as e:
             return Response({"message":"All Keys mandatory","error":str(e)},status=400)
-        
+        print(">>>>yyyyyyyyyyyyyyyyyy>>>>>>>")
         try:
             selfid=Person.objects.get(matrimony_id=self_mid)
         except Exception as e:
             return Response({"message":"Invalid matrimony id","error":str(e)},status=400)
-        
+        print(">>>>xxxxxxxxxxxxxxxxxxxxxxxxx>>>>>>>")
         doc_name_list=['Id',"Photo","Salary_Slip","Mobile"]
         if data['name'] not in doc_name_list:
             return Response({"message":"document name invalid"},status=400)
+        print(">>>>>>>>>>>")
         get,create=DocumentUpload.objects.get_or_create(profile=selfid,document=request.FILES['document'],name_of_document=data['name'],upload_status=True)
         if create:
-            return Response({"message":"Document uploaded successfully.Wait for update"},status=200)
+            return Response({"message":"Document uploaded successfully.Wait for update","upload_status":get.upload_status},status=200)
         else:
             return Response({"message":"Document allready uploaded"},status=200)
 

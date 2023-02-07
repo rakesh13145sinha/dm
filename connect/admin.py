@@ -7,5 +7,5 @@ class UpdateRequestsAdmin(admin.ModelAdmin):
 class DocumentUploadAdmin(admin.ModelAdmin):
     list_display=['id','upload_status','name_of_document',"profile","status"]
     list_editable=['status']
-admin.site.register(UpdateRequests,UpdateRequestsAdmin)
 admin.site.register(DocumentUpload,DocumentUploadAdmin)
+admin.site.register(UpdateRequests,UpdateRequestsAdmin)
