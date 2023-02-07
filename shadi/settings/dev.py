@@ -1,5 +1,5 @@
 from .base import *
-#from decouple import config
+from decouple import config
 
 SECRET_KEY =config('DEV_SECRET_KEY')
 
@@ -13,14 +13,25 @@ MEDIA_URL='media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'media_dir')
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME':config('NAME'),
+        'USER': config('USER'),
+        'PASSWORD': config('PASSWORD'),
+        'HOST': config('HOST'),
+        'PORT': config('PORT')
+        }
+   
+           
 }
-
-
 
 
 
