@@ -290,19 +290,125 @@ class Nation(APIView):
             #     return Response([])  
         else:
             
-            web=requests.get('https://www.britannica.com/topic/list-of-cities-and-towns-in-India-2033033')
-            content=web.text
-            soup = BeautifulSoup(content)
-            #print(soup.prettify())
-            states=[]
-            for a in soup.findAll('h2', attrs={'class':'h1'}):
-                # print(a)
-                title_element = a.find("a", class_="md-crosslink")
-                #print(title_element.text)
-                states.append(title_element.text)
+            # web=requests.get('https://www.britannica.com/topic/list-of-cities-and-towns-in-India-2033033')
+            # content=web.text
+            # soup = BeautifulSoup(content)
+            # #print(soup.prettify())
+            # states=[]
+            # for a in soup.findAll('h2', attrs={'class':'h1'}):
+            #     # print(a)
+            #     title_element = a.find("a", class_="md-crosslink")
+            #     #print(title_element.text)
+            #     states.append(title_element.text)
+            States=[
+                {
+                    "name": "Andaman and Nicobar Islands"
+                },
+                {
+                    "name": "Andhra Pradesh"
+                },
+                {
+                    "name": "Arunachal Pradesh"
+                },
+                {
+                    "name": "Assam"
+                },
+                {
+                    "name": "Bihar"
+                },
+                {
+                    "name": "Chandigarh"
+                },
+                {
+                    "name": "Chhattisgarh"
+                },
+                {
+                    "name": "Dadra and Nagar Haveli and Daman and Diu"
+                },
+                {
+                    "name": "Delhi"
+                },
+                {
+                    "name": "Goa"
+                },
+                {
+                    "name": "Gujarat"
+                },
+                {
+                    "name": "Haryana"
+                },
+                {
+                    "name": "Himachal Pradesh"
+                },
+                {
+                    "name": "Jammu and Kashmir (union territory)"
+                },
+                {
+                    "name": "Jharkhand"
+                },
+                {
+                    "name": "Karnataka"
+                },
+                {
+                    "name": "Kerala"
+                },
+                {
+                    "name": "Ladakh"
+                },
+                {
+                    "name": "Madhya Pradesh"
+                },
+                {
+                    "name": "Maharashtra"
+                },
+                {
+                    "name": "Manipur"
+                },
+                {
+                    "name": "Meghalaya"
+                },
+                {
+                    "name": "Mizoram"
+                },
+                {
+                    "name": "Nagaland"
+                },
+                {
+                    "name": "Odisha"
+                },
+                {
+                    "name": "Puducherry"
+                },
+                {
+                    "name": "Punjab"
+                },
+                {
+                    "name": "Rajasthan"
+                },
+                {
+                    "name": "Sikkim"
+                },
+                {
+                    "name": "Tamil Nadu"
+                },
+                {
+                    "name": "Telangana"
+                },
+                {
+                    "name": "Tripura"
+                },
+                {
+                    "name": "Uttar Pradesh"
+                },
+                {
+                    "name": "Uttarakhand"
+                },
+                {
+                    "name": "West Bengal"
+                }
+                ]
             
-            
-            return Response([{"name":state} for state in states])  
+            return Response(States)  
 
 
 ########################PROFILE API#################################               
