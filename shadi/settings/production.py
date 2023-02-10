@@ -15,10 +15,10 @@ DEBUG=config('PRODUCTION_DEBUG')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME':config('NAME'),
-        'USER': config('USER'),
-        'PASSWORD': config('PASSWORD'),
-        'HOST': config('HOST'),
+        'NAME':config('PRO_DB_NAME'),
+        'USER': config('PRO_DB_USER'),
+        'PASSWORD': config('PRO_DB_PASSWORD'),
+        'HOST': config('PRO_DB_HOST'),
         'PORT': config('PORT')
         }
    
