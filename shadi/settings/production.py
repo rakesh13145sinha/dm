@@ -7,7 +7,10 @@ SECRET_KEY =config('DEV_SECRET_KEY')
 ALLOWED_HOSTS=[str(host) for host in config('PRODUCTION_ALLOWED_HOSTS').split(",")]
 
 DEBUG=config('PRODUCTION_DEBUG')
-
+print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+print("production")
+print(DEBUG)
+print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
 
 # SERVER Database

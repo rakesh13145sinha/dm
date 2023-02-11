@@ -8,6 +8,10 @@ ALLOWED_HOSTS=[str(host) for host in config('DEV_ALLOWED_HOSTS').split(",")]
 
 DEBUG=config('DEV_DEBUG')
 
+print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+print("development")
+print(DEBUG)
+print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 STATIC_URL='/static/'
 MEDIA_URL='media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'media_dir')
