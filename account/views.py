@@ -1428,7 +1428,7 @@ class ProfileInfo(APIView):
             "occupation":person.occupation,
             "name":person.name,
             "active_plan":person.active_plan,
-            "viewed_by_me": person.viewedbyme_set.count(),
+            "viewed_by_me": person.me.count(),
             "viewed_by_others":ViewedByMe.objects.filter(view__id=person.id).count(),
             "interest":FriendRequests.objects.filter(requested_matrimony_id=matrimonyid).count()
             }
@@ -1470,7 +1470,7 @@ class HomeTabs(APIView):
             query=Q(id__in=mutual_match(matrimonyid))
         
         elif _q=="saw":
-            view_profile=person.viewedbyme_set.all()
+            view_profile=person.me.all()
             if view_profile.exists():
                 query=Q(id__in=view_profile.values_list('view__id',flat=True))
             else:
