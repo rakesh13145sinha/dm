@@ -71,7 +71,7 @@ class Banner(APIView):
 """This function for  view profile check"""
 def visted_profiles(matrimonyid,requestid):
     """self matrimony id"""
-    selfprofile=get_object_or_404(Person,matrimony_id=matrimonyid)
+    selfprofile=Person.objects.get(matrimony_id=matrimonyid)
     
     """requested matrimony id"""
     requested_profile=get_object_or_404(Person,matrimony_id=requestid)
