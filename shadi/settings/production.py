@@ -1,7 +1,7 @@
 from .base import *
 
 
-SECRET_KEY =config('DEV_SECRET_KEY')
+SECRET_KEY =config('PRO_SECRET_KEY')
 
 
 ALLOWED_HOSTS=[str(host) for host in config('PRODUCTION_ALLOWED_HOSTS').split(",")]
