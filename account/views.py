@@ -76,7 +76,7 @@ def visted_profiles(matrimonyid,requestid):
     """requested matrimony id"""
     requested_profile=get_object_or_404(Person,matrimony_id=requestid)
     
-    view_profile=selfprofile.viewedByMe.filter(view=requested_profile)
+    view_profile=selfprofile.me.filter(view=requested_profile)
     if view_profile:
         return True 
     else:
