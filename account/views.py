@@ -887,7 +887,7 @@ class ProfileUpdatePercentage(APIView):
         
         count=len( list (filter(lambda x:x!=None,change_into_dict.values())))
         if change_into_dict['degree']=="ug":
-            percentage=(count*100)//len(change_into_dict)-1 
+            percentage=(count*100)//len(change_into_dict)+1 
         
         images=ProfileMultiImage.objects \
         .select_related('profile').filter(profile__matrimony_id=matrimonyid)
