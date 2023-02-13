@@ -62,31 +62,33 @@ class Banner(APIView):
             return Response({"message":"Banner deleted"}) 
 
 
+
+
+
+
+
+#testing
 """This function for  view profile check"""
-def ViewedProfiles(matrimonyid,requestid,status=None):
+def visted_profiles(matrimonyid,requestid):
     """self matrimony id"""
     selfprofile=get_object_or_404(Person,matrimony_id=matrimonyid)
     
     """requested matrimony id"""
     requested_profile=get_object_or_404(Person,matrimony_id=requestid)
     
-    view_profile=ViewedProfile.objects.filter(profile__id=selfprofile.id)
-    if status is None:                  
-        if view_profile.exists():
-            if view_profile[0].view.filter(id=requested_profile.id).exists():
-                pass
-            else:
-                view_profile[0].view.add(requested_profile)
-        else:
+    view_profile=selfprofile.viewedbyme_set.filter(view=requested_profile)
+    if view_profile:
+        return True 
+    else:
+        get,create=ViewedByMe.objects.get_or_create(profile=selfprofile,view=requested_profile)
+        return False
             
-            view_profile=ViewedProfile.objects.create(profile=selfprofile)
-            view_profile.view.add(requested_profile)
-        return True
-    elif status is not None:
-        if view_profile.exists():
-            return view_profile[0].view.filter(id=requested_profile.id).exists()
-        else:
-            return False
+        
+           
+
+
+
+
 
 
 
@@ -435,7 +437,7 @@ class SingleProfile(APIView):
         #bookmark
         bookmark=Bookmark.objects.filter(profile__matrimony_id=matrimonyid,album__matrimony_id=requestid)
         #view profile
-        ViewedProfiles(matrimonyid,requestid)
+        visted_profiles(matrimonyid,requestid)
         #check phone number views statas
         phone_status=ViewedPhoneNumberStatus(self_profile[0],profile)
     
@@ -1420,15 +1422,14 @@ class ProfileInfo(APIView):
         matrimonyid=request.GET['matrimony_id']
         person=Person.objects.get(matrimony_id=matrimonyid)
         image=person.profilemultiimage_set.all()
-        viewed_by_me=ViewedProfile.objects.filter(profile=person)
         FriendRequests.objects.filter(requested_matrimony_id=matrimonyid)
         response={
             "profileimage":image[0].files.url if image.exists() else None,
             "occupation":person.occupation,
             "name":person.name,
             "active_plan":person.active_plan,
-            "viewed_by_me": viewed_by_me[0].view.count() if viewed_by_me.exists() else 0,
-            "viewed_by_others":ViewedProfile.objects.filter(view__id=person.id).count(),
+            "viewed_by_me": person.viewedbyme_set.count(),
+            "viewed_by_others":ViewedByMe.objects.filter(view__id=person.id).count(),
             "interest":FriendRequests.objects.filter(requested_matrimony_id=matrimonyid).count()
             }
         return Response(response)
@@ -1469,14 +1470,14 @@ class HomeTabs(APIView):
             query=Q(id__in=mutual_match(matrimonyid))
         
         elif _q=="saw":
-            view_profile=ViewedProfile.objects.filter(profile=person)
+            view_profile=person.viewedbyme_set.all()
             if view_profile.exists():
-                query=Q(id__in= view_profile[0].view.all().values_list('id',flat=True))
+                query=Q(id__in=view_profile.values_list('view__id',flat=True))
             else:
                 return Response([],status=200)
         elif _q=="viewed":
             
-            view_profile=ViewedProfile.objects.filter(view__id=person.id)
+            view_profile=ViewedByMe.objects.filter(view=person)
            
             query=Q(id__in=view_profile.values_list('profile__id',flat=True))
        
@@ -1525,7 +1526,7 @@ def get_total_number_request_and_view(request):
                          "status":False,"homeResponse":{"message":"Invalid matrimony id"}},status=400)
     try:
         #my profile viewed by other ,how many member viewed my profile
-        viewed=ViewedProfile.objects.filter(view=person).count()
+        viewed= ViewedByMe.objects.filter(view=person).count()
         
     except Exception as e:
          viewed=0

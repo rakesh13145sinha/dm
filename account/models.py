@@ -134,9 +134,12 @@ class SaveOTP(models.Model):
 		return "%s"%(self.phone_number)
 
 
-class ViewedProfile(models.Model):
-	profile=models.OneToOneField(Person,on_delete=models.CASCADE)
-	view=models.ManyToManyField(Person,related_name="viewprofile")
+
+
+class ViewedByMe(models.Model):
+	profile=models.ForeignKey(Person,on_delete=models.CASCADE,related_name="me")
+	view=models.ForeignKey(Person,on_delete=models.CASCADE,related_name="viewprofile")
+	created_date=models.DateTimeField(auto_now=True,auto_now_add=False)
 	
 
 class ViewedPhonNumber(models.Model):
