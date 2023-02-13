@@ -49,9 +49,7 @@ def search_by_matrimonyid(request):
 """SEARCH BY ANY THING"""   
 @api_view(['POST'])
 def search_test(request):
-    from itertools import chain
-    import ast
-    import operator
+    
     logged_matrimony_id=request.GET['matrimony_id']
     
     

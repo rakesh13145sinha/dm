@@ -898,6 +898,10 @@ class ProfileUpdatePercentage(APIView):
                 count=count-1
             percentage=(count*100)//not_none_field_count
         else:
+            if images:
+                count=count+1
+            else:
+                count=count-1
             percentage=(count*100)//not_none_field_count
         
         
