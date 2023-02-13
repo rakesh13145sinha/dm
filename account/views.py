@@ -1526,7 +1526,7 @@ def get_total_number_request_and_view(request):
     except Exception as e:
          viewed=0
     total_request_receive=FriendRequests.objects \
-    .filter(requested_matrimony_id=person.matrimony_id,request_status="Waiting").only("requested_matrimony_id").count()
+    .filter(requested_matrimony_id=person.matrimony_id,request_status="Waiting").count()
     homeImage=HomeScreenImage.objects.filter(status=True)
     #search_list=["viewed profile","response received","album","match maker","wedding planner","astrologer"]
     response={}
