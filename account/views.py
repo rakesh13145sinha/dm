@@ -1472,7 +1472,7 @@ class HomeTabs(APIView):
         elif _q=="saw":
             view_profile=person.me.order_by('-id')
             if view_profile.exists():
-                query=Q(id__in=[view_profile.view.id for i in view_profile])
+                query=Q(id__in=[i.view.id for i in view_profile])
             else:
                 return Response([],status=200)
         elif _q=="viewed":
