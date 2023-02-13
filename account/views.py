@@ -1470,7 +1470,7 @@ class HomeTabs(APIView):
             query=Q(id__in=mutual_match(matrimonyid))
         
         elif _q=="saw":
-            view_profile=person.me.order_by('-id')
+            view_profile=person.me.order_by('-created_data')
             if view_profile.exists():
                 query=Q(id__in=[i.view.id for i in view_profile])
             else:
