@@ -21,7 +21,7 @@ class Person(models.Model):
 	user = models.OneToOneField(User,on_delete=models.CASCADE)
 
 #basic info
-	name = models.CharField(max_length=20,null=True)
+	name = models.CharField(max_length=100,null=True)
 	email=models.EmailField(null=True)
 	matrimony_id = models.CharField(max_length=20,null=True,blank=True)
 	phone_number = models.CharField(max_length=13,null=True)
