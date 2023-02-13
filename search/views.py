@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from account.models import FriendRequests, Person
-from account.serializers import TabPersonSerializer, ViewedPhoneNumberStatus
+from account.serializers import TabPersonSerializer
 from django.db.models import Q
 
 
@@ -234,28 +234,30 @@ def search_test(request):
     # r_profile=Person.objects.filter(reduce(operator.and_, q_list))
     r_profile=Person.objects.filter(query).only('id').order_by('-reg_date')
     #print(r_profile)
-    for r_pro in r_profile:
+    serializer=TabPersonSerializer(r_profile, context={'matrimony_id':profile.matrimony_id},many=True)                         
+    return Response(serializer.data)
+    # for r_pro in r_profile:
         
-        response[r_pro.id]={
-            "matrimony_id":r_pro.matrimony_id,
-            "profileimage":[{"image":r_pro.profilemultiimage_set.latest('id').files.url if r_pro.profilemultiimage_set.all() else None}],
-            "height":r_pro.height,
-            "dateofbirth":r_pro.dateofbirth,
-            "gender":r_pro.gender,
-            "name":r_pro.name,
-            "phone_number":r_pro.phone_number,
-            "occupation" :r_pro.occupation,
-            "city":r_pro.city,
-            "state":r_pro.state,
-            "qualification":r_pro.qualification ,
-            "active_plan":r_pro.active_plan,
-            "phone_status":ViewedPhoneNumberStatus(r_pro.matrimony_id,logged_matrimony_id)
+    #     response[r_pro.id]={
+    #         "matrimony_id":r_pro.matrimony_id,
+    #         "profileimage":[{"image":r_pro.profilemultiimage_set.latest('id').files.url if r_pro.profilemultiimage_set.all() else None}],
+    #         "height":r_pro.height,
+    #         "dateofbirth":r_pro.dateofbirth,
+    #         "gender":r_pro.gender,
+    #         "name":r_pro.name,
+    #         "phone_number":r_pro.phone_number,
+    #         "occupation" :r_pro.occupation,
+    #         "city":r_pro.city,
+    #         "state":r_pro.state,
+    #         "qualification":r_pro.qualification ,
+    #         "active_plan":r_pro.active_plan,
+    #         "phone_status":ViewedPhoneNumberStatus(r_pro.matrimony_id,logged_matrimony_id)
             
-        }
-        response[r_pro.id].update(connect_status(logged_matrimony_id,r_pro.matrimony_id))
+    #     }
+    #     response[r_pro.id].update(connect_status(logged_matrimony_id,r_pro.matrimony_id))
     
     
-    return Response(response.values(),status=200)    
+    #return Response(response.values(),status=200)    
     
     
 
