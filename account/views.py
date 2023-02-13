@@ -1526,7 +1526,10 @@ def get_total_number_request_and_view(request):
     except Exception as e:
          viewed=0
     total_request_receive=FriendRequests.objects \
-    .filter(requested_matrimony_id=person.matrimony_id,request_status="Waiting").count()
+    .filter(requested_matrimony_id=person.matrimony_id,request_status="Waiting").only("requested_matrimony_id").count()
+    
+    """how many profile request to me update their profile"""
+    profile_udpate_request=UpdateRequests.objects.filter(other_profile=person,request_status="Waiting").count()
     homeImage=HomeScreenImage.objects.filter(status=True)
     #search_list=["viewed profile","response received","album","match maker","wedding planner","astrologer"]
     response={}
@@ -1543,7 +1546,7 @@ def get_total_number_request_and_view(request):
                  "id":image.id,
                  "name":image.name,
                 "image":image.image.url,
-                "count":total_request_receive
+                "count":total_request_receive +profile_udpate_request
             }
         else:
             response[image.id]={
