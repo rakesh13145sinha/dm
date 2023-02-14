@@ -1461,8 +1461,10 @@ class HomeTabs(APIView):
             query
         elif _q=="new":
             india=pytz.timezone('Asia/Kolkata')
-            interval_time=datetime.datetime.today().now(india) - datetime.timedelta(days=1)
+            interval_time=datetime.datetime.today().now(india) - datetime.timedelta(days=10)
             query=query & Q(reg_update__gte=interval_time)
+              
+            
         elif _q=="premium":
             USER_PLAN=["Silver","Gold",'Diamond',"Platinum","Trial"]
             query=query & Q(active_plan__in=USER_PLAN)
