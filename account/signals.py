@@ -10,8 +10,8 @@ def create_partner_preferance(pk):
     pp=Person.objects.get(id=pk)
     _,created=Partner_Preferences.objects.get_or_create(profile= pp,min_age= "18",  \
                  max_age="40",min_height="4ft", max_height="7ft",  \
-                 physical_status="Any", mother_tongue="Any",  \
-                 marital_status="Any", drinking_habbit="Any",  \
+                 physical_status="Doesn't matter", mother_tongue="Any",  \
+                 marital_status="Doesn't matter", drinking_habbit="Any",  \
                  smoking_habbit="Any",food="Any",  \
                  caste="Any", religion="Any",star="Any",occupation="Any",  \
                  annual_income= "Any",job_sector="Any",qualification="Any",  \
