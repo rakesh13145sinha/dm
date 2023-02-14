@@ -1479,14 +1479,21 @@ class HomeTabs(APIView):
                     
                     saw_dict.append(serializer.data)
                 return Response(saw_dict,status=200)
-                #query=Q(id__in=[i.view.id for i in view_profile])
+                
             else:
                 return Response([],status=200)
         elif _q=="viewed":
-            
+            visited_list=[]
             view_profile=ViewedByMe.objects.filter(view=person).order_by('-id')
+            if view_profile.exists():
+                for i in view_profile:
+                    persons=Person.objects.get(id=i.profile.id)
+                    serializer=TabPersonSerializer(persons, context={'matrimony_id':matrimonyid},many=False)
+                    visited_list.append(serializer.data)
+                return Response(visited_list,status=200)
+            else:
+                return Response([],status=200)
            
-            query=Q(id__in=view_profile.values_list('profile__id',flat=True))
        
         elif _q=="location":
             query=query & Q(
