@@ -160,7 +160,7 @@ class TabPersonSerializer(serializers.ModelSerializer):
                 'phone_number','occupation',
                 'qualification','caste','country',
                 "active_plan","profileimage",'connect_status',"album_status",
-                'profile_created_by','dateofbirth',"active_plan"]
+                'profile_created_by','dateofbirth',"active_plan",'reg_date']
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:
