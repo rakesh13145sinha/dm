@@ -35,7 +35,7 @@ def search_by_matrimonyid(request):
     except Exception as e:
         return Response({"message":"Invalid matrimony id"},status=200)
     try:
-        search_mid=Person.objects.get(matrimony_id=search_matrimony_id)
+        search_mid=Person.objects.get(matrimony_id__iexact=search_matrimony_id)
     except Exception as e:
         return Response({"message":"Invalid requested matrimony id"},status=200)
     if logged_user.gender!=search_mid.gender:
