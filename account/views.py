@@ -1448,7 +1448,7 @@ class HomeTabs(APIView):
                'location','horoscope','qualification','star','occupation',
                'workplace'    
                              ]
-        response={}
+        
         if _q not in _list:
             return Response({"message":"This is not Valid query","status":False},status=403)
         try:
@@ -1461,7 +1461,7 @@ class HomeTabs(APIView):
             query
         elif _q=="new":
             india=pytz.timezone('Asia/Kolkata')
-            interval_time=datetime.datetime.today().now(india) - datetime.timedelta(days=10)
+            interval_time=datetime.datetime.today().now(india) - datetime.timedelta(days=1)
             query=query & Q(reg_date__gte=interval_time)
         elif _q=="premium":
             USER_PLAN=["Silver","Gold",'Diamond',"Platinum","Trial"]
