@@ -1470,15 +1470,15 @@ class HomeTabs(APIView):
             query=Q(id__in=mutual_match(matrimonyid))
         
         elif _q=="saw":
-            saw_dict={}
+            saw_dict=[]
             view_profile=person.me.order_by('-created_date')
             if view_profile.exists():
                 for i in view_profile:
                     persons=Person.objects.get(id=i.view.id)
                     serializer=TabPersonSerializer(persons, context={'matrimony_id':matrimonyid},many=False)
                     
-                    saw_dict[i.id]=serializer
-                return Response(saw_dict.values(),status=200)
+                    saw_dict.append(serializer.data)
+                return Response(saw_dict,status=200)
                 #query=Q(id__in=[i.view.id for i in view_profile])
             else:
                 return Response([],status=200)
