@@ -142,10 +142,15 @@ class ViewedByMe(models.Model):
 	created_date=models.DateTimeField(auto_now=True,auto_now_add=False)
 	
 
-class ViewedPhonNumber(models.Model):
-	profile=models.OneToOneField(Person,on_delete=models.CASCADE)
-	view=models.ManyToManyField(Person,related_name="viewphonenumber")
+# class ViewedPhonNumber(models.Model):
+# 	profile=models.OneToOneField(Person,on_delete=models.CASCADE)
+# 	view=models.ManyToManyField(Person,related_name="viewphonenumber")
+	
 
+class ViewPhonNumber(models.Model):
+	profile=models.ForeignKey(Person,on_delete=models.CASCADE)
+	view=models.PositiveIntegerField()
+	add_date=models.DateField()
 
 class Partner_Preferences(models.Model):
 	profile = models.OneToOneField(Person, on_delete=models.CASCADE)

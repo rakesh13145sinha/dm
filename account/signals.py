@@ -14,7 +14,7 @@ def create_partner_preferance(pk):
                  marital_status="Doesn't matter", drinking_habbit="Any",  \
                  smoking_habbit="Any",food="Any",  \
                  caste="Any", religion="Any",star="Any",occupation="Any",  \
-                 annual_income= "Any",job_sector="Any",qualification="Any",  \
+                 annual_income="Any",job_sector="Any",qualification="Any",  \
                  city="Any",state="Any",country= "India",dosham="Any" ,\
                 description="Good luck !"
                  
@@ -24,16 +24,12 @@ def create_partner_preferance(pk):
 
 def generate_matrimonyid():
 
-    clients=Person.objects.all().order_by('id')
-    length=len(clients)
-    if length >=2:
-    
-        new_matrimonyid="DM"+str(int(clients[length-2].matrimony_id[2:])+1)
-        return new_matrimonyid
+    clients=Person.objects.order_by('-id')[0:2]
+    if clients.count()>=2:
+        return "DM"+str(int(clients[1].matrimony_id[2:])+1)
     else:
         pattern=102023
-        new_id="DM"+str(pattern+1)
-        return new_id
+        return "DM"+str(pattern+1)
     
     
 

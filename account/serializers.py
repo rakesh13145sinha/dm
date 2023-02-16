@@ -81,9 +81,7 @@ class PersonSerializers(serializers.ModelSerializer):
             if instance.phone_number !=validated_data.get('phone_number'):
                 
                 raise serializers.ValidationError("Phone Number can't change")
-        
-        
-        
+    
         if validated_data.get('email'):
             if instance.email != validated_data.get('email'):
                 raise serializers.ValidationError("Email Address can't update")

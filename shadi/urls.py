@@ -32,7 +32,7 @@ if settings.DEBUG:
                     path('vendor/',include('Eventmanagement.urls')),
                     path('search/',include('search.urls')),
                     path('connect/',include('connect.urls')),
-                    path('drjodi/admin/',include('adminuser.urls'))
+                    # path('drjodi/admin/',include('adminuser.urls'))
                 ])
             )
     ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

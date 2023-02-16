@@ -41,9 +41,8 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS=True
 SECURE_HSTS_PRELOAD=True
 
 
-
+"""CORS CONFIGRATION"""
 CORS_ORIGIN_ALLOW_ALL = False
-
 CORS_ALLOWED_ORIGINS=config('WHITE_LIST', cast=lambda v: [s.strip() for s in v.split(',')])
 CORS_ORIGIN_WHITELIST = config('WHITE_LIST', cast=lambda v: [s.strip() for s in v.split(',')])
 CORS_ALLOW_CREDENTIALS = True

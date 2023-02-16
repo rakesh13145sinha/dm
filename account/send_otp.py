@@ -4,22 +4,10 @@ template_id=config("template_id")
 access_key =config("access_key")
 from .models import SaveOTP 
 
-def save_otp(otp,phone):
-    getotp=SaveOTP.objects.filter(phone_number=phone)
-    if getotp.exists():
-        getotp.delete()
-        SaveOTP.objects.create(phone_number=phone,otp=otp)
-        return phone
-    else:
-        SaveOTP.objects.create(phone_number=phone,otp=otp)
-        return phone
-
-
-
 
 def sending_otp(otp,phone):
-    # save_otp(otp,phone)
-    save_otp("2023",phone)
+   
+    SaveOTP.objects.update_or_create(phone_number=phone,otp=2023)
     
 
     url = "https://api.msg91.com/api/v5/otp?template_id="+template_id +"&mobile=91"+phone+"&authkey="+access_key+"&otp="+str(otp)

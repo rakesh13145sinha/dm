@@ -22,7 +22,7 @@ from .serializers import *
 from connect.status import *
 from record import *
 
-print("This is testing phase. Don't mind it.................")
+
 
 
 def connection(**kwargs):
@@ -134,15 +134,10 @@ def religion_by_caste(request):
 """VIEW PHONE NUMBERS"""
 """This function for  view profile check"""
 def ViewedPhoneNumberStatus(matrimonyid,requestid):
-    
     try:
-        view_profile=ViewedPhonNumber.objects.get(profile=matrimonyid)
-        check_phone_number=view_profile.view.filter(id=requestid.id)
-        if check_phone_number:
-            return True
-        else:
-            return False
-    except Exception as e:
+        ViewPhonNumber.objects.get(profile=matrimonyid,view=requestid.id)
+        return True
+    except Exception:
         return False
    
 
@@ -208,40 +203,21 @@ class Check_Phone_Number(APIView):
                             "status":False,
                             "matrimony_id":None                            
                              },status=200)
-        
-        #only testing purpose only
-        if phone=="8500001406":
-            SaveOTP.objects.get_or_create(phone_number=phone,otp=1406)
-            return Response({"message":"Testing purpose only",
-                            "status":person_phone_number.status,
-                            "matrimony_id":person_phone_number.matrimony_id                             
-                            },status=200)
-        else:   
-            # generate_otp=random.randint(1000,9999)
-            sending_otp("2023",phone)
-            return Response({"message":"OTP send successfully",
-                            "status":person_phone_number.status,
-                            "matrimony_id":person_phone_number.matrimony_id                             
-                            },status=200)
+        sending_otp("2023",phone)
+        return Response({"message":"OTP send successfully",
+                        "status":person_phone_number.status,
+                        "matrimony_id":person_phone_number.matrimony_id                             
+                        },status=200)
        
 
 class Check_Email(APIView):
     def get(self,request):
-        person_email=Person.objects.filter(email__iexact=request.GET['email'])
-        if person_email.exists():
-            return Response({"message":config("Email_Exists"),
-                            "status":person_email[0].status,
-                            "matrimony_id":person_email[0].matrimony_id ,
-                             
-                             },status=200)
-        else:
-            return Response({"message":"Accepted",
-                             "status":False ,
-                            "matrimony_id":None                            
-                             },status=200)
- 
-
-          
+        try:
+            Person.objects.get(email__iexact=request.GET['email'])
+            return Response({"message":"Email Already taken", "status":True },status=200)                 
+        except Exception as e:
+            return Response({"message":"Accepted","status":False },status=200)
+     
 class Nation(APIView):
     def get(self,request):
         query=request.GET.get('q')
@@ -493,7 +469,7 @@ class Registration(APIView):
         data=request.data 
 
         serializers=PersonSerializers(data=data)
-        print(data)
+        #print(data)
         if serializers.is_valid():
             serializers.save()
             return Response({"message":config("Profile_Created"),
@@ -527,15 +503,15 @@ class Registration(APIView):
     
     
        
-    def delete(self,request):
-        #matrimonyid=request.GET['matrimony_id']
-        person=Person.objects.filter(matrimony_id=request.GET['matrimony_id'])
-        if person.exists():
-            person.delete()
+    # def delete(self,request):
+    #     #matrimonyid=request.GET['matrimony_id']
+    #     person=Person.objects.filter(matrimony_id=request.GET['matrimony_id'])
+    #     if person.exists():
+    #         person.delete()
             
-            return Response({"message":"Profile Deleted sucessfully",'status':True})
-        else:
-            return Response({"message":"Profile Matrimony Id Not Found",'status':False})
+    #         return Response({"message":"Profile Deleted sucessfully",'status':True})
+    #     else:
+    #         return Response({"message":"Profile Matrimony Id Not Found",'status':False})
 
 
 """VALIDATE OTP AUTHENTICATION AND LOGIN WITH OTP""" 
@@ -556,7 +532,7 @@ class Validate_OTP(APIView):
         contactnumber= Person.objects.get(phone_number__iexact=data['phone_number'])    
        
         saved_otp=SaveOTP.objects.get(phone_number__iexact=data['phone_number'])
-        images=ProfileMultiImage.objects.filter(profile=contactnumber)
+        images=contactnumber.profilemultiimage_set.all()
         
         """OTP VARIFICATION """
         if int(data['otp'])==saved_otp.otp:
@@ -603,7 +579,7 @@ class UploadProfileImage(APIView):
         elif matrimonyid is not None:
             response={}
             profile=Person.objects.get(matrimony_id=matrimonyid)
-            uploadedimage=ProfileMultiImage.objects.filter(profile=profile)
+            uploadedimage=profile.profilemultiimage_set.all()
             for i in range(6):
                 try:
                     response[i+1]={
@@ -617,9 +593,6 @@ class UploadProfileImage(APIView):
                         "image": None,
 
                     }
-                    
-                
-                
             
             return Response(response.values())
         else:
@@ -633,21 +606,21 @@ class UploadProfileImage(APIView):
             request.POST._mutable=True
        
         matrimonyid=request.GET['matrimony_id']
-        profile=Person.objects.filter(matrimony_id=matrimonyid)
-        if profile.exists():
-           
-            image=ProfileMultiImage.objects.create(
-                profile=profile[0],\
-                files=request.FILES['image'])
-           
-            return Response({"message":"Profile Image Uploaded",
-                             "status":True,
-                             "image":image.files.url,
-                             "imageid":image.id},status=200)
-        else:
+        try:
+            profile=Person.objects.get(matrimony_id=matrimonyid)
+        except Exception as e:
             return Response({"message":"Matrimony Id Invalid",
                              "status":False,
                              "matrimony_id":None},status=400)
+           
+        image=profile.profilemultiimage_set.create(files=request.FILES['image'])
+         
+        return Response({"message":"Profile Image Uploaded",
+                            "status":True,
+                            "image":image.files.url,
+                            "imageid":image.id},status=200)
+      
+            
     
     
     def put(self,request):
@@ -655,7 +628,7 @@ class UploadProfileImage(APIView):
             request.POST._mutable=True
        
         image=ProfileMultiImage.objects.get(id=request.GET['imageid'])
-        
+        image.files.delete()
         image.files=request.FILES['image']
         image.save()  
         return Response({"message":"Profile Image Updated Successfully",
@@ -665,16 +638,15 @@ class UploadProfileImage(APIView):
         
 
     def delete(self,request):
-        
         imageid=request.GET.get('imageid')
+        try:
+            ProfileMultiImage.objects.get(id=imageid).delete()
+        except Exception as e:
+            return Response({"message":"Image Id not Found","status":False,"error":str(e)},status=404)
+            
+        return Response({"message":"Image successfully Deleted","satus":True},status=203)
         
-        
-        image=ProfileMultiImage.objects.filter(id=imageid)
-        if image.exists():
-            image.delete()
-            return Response({"message":"Image successfully Deleted","satus":True},status=203)
-        else:
-            return Response({"message":"Image Id not Found","status":False},status=404)
+            
         
 
 #################################END###############################
@@ -801,7 +773,7 @@ def profile_match_percentage(request):
     pp=Partner_Preferences.objects.get(profile=target_profile)
     
     _height_list=[
-    "3ft 1in","3ft2in","3ft 3in","3ft 4in","3ft 5in","3ft 6in","3ft 7in","3ft 8in","3ft 9in","3ft 10in","3ft 11in","4ft", 
+    "3ft 1in","3ft 2in","3ft 3in","3ft 4in","3ft 5in","3ft 6in","3ft 7in","3ft 8in","3ft 9in","3ft 10in","3ft 11in","4ft", 
     "4ft 1in","4ft 2in","4ft 3in","4ft 4in","4ft 5in","4ft 6in","4ft 7in","4ft 8in","4ft 9in","4ft 10in","4ft 11in","5ft" , 
     "5ft 1in","5ft 2in","5ft 3in","5ft 4in","5ft 5in","5ft 6in","5ft 7in","5ft 8in","5ft 9in","5ft 10in","5ft 11in","6ft",
     "6ft 1in","6ft 2in","6ft 3in","6ft 4in","6ft 5in","6ft 6in","6ft 7in","6ft 8in","6ft 9in","6ft 10in","6ft 11in","7ft",
@@ -1308,24 +1280,49 @@ def view_phone_nunmber(request):
         return Response({"message":"Invalid matrimony id","errors":str(e)},status=400)
     if logged_profile.gender==request_profile.gender:
         return Response({"message":"both are same gender"},status=200)
-       
-    phone_status=ViewedPhoneNumberStatus(logged_profile,request_profile)
+    today_date=datetime.datetime.today().date()  
+    
+    phone_status=logged_profile.viewphonnumber_set.filter(view=request_profile.id)
+   
+    today_quota=phone_status=logged_profile.viewphonnumber_set \
+            .filter(add_date=today_date)
     if phone_status:
         return Response({"message":"Allready add this profile in your Id",
                             "total_access":logged_profile.total_access,
                             "status":False},status=200)
-    else:
-        try:
-            add_phone_number=ViewedPhonNumber.objects.get(profile=logged_profile)
-        except Exception as e:
-            add_phone_number=ViewedPhonNumber.objects.create(profile=logged_profile)
-        add_phone_number.view.add(request_profile)
-        logged_profile.total_access=str(int(logged_profile.total_access)-1)
-        logged_profile.save()
-        return Response({"message":"total access updated",
-                            "total_access":logged_profile.total_access,
-                            "status":False},status=200)
+    
+    
+    
+    elif logged_profile.active_plan=="Trial":
+       
+        if today_quota:
+            return Response({"message":"Today quota is finished",
+                        "total_access":logged_profile.total_access,
+                        "status":False},status=200)
             
+    
+        # else:
+        #     logged_profile.viewphonnumber_set \
+        #             .create(profile=logged_profile,view=request_profile.id,add_date=today_date)
+        #     logged_profile.total_access=str(int(logged_profile.total_access)-1)
+        #     logged_profile.save()
+        #     return Response({"message":"total access updated",
+        #                             "total_access":logged_profile.total_access,
+        #                             "status":False},status=200)
+    else:
+        if int(logged_profile.total_access)>=1:
+            logged_profile.viewphonnumber_set \
+                .create(profile=logged_profile,view=request_profile.id,add_date=today_date)
+        
+            logged_profile.total_access=str(int(logged_profile.total_access)-1)
+            logged_profile.save()
+            return Response({"message":"total access updated",
+                                "total_access":logged_profile.total_access,
+                                "status":False},status=200)
+        else:
+            return Response({"message":"You have not Valid Plan,Check our  Plans",
+                                "total_access":logged_profile.total_access,
+                                "status":False},status=200)
 
 
 
@@ -1542,7 +1539,8 @@ def get_total_number_request_and_view(request):
                          "status":False,"homeResponse":{"message":"Invalid matrimony id"}},status=400)
     try:
         #my profile viewed by other ,how many member viewed my profile
-        viewed= ViewedByMe.objects.filter(view=person).count()
+        #viewed= ViewedByMe.objects.filter(view=person).count()
+        viewed=person.viewprofile.count()
         
     except Exception as e:
          viewed=0
